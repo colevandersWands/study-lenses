@@ -37,4 +37,5 @@ COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 4567
-CMD ["npm", "install", "&&", "npm", "start" ]
+CMD ["npm", "ci"]
+CMD ["npm", "start"]
