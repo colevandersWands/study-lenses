@@ -58,7 +58,8 @@
       "Bash(PORT=8888 node server.js)",
       "Bash(git checkout:*)",
       "Bash(npm run:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(flyctl logs:*)"
     ],
     "deny": []
   }

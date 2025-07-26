@@ -24,8 +24,8 @@ RUN apt-get update -qq && \
 COPY package-lock.json package.json ./
 RUN npm ci
 
-# Copy application code
-COPY . .
+# # Copy application code
+# COPY . .
 
 
 # Final stage for app image

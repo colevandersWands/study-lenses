@@ -1,351 +1,396 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Lenses - Interactive Code Learning</title>
-    <meta name="description" content="Study any GitHub repository interactively with multiple learning perspectives and tools">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .header {
-            text-align: center;
-            padding: 60px 0;
-            color: white;
-        }
-        
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .main-content {
-            background: white;
-            border-radius: 20px;
-            margin: -50px auto 0;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .content-section {
-            padding: 60px 40px;
-        }
-        
-        .usage-section {
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #2c3e50;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        
-        .feature-card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-left: 4px solid #667eea;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-        
-        .feature-card p {
-            color: #6c757d;
-            line-height: 1.6;
-        }
-        
-        .usage-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 40px 0;
-        }
-        
-        .step {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .step-number {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background: #667eea;
-            color: white;
-            border-radius: 50%;
-            line-height: 40px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        
-        .step h3 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-        
-        .step p {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        .demo-section {
-            text-align: center;
-            margin: 40px 0;
-        }
-        
-        .demo-input {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .demo-input input {
-            padding: 12px 16px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 1rem;
-            min-width: 200px;
-        }
-        
-        .demo-input input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .demo-input button {
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .demo-input button:hover {
-            background: #5a6fd8;
-        }
-        
-        .examples {
-            margin: 40px 0;
-        }
-        
-        .example-link {
-            display: inline-block;
-            margin: 5px 10px;
-            padding: 8px 16px;
-            background: #f8f9fa;
-            color: #667eea;
-            text-decoration: none;
-            border-radius: 20px;
-            border: 1px solid #e9ecef;
-            transition: all 0.2s;
-        }
-        
-        .example-link:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
-            }
-            
-            .content-section {
-                padding: 40px 20px;
-            }
-            
-            .demo-input {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .demo-input input,
-            .demo-input button {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-    </style>
-</head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Study Lenses - Interactive Code Learning</title>
+		<meta
+			name="description"
+			content="Study any GitHub repository interactively with multiple learning perspectives and tools"
+		/>
 
-<body>
-    <div class="container">
-        <header class="header">
-            <h1>Study Lenses</h1>
-            <p>Transform any GitHub repository into an interactive learning experience with multiple study perspectives</p>
-        </header>
-        
-        <main class="main-content">
-            <section class="content-section">
-                <h2 class="section-title">What is Study Lenses?</h2>
-                
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <h3>🔍 Multiple Perspectives</h3>
-                        <p>View code through different "lenses" - trace execution, analyze variables, create flashcards, generate exercises, and more.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>📚 Interactive Learning</h3>
-                        <p>Turn static code into interactive learning materials with fill-in-the-blanks, Parsons problems, and step-through debugging.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>🐍 Multi-Language Support</h3>
-                        <p>Study JavaScript, Python, HTML, CSS, and more with language-specific tools and execution environments.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>🚀 Run Code Instantly</h3>
-                        <p>Execute JavaScript and Python code directly in the browser with interactive consoles and real-time output.</p>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="usage-section content-section">
-                <h2 class="section-title">How to Use Study Lenses</h2>
-                
-                <div class="usage-steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <h3>Find a Repository</h3>
-                        <p>Enter a GitHub username to browse their public repositories</p>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <h3>Select a Project</h3>
-                        <p>Choose an interesting repository to study from the list</p>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <h3>Study Interactively</h3>
-                        <p>Use different lenses to explore, understand, and learn from the code</p>
-                    </div>
-                </div>
-                
-                <div class="demo-section">
-                    <h3>Try it now!</h3>
-                    <p>Enter a GitHub username to explore their repositories:</p>
-                    
-                    <div class="demo-input">
-                        <input type="text" id="username-input" placeholder="GitHub username (e.g., torvalds)" autocomplete="off">
-                        <button onclick="exploreUser()">Explore Repositories</button>
-                    </div>
-                    
-                    <div class="examples">
-                        <p><strong>Popular examples:</strong></p>
-                        <a href="/microsoft" class="example-link">microsoft</a>
-                        <a href="/facebook" class="example-link">facebook</a>
-                        <a href="/google" class="example-link">google</a>
-                        <a href="/torvalds" class="example-link">torvalds</a>
-                        <a href="/gaearon" class="example-link">gaearon</a>
-                        <a href="/sindresorhus" class="example-link">sindresorhus</a>
-                        <a href="/octocat" class="example-link">octocat</a>
-                    </div>
-                </div>
-            </section>
-        </main>
-        
-        <footer class="footer">
-            <p>
-                Study Lenses &copy; 2024 | 
-                <a href="https://github.com/study-lenses/study-lenses" target="_blank">Open Source</a> | 
-                Made with ❤️ for learners everywhere
-            </p>
-        </footer>
-    </div>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
 
-    <script>
-        function exploreUser() {
-            const username = document.getElementById('username-input').value.trim();
-            if (username) {
-                // Validate GitHub username format
-                const validUsername = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/.test(username);
-                if (validUsername) {
-                    window.location.href = `/${username}`;
-                } else {
-                    alert('Please enter a valid GitHub username (alphanumeric characters and hyphens only)');
-                }
-            } else {
-                alert('Please enter a GitHub username');
-            }
-        }
-        
-        // Allow Enter key to submit
-        document.getElementById('username-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                exploreUser();
-            }
-        });
-        
-        // Focus input on page load
-        document.getElementById('username-input').focus();
-    </script>
-</body>
+			body {
+				font-family:
+					-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+					Oxygen, Ubuntu, Cantarell, sans-serif;
+				line-height: 1.6;
+				color: #333;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				min-height: 100vh;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 20px;
+			}
+
+			.header {
+				text-align: center;
+				padding: 60px 0;
+				color: white;
+			}
+
+			.header h1 {
+				font-size: 3.5rem;
+				font-weight: 700;
+				margin-bottom: 20px;
+				text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+			}
+
+			.header p {
+				font-size: 1.25rem;
+				opacity: 0.9;
+				max-width: 600px;
+				margin: 0 auto;
+			}
+
+			.main-content {
+				background: white;
+				border-radius: 20px;
+				margin: -50px auto 0;
+				box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+				overflow: hidden;
+			}
+
+			.content-section {
+				padding: 60px 40px;
+			}
+
+			.usage-section {
+				background: #f8f9fa;
+				border-top: 1px solid #e9ecef;
+			}
+
+			.section-title {
+				font-size: 2rem;
+				font-weight: 600;
+				margin-bottom: 30px;
+				text-align: center;
+				color: #2c3e50;
+			}
+
+			.features-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 30px;
+				margin-bottom: 40px;
+			}
+
+			.feature-card {
+				background: white;
+				padding: 30px;
+				border-radius: 10px;
+				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+				border-left: 4px solid #667eea;
+			}
+
+			.feature-card h3 {
+				font-size: 1.25rem;
+				font-weight: 600;
+				margin-bottom: 15px;
+				color: #2c3e50;
+			}
+
+			.feature-card p {
+				color: #6c757d;
+				line-height: 1.6;
+			}
+
+			.usage-steps {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+				gap: 20px;
+				margin: 40px 0;
+			}
+
+			.step {
+				text-align: center;
+				padding: 20px;
+			}
+
+			.step-number {
+				display: inline-block;
+				width: 40px;
+				height: 40px;
+				background: #667eea;
+				color: white;
+				border-radius: 50%;
+				line-height: 40px;
+				font-weight: 600;
+				margin-bottom: 15px;
+			}
+
+			.step h3 {
+				font-size: 1.1rem;
+				margin-bottom: 10px;
+				color: #2c3e50;
+			}
+
+			.step p {
+				color: #6c757d;
+				font-size: 0.9rem;
+			}
+
+			.demo-section {
+				text-align: center;
+				margin: 40px 0;
+			}
+
+			.demo-input {
+				display: flex;
+				justify-content: center;
+				gap: 10px;
+				margin: 20px 0;
+				flex-wrap: wrap;
+			}
+
+			.demo-input input {
+				padding: 12px 16px;
+				border: 2px solid #e9ecef;
+				border-radius: 8px;
+				font-size: 1rem;
+				min-width: 200px;
+			}
+
+			.demo-input input:focus {
+				outline: none;
+				border-color: #667eea;
+			}
+
+			.demo-input button {
+				padding: 12px 24px;
+				background: #667eea;
+				color: white;
+				border: none;
+				border-radius: 8px;
+				font-size: 1rem;
+				cursor: pointer;
+				transition: background 0.2s;
+			}
+
+			.demo-input button:hover {
+				background: #5a6fd8;
+			}
+
+			.examples {
+				margin: 40px 0;
+			}
+
+			.example-link {
+				display: inline-block;
+				margin: 5px 10px;
+				padding: 8px 16px;
+				background: #f8f9fa;
+				color: #667eea;
+				text-decoration: none;
+				border-radius: 20px;
+				border: 1px solid #e9ecef;
+				transition: all 0.2s;
+			}
+
+			.example-link:hover {
+				background: #667eea;
+				color: white;
+				transform: translateY(-2px);
+			}
+
+			.footer {
+				text-align: center;
+				padding: 40px;
+				color: #6c757d;
+				font-size: 0.9rem;
+			}
+
+			.footer a {
+				color: #667eea;
+				text-decoration: none;
+			}
+
+			@media (max-width: 768px) {
+				.header h1 {
+					font-size: 2.5rem;
+				}
+
+				.content-section {
+					padding: 40px 20px;
+				}
+
+				.demo-input {
+					flex-direction: column;
+					align-items: center;
+				}
+
+				.demo-input input,
+				.demo-input button {
+					width: 100%;
+					max-width: 300px;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<header class="header">
+				<h1>Study Lenses</h1>
+				<p>
+					Transform any GitHub repository into an interactive learning
+					experience with multiple study perspectives
+				</p>
+			</header>
+
+			<main class="main-content">
+				<section class="content-section">
+					<h2 class="section-title">What is Study Lenses?</h2>
+
+					<div class="features-grid">
+						<div class="feature-card">
+							<h3>🔍 Multiple Perspectives</h3>
+							<p>
+								View code through different "lenses" - trace
+								execution, analyze variables, create flashcards,
+								generate exercises, and more.
+							</p>
+						</div>
+
+						<div class="feature-card">
+							<h3>📚 Interactive Learning</h3>
+							<p>
+								Turn static code into interactive learning
+								materials with fill-in-the-blanks, Parsons
+								problems, and step-through debugging.
+							</p>
+						</div>
+
+						<div class="feature-card">
+							<h3>🐍 Multi-Language Support</h3>
+							<p>
+								Study JavaScript, Python, HTML, CSS, and more
+								with language-specific tools and execution
+								environments.
+							</p>
+						</div>
+
+						<div class="feature-card">
+							<h3>🚀 Run Code Instantly</h3>
+							<p>
+								Execute JavaScript and Python code directly in
+								the browser with interactive consoles and
+								real-time output.
+							</p>
+						</div>
+					</div>
+				</section>
+
+				<section class="usage-section content-section">
+					<h2 class="section-title">How to Use Study Lenses</h2>
+
+					<div class="usage-steps">
+						<div class="step">
+							<div class="step-number">1</div>
+							<h3>Find a Repository</h3>
+							<p>
+								Enter a GitHub username to browse their public
+								repositories
+							</p>
+						</div>
+
+						<div class="step">
+							<div class="step-number">2</div>
+							<h3>Select a Project</h3>
+							<p>
+								Choose an interesting repository to study from
+								the list
+							</p>
+						</div>
+
+						<div class="step">
+							<div class="step-number">3</div>
+							<h3>Study Interactively</h3>
+							<p>
+								Use different lenses to explore, understand, and
+								learn from the code
+							</p>
+						</div>
+					</div>
+
+					<div class="demo-section">
+						<h3>Try it now!</h3>
+						<p>
+							Enter a GitHub username to explore their
+							repositories:
+						</p>
+
+						<div class="demo-input">
+							<input
+								type="text"
+								id="username-input"
+								placeholder="GitHub username (e.g., torvalds)"
+								autocomplete="off"
+							/>
+							<button onclick="exploreUser()">
+								Explore Repositories
+							</button>
+						</div>
+					</div>
+				</section>
+			</main>
+
+			<footer class="footer">
+				<p>
+					Study Lenses &copy; 2024 |
+					<a
+						href="https://github.com/study-lenses/study-lenses"
+						target="_blank"
+						>Open Source</a
+					>
+					| Made with ❤️ for learners everywhere
+				</p>
+			</footer>
+		</div>
+
+		<script>
+			function exploreUser() {
+				const username = document
+					.getElementById('username-input')
+					.value.trim();
+				if (username) {
+					// Validate GitHub username format
+					const validUsername =
+						/^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/.test(
+							username
+						);
+					if (validUsername) {
+						window.location.href = `/${username}`;
+					} else {
+						alert(
+							'Please enter a valid GitHub username (alphanumeric characters and hyphens only)'
+						);
+					}
+				} else {
+					alert('Please enter a GitHub username');
+				}
+			}
+
+			// Allow Enter key to submit
+			document
+				.getElementById('username-input')
+				.addEventListener('keypress', function (e) {
+					if (e.key === 'Enter') {
+						exploreUser();
+					}
+				});
+
+			// Focus input on page load
+			document.getElementById('username-input').focus();
+		</script>
+	</body>
 </html>
