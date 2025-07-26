@@ -75,7 +75,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve Study Lenses static files directly from the dist directory
 const studyLensesPath = path.join(__dirname, 'dist');
-app.use('/', express.static(studyLensesPath));
+// app.use('/', express.static(studyLensesPath));
 
 // Input validation middleware
 const validateGitHubName = (req, res, next) => {
