@@ -1,0 +1,411 @@
+/* StudyButton Component Styles */
+
+.studyButton {
+	display: inline-block;
+	position: relative;
+	z-index: 1; /* Establish stacking context */
+}
+
+.buttonContainer {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	position: relative; /* Ensure dropdown positions relative to this */
+}
+
+/* Base button styles */
+.button {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 12px;
+	border: 1px solid #464647;
+	border-radius: 4px;
+	background: #383838;
+	color: #d4d4d4;
+	font-size: 12px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+}
+
+.button:hover:not(:disabled) {
+	background: #404040;
+	border-color: #5a5a5a;
+}
+
+.button:active:not(:disabled) {
+	background: #2d2d2d;
+	transform: translateY(1px);
+}
+
+.button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Button variants */
+.button.compact {
+	padding: 4px 8px;
+	font-size: 11px;
+}
+
+.button.embedded {
+	padding: 3px 6px;
+	font-size: 11px;
+	gap: 2px;
+}
+
+.button.iconOnly {
+	padding: 6px;
+	min-width: auto;
+}
+
+.button.full {
+	padding: 8px 16px;
+	font-size: 13px;
+}
+
+/* Button type-specific colors */
+.button.run {
+	background: #1e7e34;
+	border-color: #28a745;
+}
+
+.button.run:hover:not(:disabled) {
+	background: #218838;
+}
+
+.button.trace {
+	background: #0c5460;
+	border-color: #17a2b8;
+}
+
+.button.trace:hover:not(:disabled) {
+	background: #138496;
+}
+
+.button.step {
+	background: #533f03;
+	border-color: #ffc107;
+}
+
+.button.step:hover:not(:disabled) {
+	background: #6c5ce7;
+}
+
+.button.ask {
+	background: #5a4b96;
+	border-color: #6f42c1;
+}
+
+.button.ask:hover:not(:disabled) {
+	background: #6f42c1;
+}
+
+.button.tables {
+	background: #b8860b;
+	border-color: #daa520;
+}
+
+.button.tables:hover:not(:disabled) {
+	background: #daa520;
+}
+
+/* Config button */
+.configButton {
+	padding: 6px;
+	border: 1px solid #464647;
+	border-radius: 4px;
+	background: #383838;
+	color: #d4d4d4;
+	font-size: 11px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.configButton:hover {
+	background: #404040;
+	border-color: #5a5a5a;
+}
+
+.configButton.embedded {
+	padding: 3px 4px;
+	font-size: 10px;
+}
+
+/* Configuration panel */
+.configPanel {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	min-width: 200px;
+	padding: 12px;
+	background: #2d2d2d;
+	border: 1px solid #464647;
+	border-radius: 4px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	margin-top: 4px;
+}
+
+.configPanel label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 8px;
+	font-size: 12px;
+	color: #d4d4d4;
+	cursor: pointer;
+}
+
+.configPanel label:last-child {
+	margin-bottom: 0;
+}
+
+.configPanel input[type='checkbox'] {
+	cursor: pointer;
+}
+
+.configPanel .numberInput {
+	width: 60px;
+	padding: 2px 4px;
+	border: 1px solid #464647;
+	border-radius: 2px;
+	background: #383838;
+	color: #d4d4d4;
+	font-size: 11px;
+}
+
+/* Tables dropdown */
+.tablesDropdown {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	z-index: 1000;
+	min-width: 150px;
+	background: #2d2d2d;
+	border: 1px solid #464647;
+	border-radius: 4px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	margin-top: 4px;
+	padding: 4px 0;
+}
+
+.dropdownItem {
+	display: block;
+	width: 100%;
+	padding: 8px 12px;
+	border: none;
+	background: transparent;
+	color: #d4d4d4;
+	font-size: 12px;
+	text-align: left;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.dropdownItem:hover {
+	background: #404040;
+}
+
+/* Modal-style config overlay - full screen click area */
+.configOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: transparent; /* No dark background, just click area */
+	z-index: 50000; /* Higher z-index to ensure always on top */
+	animation: fadeIn 0.2s ease-out;
+}
+
+/* Beautiful config dropdown - modal styling with dropdown positioning */
+.configDropdown {
+	background: #2d2d30;
+	border-radius: 8px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+	min-width: 280px;
+	max-width: 400px;
+	max-height: 500px;
+	overflow: hidden; /* For rounded header */
+	animation: modalSlideIn 0.3s ease-out;
+	transition: box-shadow 0.2s ease;
+}
+
+.configDropdown.dragging {
+	user-select: none; /* Prevent text selection while dragging */
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); /* Enhanced shadow while dragging */
+}
+
+/* Beautiful blue header like the example - now draggable */
+.configHeader {
+	background: #4fc3f7;
+	color: white;
+	padding: 12px 16px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-weight: 600;
+	cursor: grab; /* Show drag cursor */
+	user-select: none; /* Prevent text selection while dragging */
+}
+
+.configHeader:active {
+	cursor: grabbing;
+}
+
+.configHeader h3 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.configClose {
+	background: none;
+	border: none;
+	color: white;
+	font-size: 18px;
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: 3px;
+	transition: background-color 0.2s ease;
+}
+
+.configClose:hover {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+/* Config body with proper spacing */
+.configBody {
+	background: #2d2d30;
+	padding: 16px;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+/* Config sections with beautiful spacing */
+.configSection {
+	margin-bottom: 20px;
+}
+
+.configSection:last-child {
+	margin-bottom: 0;
+}
+
+.configSectionTitle {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	color: #9cdcfe;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 12px;
+	opacity: 0.9;
+}
+
+/* Beautiful config options */
+.configOption {
+	display: flex;
+	align-items: center;
+	padding: 10px 0;
+	cursor: pointer;
+	border-radius: 4px;
+	transition: all 0.2s ease;
+	margin-bottom: 8px;
+}
+
+.configOption:hover {
+	background: rgba(255, 255, 255, 0.05);
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.configOption:last-child {
+	margin-bottom: 0;
+}
+
+/* Beautiful custom checkbox styling */
+.configOption input[type='checkbox'] {
+	margin-right: 12px;
+	width: 16px;
+	height: 16px;
+	accent-color: #4fc3f7;
+	cursor: pointer;
+}
+
+/* Beautiful custom radio button styling */
+.configOption input[type='radio'] {
+	margin-right: 12px;
+	width: 16px;
+	height: 16px;
+	accent-color: #4fc3f7;
+	cursor: pointer;
+}
+
+.optionIcon {
+	font-size: 14px;
+	margin-right: 8px;
+	width: 18px;
+	display: inline-block;
+	text-align: center;
+}
+
+.optionLabel {
+	color: #d4d4d4;
+	font-size: 13px;
+	font-weight: 500;
+	flex: 1;
+}
+
+.optionDescription {
+	color: #888;
+	font-size: 11px;
+	margin-top: 2px;
+	font-style: italic;
+}
+
+/* Execution container (for run output) */
+.executionContainer {
+	margin-top: 8px;
+}
+
+/* Modal animations (from original trace-table modal) */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes modalSlideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px) scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.button {
+		padding: 8px 12px;
+		font-size: 13px;
+	}
+
+	.button.compact {
+		padding: 6px 10px;
+		font-size: 12px;
+	}
+
+	.configPanel {
+		min-width: 180px;
+	}
+}

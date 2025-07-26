@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Public assets
+public/static/js2flowchart/
+public/static/shift-parser/
+public/static/blanks/blankenate.js
+public/static/wc-trace-table--backup/
+
+# Generated files
+*.min.js
+*.bundle.js
+
+# Temporary files
+.DS_Store
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# Git
+.git/

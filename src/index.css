@@ -1,0 +1,70 @@
+/* Global Styles */
+
+:root {
+	/* Color palette */
+	--color-primary: #007acc;
+	--color-primary-dark: #005a9e;
+	--color-secondary: #f3f3f3;
+	--color-secondary-dark: #e0e0e0;
+	--color-bg: #1e1e1e;
+	--color-bg-secondary: #252526;
+	--color-text: #d4d4d4;
+	--color-text-secondary: #969696;
+	--color-border: #464647;
+	--color-error: #f14c4c;
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html,
+body {
+	height: 100%;
+	font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+	background: #1e1e1e;
+	color: #d4d4d4;
+	overflow: hidden;
+}
+
+#app {
+	height: 100%;
+}
+
+/* Scrollbar styling for the entire app */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #464647;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #666;
+}
+
+/* Focus outline for accessibility */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+	outline: 2px solid #007acc;
+	outline-offset: 2px;
+}
+
+/* Remove focus outline for mouse users */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+select:focus:not(:focus-visible) {
+	outline: none;
+}

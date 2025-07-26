@@ -1,0 +1,969 @@
+{
+  "key": "denepo/predictive-stepping",
+  "data": {
+    "name": "denepo_predictive-stepping_1753500387019",
+    "type": "directory",
+    "path": "/",
+    "children": [
+      {
+        "name": ".git",
+        "type": "directory",
+        "path": "/.git",
+        "children": [
+          {
+            "name": "HEAD",
+            "type": "file",
+            "ext": "",
+            "base": "HEAD",
+            "dir": ".git",
+            "path": "/.git/HEAD",
+            "lang": "",
+            "content": "ref: refs/heads/main\n"
+          },
+          {
+            "name": "config",
+            "type": "file",
+            "ext": "",
+            "base": "config",
+            "dir": ".git",
+            "path": "/.git/config",
+            "lang": "",
+            "content": "[core]\n\trepositoryformatversion = 0\n\tfilemode = true\n\tbare = false\n\tlogallrefupdates = true\n\tignorecase = true\n\tprecomposeunicode = true\n[remote \"origin\"]\n\turl = https://github.com/denepo/predictive-stepping.git\n\tfetch = +refs/heads/main:refs/remotes/origin/main\n[branch \"main\"]\n\tremote = origin\n\tmerge = refs/heads/main\n"
+          },
+          {
+            "name": "description",
+            "type": "file",
+            "ext": "",
+            "base": "description",
+            "dir": ".git",
+            "path": "/.git/description",
+            "lang": "",
+            "content": "Unnamed repository; edit this file 'description' to name the repository.\n"
+          },
+          {
+            "name": "hooks",
+            "type": "directory",
+            "path": "/.git/hooks",
+            "children": [
+              {
+                "name": "applypatch-msg.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "applypatch-msg",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/applypatch-msg.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to check the commit log message taken by\n# applypatch from an e-mail message.\n#\n# The hook should exit with non-zero status after issuing an\n# appropriate message if it wants to stop the commit.  The hook is\n# allowed to edit the commit message file.\n#\n# To enable this hook, rename this file to \"applypatch-msg\".\n\n. git-sh-setup\ncommitmsg=\"$(git rev-parse --git-path hooks/commit-msg)\"\ntest -x \"$commitmsg\" && exec \"$commitmsg\" ${1+\"$@\"}\n:\n"
+              },
+              {
+                "name": "commit-msg.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "commit-msg",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/commit-msg.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to check the commit log message.\n# Called by \"git commit\" with one argument, the name of the file\n# that has the commit message.  The hook should exit with non-zero\n# status after issuing an appropriate message if it wants to stop the\n# commit.  The hook is allowed to edit the commit message file.\n#\n# To enable this hook, rename this file to \"commit-msg\".\n\n# Uncomment the below to add a Signed-off-by line to the message.\n# Doing this in a hook is a bad idea in general, but the prepare-commit-msg\n# hook is more suited to it.\n#\n# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\\(.*>\\).*$/Signed-off-by: \\1/p')\n# grep -qs \"^$SOB\" \"$1\" || echo \"$SOB\" >> \"$1\"\n\n# This example catches duplicate Signed-off-by lines.\n\ntest \"\" = \"$(grep '^Signed-off-by: ' \"$1\" |\n\t sort | uniq -c | sed -e '/^[ \t]*1[ \t]/d')\" || {\n\techo >&2 Duplicate Signed-off-by lines.\n\texit 1\n}\n"
+              },
+              {
+                "name": "fsmonitor-watchman.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "fsmonitor-watchman",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/fsmonitor-watchman.sample",
+                "lang": ".sample",
+                "content": "#!/usr/bin/perl\n\nuse strict;\nuse warnings;\nuse IPC::Open2;\n\n# An example hook script to integrate Watchman\n# (https://facebook.github.io/watchman/) with git to speed up detecting\n# new and modified files.\n#\n# The hook is passed a version (currently 2) and last update token\n# formatted as a string and outputs to stdout a new update token and\n# all files that have been modified since the update token. Paths must\n# be relative to the root of the working tree and separated by a single NUL.\n#\n# To enable this hook, rename this file to \"query-watchman\" and set\n# 'git config core.fsmonitor .git/hooks/query-watchman'\n#\nmy ($version, $last_update_token) = @ARGV;\n\n# Uncomment for debugging\n# print STDERR \"$0 $version $last_update_token\\n\";\n\n# Check the hook interface version\nif ($version ne 2) {\n\tdie \"Unsupported query-fsmonitor hook version '$version'.\\n\" .\n\t    \"Falling back to scanning...\\n\";\n}\n\nmy $git_work_tree = get_working_dir();\n\nmy $retry = 1;\n\nmy $json_pkg;\neval {\n\trequire JSON::XS;\n\t$json_pkg = \"JSON::XS\";\n\t1;\n} or do {\n\trequire JSON::PP;\n\t$json_pkg = \"JSON::PP\";\n};\n\nlaunch_watchman();\n\nsub launch_watchman {\n\tmy $o = watchman_query();\n\tif (is_work_tree_watched($o)) {\n\t\toutput_result($o->{clock}, @{$o->{files}});\n\t}\n}\n\nsub output_result {\n\tmy ($clockid, @files) = @_;\n\n\t# Uncomment for debugging watchman output\n\t# open (my $fh, \">\", \".git/watchman-output.out\");\n\t# binmode $fh, \":utf8\";\n\t# print $fh \"$clockid\\n@files\\n\";\n\t# close $fh;\n\n\tbinmode STDOUT, \":utf8\";\n\tprint $clockid;\n\tprint \"\\0\";\n\tlocal $, = \"\\0\";\n\tprint @files;\n}\n\nsub watchman_clock {\n\tmy $response = qx/watchman clock \"$git_work_tree\"/;\n\tdie \"Failed to get clock id on '$git_work_tree'.\\n\" .\n\t\t\"Falling back to scanning...\\n\" if $? != 0;\n\n\treturn $json_pkg->new->utf8->decode($response);\n}\n\nsub watchman_query {\n\tmy $pid = open2(\\*CHLD_OUT, \\*CHLD_IN, 'watchman -j --no-pretty')\n\tor die \"open2() failed: $!\\n\" .\n\t\"Falling back to scanning...\\n\";\n\n\t# In the query expression below we're asking for names of files that\n\t# changed since $last_update_token but not from the .git folder.\n\t#\n\t# To accomplish this, we're using the \"since\" generator to use the\n\t# recency index to select candidate nodes and \"fields\" to limit the\n\t# output to file names only. Then we're using the \"expression\" term to\n\t# further constrain the results.\n\tmy $last_update_line = \"\";\n\tif (substr($last_update_token, 0, 1) eq \"c\") {\n\t\t$last_update_token = \"\\\"$last_update_token\\\"\";\n\t\t$last_update_line = qq[\\n\"since\": $last_update_token,];\n\t}\n\tmy $query = <<\"\tEND\";\n\t\t[\"query\", \"$git_work_tree\", {$last_update_line\n\t\t\t\"fields\": [\"name\"],\n\t\t\t\"expression\": [\"not\", [\"dirname\", \".git\"]]\n\t\t}]\n\tEND\n\n\t# Uncomment for debugging the watchman query\n\t# open (my $fh, \">\", \".git/watchman-query.json\");\n\t# print $fh $query;\n\t# close $fh;\n\n\tprint CHLD_IN $query;\n\tclose CHLD_IN;\n\tmy $response = do {local $/; <CHLD_OUT>};\n\n\t# Uncomment for debugging the watch response\n\t# open ($fh, \">\", \".git/watchman-response.json\");\n\t# print $fh $response;\n\t# close $fh;\n\n\tdie \"Watchman: command returned no output.\\n\" .\n\t\"Falling back to scanning...\\n\" if $response eq \"\";\n\tdie \"Watchman: command returned invalid output: $response\\n\" .\n\t\"Falling back to scanning...\\n\" unless $response =~ /^\\{/;\n\n\treturn $json_pkg->new->utf8->decode($response);\n}\n\nsub is_work_tree_watched {\n\tmy ($output) = @_;\n\tmy $error = $output->{error};\n\tif ($retry > 0 and $error and $error =~ m/unable to resolve root .* directory (.*) is not watched/) {\n\t\t$retry--;\n\t\tmy $response = qx/watchman watch \"$git_work_tree\"/;\n\t\tdie \"Failed to make watchman watch '$git_work_tree'.\\n\" .\n\t\t    \"Falling back to scanning...\\n\" if $? != 0;\n\t\t$output = $json_pkg->new->utf8->decode($response);\n\t\t$error = $output->{error};\n\t\tdie \"Watchman: $error.\\n\" .\n\t\t\"Falling back to scanning...\\n\" if $error;\n\n\t\t# Uncomment for debugging watchman output\n\t\t# open (my $fh, \">\", \".git/watchman-output.out\");\n\t\t# close $fh;\n\n\t\t# Watchman will always return all files on the first query so\n\t\t# return the fast \"everything is dirty\" flag to git and do the\n\t\t# Watchman query just to get it over with now so we won't pay\n\t\t# the cost in git to look up each individual file.\n\t\tmy $o = watchman_clock();\n\t\t$error = $output->{error};\n\n\t\tdie \"Watchman: $error.\\n\" .\n\t\t\"Falling back to scanning...\\n\" if $error;\n\n\t\toutput_result($o->{clock}, (\"/\"));\n\t\t$last_update_token = $o->{clock};\n\n\t\teval { launch_watchman() };\n\t\treturn 0;\n\t}\n\n\tdie \"Watchman: $error.\\n\" .\n\t\"Falling back to scanning...\\n\" if $error;\n\n\treturn 1;\n}\n\nsub get_working_dir {\n\tmy $working_dir;\n\tif ($^O =~ 'msys' || $^O =~ 'cygwin') {\n\t\t$working_dir = Win32::GetCwd();\n\t\t$working_dir =~ tr/\\\\/\\//;\n\t} else {\n\t\trequire Cwd;\n\t\t$working_dir = Cwd::cwd();\n\t}\n\n\treturn $working_dir;\n}\n"
+              },
+              {
+                "name": "post-update.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "post-update",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/post-update.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to prepare a packed repository for use over\n# dumb transports.\n#\n# To enable this hook, rename this file to \"post-update\".\n\nexec git update-server-info\n"
+              },
+              {
+                "name": "pre-applypatch.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "pre-applypatch",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/pre-applypatch.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to verify what is about to be committed\n# by applypatch from an e-mail message.\n#\n# The hook should exit with non-zero status after issuing an\n# appropriate message if it wants to stop the commit.\n#\n# To enable this hook, rename this file to \"pre-applypatch\".\n\n. git-sh-setup\nprecommit=\"$(git rev-parse --git-path hooks/pre-commit)\"\ntest -x \"$precommit\" && exec \"$precommit\" ${1+\"$@\"}\n:\n"
+              },
+              {
+                "name": "pre-commit.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "pre-commit",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/pre-commit.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to verify what is about to be committed.\n# Called by \"git commit\" with no arguments.  The hook should\n# exit with non-zero status after issuing an appropriate message if\n# it wants to stop the commit.\n#\n# To enable this hook, rename this file to \"pre-commit\".\n\nif git rev-parse --verify HEAD >/dev/null 2>&1\nthen\n\tagainst=HEAD\nelse\n\t# Initial commit: diff against an empty tree object\n\tagainst=$(git hash-object -t tree /dev/null)\nfi\n\n# If you want to allow non-ASCII filenames set this variable to true.\nallownonascii=$(git config --type=bool hooks.allownonascii)\n\n# Redirect output to stderr.\nexec 1>&2\n\n# Cross platform projects tend to avoid non-ASCII filenames; prevent\n# them from being added to the repository. We exploit the fact that the\n# printable range starts at the space character and ends with tilde.\nif [ \"$allownonascii\" != \"true\" ] &&\n\t# Note that the use of brackets around a tr range is ok here, (it's\n\t# even required, for portability to Solaris 10's /usr/bin/tr), since\n\t# the square bracket bytes happen to fall in the designated range.\n\ttest $(git diff --cached --name-only --diff-filter=A -z $against |\n\t  LC_ALL=C tr -d '[ -~]\\0' | wc -c) != 0\nthen\n\tcat <<\\EOF\nError: Attempt to add a non-ASCII file name.\n\nThis can cause problems if you want to work with people on other platforms.\n\nTo be portable it is advisable to rename the file.\n\nIf you know what you are doing you can disable this check using:\n\n  git config hooks.allownonascii true\nEOF\n\texit 1\nfi\n\n# If there are whitespace errors, print the offending file names and fail.\nexec git diff-index --check --cached $against --\n"
+              },
+              {
+                "name": "pre-merge-commit.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "pre-merge-commit",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/pre-merge-commit.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to verify what is about to be committed.\n# Called by \"git merge\" with no arguments.  The hook should\n# exit with non-zero status after issuing an appropriate message to\n# stderr if it wants to stop the merge commit.\n#\n# To enable this hook, rename this file to \"pre-merge-commit\".\n\n. git-sh-setup\ntest -x \"$GIT_DIR/hooks/pre-commit\" &&\n        exec \"$GIT_DIR/hooks/pre-commit\"\n:\n"
+              },
+              {
+                "name": "pre-push.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "pre-push",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/pre-push.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n\n# An example hook script to verify what is about to be pushed.  Called by \"git\n# push\" after it has checked the remote status, but before anything has been\n# pushed.  If this script exits with a non-zero status nothing will be pushed.\n#\n# This hook is called with the following parameters:\n#\n# $1 -- Name of the remote to which the push is being done\n# $2 -- URL to which the push is being done\n#\n# If pushing without using a named remote those arguments will be equal.\n#\n# Information about the commits which are being pushed is supplied as lines to\n# the standard input in the form:\n#\n#   <local ref> <local oid> <remote ref> <remote oid>\n#\n# This sample shows how to prevent push of commits where the log message starts\n# with \"WIP\" (work in progress).\n\nremote=\"$1\"\nurl=\"$2\"\n\nzero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')\n\nwhile read local_ref local_oid remote_ref remote_oid\ndo\n\tif test \"$local_oid\" = \"$zero\"\n\tthen\n\t\t# Handle delete\n\t\t:\n\telse\n\t\tif test \"$remote_oid\" = \"$zero\"\n\t\tthen\n\t\t\t# New branch, examine all commits\n\t\t\trange=\"$local_oid\"\n\t\telse\n\t\t\t# Update to existing branch, examine new commits\n\t\t\trange=\"$remote_oid..$local_oid\"\n\t\tfi\n\n\t\t# Check for WIP commit\n\t\tcommit=$(git rev-list -n 1 --grep '^WIP' \"$range\")\n\t\tif test -n \"$commit\"\n\t\tthen\n\t\t\techo >&2 \"Found WIP commit in $local_ref, not pushing\"\n\t\t\texit 1\n\t\tfi\n\tfi\ndone\n\nexit 0\n"
+              },
+              {
+                "name": "pre-rebase.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "pre-rebase",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/pre-rebase.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# Copyright (c) 2006, 2008 Junio C Hamano\n#\n# The \"pre-rebase\" hook is run just before \"git rebase\" starts doing\n# its job, and can prevent the command from running by exiting with\n# non-zero status.\n#\n# The hook is called with the following parameters:\n#\n# $1 -- the upstream the series was forked from.\n# $2 -- the branch being rebased (or empty when rebasing the current branch).\n#\n# This sample shows how to prevent topic branches that are already\n# merged to 'next' branch from getting rebased, because allowing it\n# would result in rebasing already published history.\n\npublish=next\nbasebranch=\"$1\"\nif test \"$#\" = 2\nthen\n\ttopic=\"refs/heads/$2\"\nelse\n\ttopic=`git symbolic-ref HEAD` ||\n\texit 0 ;# we do not interrupt rebasing detached HEAD\nfi\n\ncase \"$topic\" in\nrefs/heads/??/*)\n\t;;\n*)\n\texit 0 ;# we do not interrupt others.\n\t;;\nesac\n\n# Now we are dealing with a topic branch being rebased\n# on top of master.  Is it OK to rebase it?\n\n# Does the topic really exist?\ngit show-ref -q \"$topic\" || {\n\techo >&2 \"No such branch $topic\"\n\texit 1\n}\n\n# Is topic fully merged to master?\nnot_in_master=`git rev-list --pretty=oneline ^master \"$topic\"`\nif test -z \"$not_in_master\"\nthen\n\techo >&2 \"$topic is fully merged to master; better remove it.\"\n\texit 1 ;# we could allow it, but there is no point.\nfi\n\n# Is topic ever merged to next?  If so you should not be rebasing it.\nonly_next_1=`git rev-list ^master \"^$topic\" ${publish} | sort`\nonly_next_2=`git rev-list ^master           ${publish} | sort`\nif test \"$only_next_1\" = \"$only_next_2\"\nthen\n\tnot_in_topic=`git rev-list \"^$topic\" master`\n\tif test -z \"$not_in_topic\"\n\tthen\n\t\techo >&2 \"$topic is already up to date with master\"\n\t\texit 1 ;# we could allow it, but there is no point.\n\telse\n\t\texit 0\n\tfi\nelse\n\tnot_in_next=`git rev-list --pretty=oneline ^${publish} \"$topic\"`\n\t/usr/bin/perl -e '\n\t\tmy $topic = $ARGV[0];\n\t\tmy $msg = \"* $topic has commits already merged to public branch:\\n\";\n\t\tmy (%not_in_next) = map {\n\t\t\t/^([0-9a-f]+) /;\n\t\t\t($1 => 1);\n\t\t} split(/\\n/, $ARGV[1]);\n\t\tfor my $elem (map {\n\t\t\t\t/^([0-9a-f]+) (.*)$/;\n\t\t\t\t[$1 => $2];\n\t\t\t} split(/\\n/, $ARGV[2])) {\n\t\t\tif (!exists $not_in_next{$elem->[0]}) {\n\t\t\t\tif ($msg) {\n\t\t\t\t\tprint STDERR $msg;\n\t\t\t\t\tundef $msg;\n\t\t\t\t}\n\t\t\t\tprint STDERR \" $elem->[1]\\n\";\n\t\t\t}\n\t\t}\n\t' \"$topic\" \"$not_in_next\" \"$not_in_master\"\n\texit 1\nfi\n\n<<\\DOC_END\n\nThis sample hook safeguards topic branches that have been\npublished from being rewound.\n\nThe workflow assumed here is:\n\n * Once a topic branch forks from \"master\", \"master\" is never\n   merged into it again (either directly or indirectly).\n\n * Once a topic branch is fully cooked and merged into \"master\",\n   it is deleted.  If you need to build on top of it to correct\n   earlier mistakes, a new topic branch is created by forking at\n   the tip of the \"master\".  This is not strictly necessary, but\n   it makes it easier to keep your history simple.\n\n * Whenever you need to test or publish your changes to topic\n   branches, merge them into \"next\" branch.\n\nThe script, being an example, hardcodes the publish branch name\nto be \"next\", but it is trivial to make it configurable via\n$GIT_DIR/config mechanism.\n\nWith this workflow, you would want to know:\n\n(1) ... if a topic branch has ever been merged to \"next\".  Young\n    topic branches can have stupid mistakes you would rather\n    clean up before publishing, and things that have not been\n    merged into other branches can be easily rebased without\n    affecting other people.  But once it is published, you would\n    not want to rewind it.\n\n(2) ... if a topic branch has been fully merged to \"master\".\n    Then you can delete it.  More importantly, you should not\n    build on top of it -- other people may already want to\n    change things related to the topic as patches against your\n    \"master\", so if you need further changes, it is better to\n    fork the topic (perhaps with the same name) afresh from the\n    tip of \"master\".\n\nLet's look at this example:\n\n\t\t   o---o---o---o---o---o---o---o---o---o \"next\"\n\t\t  /       /           /           /\n\t\t /   a---a---b A     /           /\n\t\t/   /               /           /\n\t       /   /   c---c---c---c B         /\n\t      /   /   /             \\         /\n\t     /   /   /   b---b C     \\       /\n\t    /   /   /   /             \\     /\n    ---o---o---o---o---o---o---o---o---o---o---o \"master\"\n\n\nA, B and C are topic branches.\n\n * A has one fix since it was merged up to \"next\".\n\n * B has finished.  It has been fully merged up to \"master\" and \"next\",\n   and is ready to be deleted.\n\n * C has not merged to \"next\" at all.\n\nWe would want to allow C to be rebased, refuse A, and encourage\nB to be deleted.\n\nTo compute (1):\n\n\tgit rev-list ^master ^topic next\n\tgit rev-list ^master        next\n\n\tif these match, topic has not merged in next at all.\n\nTo compute (2):\n\n\tgit rev-list master..topic\n\n\tif this is empty, it is fully merged to \"master\".\n\nDOC_END\n"
+              },
+              {
+                "name": "pre-receive.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "pre-receive",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/pre-receive.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to make use of push options.\n# The example simply echoes all push options that start with 'echoback='\n# and rejects all pushes when the \"reject\" push option is used.\n#\n# To enable this hook, rename this file to \"pre-receive\".\n\nif test -n \"$GIT_PUSH_OPTION_COUNT\"\nthen\n\ti=0\n\twhile test \"$i\" -lt \"$GIT_PUSH_OPTION_COUNT\"\n\tdo\n\t\teval \"value=\\$GIT_PUSH_OPTION_$i\"\n\t\tcase \"$value\" in\n\t\techoback=*)\n\t\t\techo \"echo from the pre-receive-hook: ${value#*=}\" >&2\n\t\t\t;;\n\t\treject)\n\t\t\texit 1\n\t\tesac\n\t\ti=$((i + 1))\n\tdone\nfi\n"
+              },
+              {
+                "name": "prepare-commit-msg.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "prepare-commit-msg",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/prepare-commit-msg.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to prepare the commit log message.\n# Called by \"git commit\" with the name of the file that has the\n# commit message, followed by the description of the commit\n# message's source.  The hook's purpose is to edit the commit\n# message file.  If the hook fails with a non-zero status,\n# the commit is aborted.\n#\n# To enable this hook, rename this file to \"prepare-commit-msg\".\n\n# This hook includes three examples. The first one removes the\n# \"# Please enter the commit message...\" help message.\n#\n# The second includes the output of \"git diff --name-status -r\"\n# into the message, just before the \"git status\" output.  It is\n# commented because it doesn't cope with --amend or with squashed\n# commits.\n#\n# The third example adds a Signed-off-by line to the message, that can\n# still be edited.  This is rarely a good idea.\n\nCOMMIT_MSG_FILE=$1\nCOMMIT_SOURCE=$2\nSHA1=$3\n\n/usr/bin/perl -i.bak -ne 'print unless(m/^. Please enter the commit message/..m/^#$/)' \"$COMMIT_MSG_FILE\"\n\n# case \"$COMMIT_SOURCE,$SHA1\" in\n#  ,|template,)\n#    /usr/bin/perl -i.bak -pe '\n#       print \"\\n\" . `git diff --cached --name-status -r`\n# \t if /^#/ && $first++ == 0' \"$COMMIT_MSG_FILE\" ;;\n#  *) ;;\n# esac\n\n# SOB=$(git var GIT_COMMITTER_IDENT | sed -n 's/^\\(.*>\\).*$/Signed-off-by: \\1/p')\n# git interpret-trailers --in-place --trailer \"$SOB\" \"$COMMIT_MSG_FILE\"\n# if test -z \"$COMMIT_SOURCE\"\n# then\n#   /usr/bin/perl -i.bak -pe 'print \"\\n\" if !$first_line++' \"$COMMIT_MSG_FILE\"\n# fi\n"
+              },
+              {
+                "name": "push-to-checkout.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "push-to-checkout",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/push-to-checkout.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n\n# An example hook script to update a checked-out tree on a git push.\n#\n# This hook is invoked by git-receive-pack(1) when it reacts to git\n# push and updates reference(s) in its repository, and when the push\n# tries to update the branch that is currently checked out and the\n# receive.denyCurrentBranch configuration variable is set to\n# updateInstead.\n#\n# By default, such a push is refused if the working tree and the index\n# of the remote repository has any difference from the currently\n# checked out commit; when both the working tree and the index match\n# the current commit, they are updated to match the newly pushed tip\n# of the branch. This hook is to be used to override the default\n# behaviour; however the code below reimplements the default behaviour\n# as a starting point for convenient modification.\n#\n# The hook receives the commit with which the tip of the current\n# branch is going to be updated:\ncommit=$1\n\n# It can exit with a non-zero status to refuse the push (when it does\n# so, it must not modify the index or the working tree).\ndie () {\n\techo >&2 \"$*\"\n\texit 1\n}\n\n# Or it can make any necessary changes to the working tree and to the\n# index to bring them to the desired state when the tip of the current\n# branch is updated to the new commit, and exit with a zero status.\n#\n# For example, the hook can simply run git read-tree -u -m HEAD \"$1\"\n# in order to emulate git fetch that is run in the reverse direction\n# with git push, as the two-tree form of git read-tree -u -m is\n# essentially the same as git switch or git checkout that switches\n# branches while keeping the local changes in the working tree that do\n# not interfere with the difference between the branches.\n\n# The below is a more-or-less exact translation to shell of the C code\n# for the default behaviour for git's push-to-checkout hook defined in\n# the push_to_deploy() function in builtin/receive-pack.c.\n#\n# Note that the hook will be executed from the repository directory,\n# not from the working tree, so if you want to perform operations on\n# the working tree, you will have to adapt your code accordingly, e.g.\n# by adding \"cd ..\" or using relative paths.\n\nif ! git update-index -q --ignore-submodules --refresh\nthen\n\tdie \"Up-to-date check failed\"\nfi\n\nif ! git diff-files --quiet --ignore-submodules --\nthen\n\tdie \"Working directory has unstaged changes\"\nfi\n\n# This is a rough translation of:\n#\n#   head_has_history() ? \"HEAD\" : EMPTY_TREE_SHA1_HEX\nif git cat-file -e HEAD 2>/dev/null\nthen\n\thead=HEAD\nelse\n\thead=$(git hash-object -t tree --stdin </dev/null)\nfi\n\nif ! git diff-index --quiet --cached --ignore-submodules $head --\nthen\n\tdie \"Working directory has staged changes\"\nfi\n\nif ! git read-tree -u -m \"$commit\"\nthen\n\tdie \"Could not update working tree to new HEAD\"\nfi\n"
+              },
+              {
+                "name": "update.sample",
+                "type": "file",
+                "ext": ".sample",
+                "base": "update",
+                "dir": ".git/hooks",
+                "path": "/.git/hooks/update.sample",
+                "lang": ".sample",
+                "content": "#!/bin/sh\n#\n# An example hook script to block unannotated tags from entering.\n# Called by \"git receive-pack\" with arguments: refname sha1-old sha1-new\n#\n# To enable this hook, rename this file to \"update\".\n#\n# Config\n# ------\n# hooks.allowunannotated\n#   This boolean sets whether unannotated tags will be allowed into the\n#   repository.  By default they won't be.\n# hooks.allowdeletetag\n#   This boolean sets whether deleting tags will be allowed in the\n#   repository.  By default they won't be.\n# hooks.allowmodifytag\n#   This boolean sets whether a tag may be modified after creation. By default\n#   it won't be.\n# hooks.allowdeletebranch\n#   This boolean sets whether deleting branches will be allowed in the\n#   repository.  By default they won't be.\n# hooks.denycreatebranch\n#   This boolean sets whether remotely creating branches will be denied\n#   in the repository.  By default this is allowed.\n#\n\n# --- Command line\nrefname=\"$1\"\noldrev=\"$2\"\nnewrev=\"$3\"\n\n# --- Safety check\nif [ -z \"$GIT_DIR\" ]; then\n\techo \"Don't run this script from the command line.\" >&2\n\techo \" (if you want, you could supply GIT_DIR then run\" >&2\n\techo \"  $0 <ref> <oldrev> <newrev>)\" >&2\n\texit 1\nfi\n\nif [ -z \"$refname\" -o -z \"$oldrev\" -o -z \"$newrev\" ]; then\n\techo \"usage: $0 <ref> <oldrev> <newrev>\" >&2\n\texit 1\nfi\n\n# --- Config\nallowunannotated=$(git config --type=bool hooks.allowunannotated)\nallowdeletebranch=$(git config --type=bool hooks.allowdeletebranch)\ndenycreatebranch=$(git config --type=bool hooks.denycreatebranch)\nallowdeletetag=$(git config --type=bool hooks.allowdeletetag)\nallowmodifytag=$(git config --type=bool hooks.allowmodifytag)\n\n# check for no description\nprojectdesc=$(sed -e '1q' \"$GIT_DIR/description\")\ncase \"$projectdesc\" in\n\"Unnamed repository\"* | \"\")\n\techo \"*** Project description file hasn't been set\" >&2\n\texit 1\n\t;;\nesac\n\n# --- Check types\n# if $newrev is 0000...0000, it's a commit to delete a ref.\nzero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')\nif [ \"$newrev\" = \"$zero\" ]; then\n\tnewrev_type=delete\nelse\n\tnewrev_type=$(git cat-file -t $newrev)\nfi\n\ncase \"$refname\",\"$newrev_type\" in\n\trefs/tags/*,commit)\n\t\t# un-annotated tag\n\t\tshort_refname=${refname##refs/tags/}\n\t\tif [ \"$allowunannotated\" != \"true\" ]; then\n\t\t\techo \"*** The un-annotated tag, $short_refname, is not allowed in this repository\" >&2\n\t\t\techo \"*** Use 'git tag [ -a | -s ]' for tags you want to propagate.\" >&2\n\t\t\texit 1\n\t\tfi\n\t\t;;\n\trefs/tags/*,delete)\n\t\t# delete tag\n\t\tif [ \"$allowdeletetag\" != \"true\" ]; then\n\t\t\techo \"*** Deleting a tag is not allowed in this repository\" >&2\n\t\t\texit 1\n\t\tfi\n\t\t;;\n\trefs/tags/*,tag)\n\t\t# annotated tag\n\t\tif [ \"$allowmodifytag\" != \"true\" ] && git rev-parse $refname > /dev/null 2>&1\n\t\tthen\n\t\t\techo \"*** Tag '$refname' already exists.\" >&2\n\t\t\techo \"*** Modifying a tag is not allowed in this repository.\" >&2\n\t\t\texit 1\n\t\tfi\n\t\t;;\n\trefs/heads/*,commit)\n\t\t# branch\n\t\tif [ \"$oldrev\" = \"$zero\" -a \"$denycreatebranch\" = \"true\" ]; then\n\t\t\techo \"*** Creating a branch is not allowed in this repository\" >&2\n\t\t\texit 1\n\t\tfi\n\t\t;;\n\trefs/heads/*,delete)\n\t\t# delete branch\n\t\tif [ \"$allowdeletebranch\" != \"true\" ]; then\n\t\t\techo \"*** Deleting a branch is not allowed in this repository\" >&2\n\t\t\texit 1\n\t\tfi\n\t\t;;\n\trefs/remotes/*,commit)\n\t\t# tracking branch\n\t\t;;\n\trefs/remotes/*,delete)\n\t\t# delete tracking branch\n\t\tif [ \"$allowdeletebranch\" != \"true\" ]; then\n\t\t\techo \"*** Deleting a tracking branch is not allowed in this repository\" >&2\n\t\t\texit 1\n\t\tfi\n\t\t;;\n\t*)\n\t\t# Anything else (is there anything else?)\n\t\techo \"*** Update hook: unknown type of update to ref $refname of type $newrev_type\" >&2\n\t\texit 1\n\t\t;;\nesac\n\n# --- Finished\nexit 0\n"
+              }
+            ]
+          },
+          {
+            "name": "index",
+            "type": "file",
+            "ext": "",
+            "base": "index",
+            "dir": ".git",
+            "path": "/.git/index",
+            "lang": "",
+            "content": "DIRC\u0000\u0000\u0000\u0002\u0000\u0000\u0000.h�J�9�y�h�J�9�y�\u0001\u0000\u0000\u0011\u0004t�g\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000\f�\u0012��Gf#�K���<)���]��\u0000\n.gitignore\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9��sh�J�9��s\u0001\u0000\u0000\u0011\u0004t�j\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0001�/8b�\n��;���P�\t�f��6\u0000(1-isolate/examples/1-stepping-through.js\u0000\u0000h�J�9�o�h�J�9�o�\u0001\u0000\u0000\u0011\u0004t�k\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002��\u0012B��\u0016����9�R�e���\u001f\u0000#1-isolate/examples/2-scope-panel.js\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9��{h�J�9��{\u0001\u0000\u0000\u0011\u0004t�l\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0003\u0017\u001a�9��\u0010�\u0015z\u001cF\u0004�+����Do\u0000(1-isolate/examples/3-hovering-preview.js\u0000\u0000h�J�9�h�h�J�9�h�\u0001\u0000\u0000\u0011\u0004t�m\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0003;02\n�kf��1�\u0019Bc�\n��\u0019_\b\u0000(1-isolate/examples/4-continue-to-here.js\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�n\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002{h\u0004,�\u0011߯C�|S-�\u0011���\u0010�\u0000#1-isolate/examples/5-breakpoints.js\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9�P�h�J�9�P�\u0001\u0000\u0000\u0011\u0004t�o\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0001��y�}Rצ<F\"?hU\u0001����p\u0000*1-isolate/examples/6-debugger-statement.js\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9�ɕh�J�9�ɕ\u0001\u0000\u0000\u0011\u0004t�q\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u00019\u0010�D\u0017\u001au\u0013�\u0003��\u0019\t��\f)\u0019��\u0000!1-isolate/exercises/1-greeting.js\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�r\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002GU�V��\u0016$\b]\r�;L`)�Kn\u001a\u0000(1-isolate/exercises/2-five-characters.js\u0000\u0000h�J�9�\u001a�h�J�9�\u001a�\u0001\u0000\u0000\u0011\u0004t�s\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0001\u0005�ND�.]�7�u�r��5�$���\u0000#1-isolate/exercises/3-eary-words.js\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�t\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0001\u0005y�a|��\u0018�X�.���׍�\u000b�|\u0000#1-isolate/exercises/4-eary-words.js\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9�\u0007�h�J�9�\u0007�\u0001\u0000\u0000\u0011\u0004t�u\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002\u0000�6�&�?�;㹫�����.��\u0000$1-isolate/exercises/5-memory-game.js\u0000\u0000\u0000\u0000\u0000\u0000h�J�9��\u0005h�J�9��\u0005\u0001\u0000\u0000\u0011\u0004t�v\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000׵z\u0016\u001d��\u000e�H#�,�\u001a��B�T\u0000\u00141-isolate/study.json\u0000\u0000\u0000\u0000\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�z\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000˯ڕ\u0003�^L\n���eŶ\u0002�ӫ\u0010!\u0000-2-integrate/examples/0-the-sources-tab/app.js\u0000\u0000\u0000\u0000\u0000h�J�9�;�h�J�9�;�\u0001\u0000\u0000\u0011\u0004t�{\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0003\u001a\r\fG\u0011Zc�V��F�os�\fR��$\u000012-integrate/examples/0-the-sources-tab/index.html\u0000h�J�9��Rh�J�9��R\u0001\u0000\u0000\u0011\u0004t�|\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000)�Ǻ��\ny�\u001cQچ��T�]�?\u000012-integrate/examples/0-the-sources-tab/styles.css\u0000h�J�9ɋ[h�J�9ɋ[\u0001\u0000\u0000\u0011\u0004t�~\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0005W�\u0013�.I��5���\u0016\"�\u0012g7r��\u0000$2-integrate/examples/1-dom-io/app.js\u0000\u0000\u0000\u0000\u0000\u0000h�J�9�$�h�J�9�$�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002��=�!�G�J\u0006���s}�rz?�\u0016\u0000(2-integrate/examples/1-dom-io/index.html\u0000\u0000h�J�9̧mh�J�9̧m\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000wk\\�\u0004}6%P�%�E�\u000f�\u0015OF�\u0000(2-integrate/examples/1-dom-io/styles.css\u0000\u0000h�J�9�\u001b�h�J�9�\u001b�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0005}�'�\t�\u0019S�^XK��\u0003\u0003��F�P\u0000'2-integrate/examples/2-step-over/app.js\u0000\u0000\u0000h�J�9�k�h�J�9�k�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002~�������L�]SY��eu ��\u0000+2-integrate/examples/2-step-over/index.html\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9Ѳth�J�9Ѳt\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000wk\\�\u0004}6%P�%�E�\u000f�\u0015OF�\u0000+2-integrate/examples/2-step-over/styles.css\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0001x�PY\u0001�Qu�$���ߖ,�\u0015u_\u0000\u001f2-integrate/exercises/README.md\u0000\u0000\u0000h�J�9�u`h�J�9�u`\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0003xJ�1`i�R�\r),�w�!/��\u0000)2-integrate/exercises/cat-detector/app.js\u0000h�J�9�\n�h�J�9�\n�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0001�_\u0000`Eoޟ��H\u0014fnu@\u001d+��\u0000-2-integrate/exercises/cat-detector/index.html\u0000\u0000\u0000\u0000\u0000h�J�9�h�h�J�9�h�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000x����V���y�l[�����߄\u0000-2-integrate/exercises/cat-detector/styles.css\u0000\u0000\u0000\u0000\u0000h�J�9��h�J�9��\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0004%ğ�L�3$�`��Za\u0014��T[�\u0000#2-integrate/exercises/search/app.js\u0000\u0000\u0000\u0000\u0000\u0000\u0000h�J�9�N�h�J�9�N�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u00024\u0018\u0003\u0002��Ð\u000fT\u0010�<�a�\u0016\u001c#&�\u0000'2-integrate/exercises/search/index.html\u0000\u0000\u0000h�J�9ޫHh�J�9ޫH\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000wJ���b+��;9�\u001f�MĽ�{r�\u0000'2-integrate/exercises/search/styles.css\u0000\u0000\u0000h�J�9�\u0001nh�J�9�\u0001n\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0003��lt\u000b[׍�B��P8J&B�N\u0000,2-integrate/exercises/time-management/app.js\u0000\u0000\u0000\u0000\u0000\u0000h�J�9�edh�J�9�ed\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002K���I��2C���5�`P�t�*r\u000002-integrate/exercises/time-management/index.html\u0000\u0000h�J�9��_h�J�9��_\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000wk\\�\u0004}6%P�%�E�\u000f�\u0015OF�\u000002-integrate/exercises/time-management/styles.css\u0000\u0000h�J�9�=�h�J�9�=�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0011ع�[�q�0X']��PG�f�^C\u0000\u001e2-integrate/lib/dom-io/DOCS.md\u0000\u0000\u0000\u0000h�J�9�Jh�J�9�J\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002��;tl�c[�\b�\b+Ob���?r�\u0000 2-integrate/lib/dom-io/README.md\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000�y�6$%2���\u0013?�ё'�\u001e6AM\u0000(2-integrate/lib/dom-io/example/README.md\u0000\u0000h�J�9�1\u0016h�J�9�1\u0016\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000Ym�E��3�\u001a�(���qt�a\u0000(2-integrate/lib/dom-io/example/index.css\u0000\u0000h�J�9�x�h�J�9�x�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002�Ƕ?+��\t�\u0015{,�s\u0019�c�׌\u0000)2-integrate/lib/dom-io/example/index.html\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0002�It���b�L�[(� \u000eٮ��q\u0000'2-integrate/lib/dom-io/example/index.js\u0000\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000#�]@>ј�.\u0011��\"U����\\���\u0000\u001f2-integrate/lib/dom-io/index.js\u0000\u0000\u0000h�J�9�B�h�J�9�B�\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\f[\u001f��'�;����3\u0012\"V̍\u0006�\u0000&2-integrate/lib/dom-io/test/index.html\u0000\u0000\u0000\u0000h�J�9��>h�J�9��>\u0001\u0000\u0000\u0011\u0004t�\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u000bX���,\u0004I��j\u001b�d�c�B�+&�\u0000$2-integrate/lib/dom-io/test/index.js\u0000\u0000\u0000\u0000\u0000\u0000h�J�9�m�h�J�9�m�\u0001\u0000\u0000\u0011\u0004t��\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000P��L\r;nX�S�mkg���\b�rf\u0000\u00162-integrate/study.json\u0000\u0000\u0000\u0000h�J�9��\"h�J�9��\"\u0001\u0000\u0000\u0011\u0004t��\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0004(����=a���(uʆR5�f(7\u0000\u0007LICENSE\u0000\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t��\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\t������\u0006�u����[z��\u0013��\u0000\tREADME.md\u0000h�J�9�K�h�J�9�K�\u0001\u0000\u0000\u0011\u0004t��\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0006k\u0014�q*�WVOj8R\u0017\u00171O�oe��\u0000\u0016predictive-stepping.md\u0000\u0000\u0000\u0000h�J�9���h�J�9���\u0001\u0000\u0000\u0011\u0004t��\u0000\u0000��\u0000\u0000\u0001�\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0015%��{\u0012���z����[��\"\u0004�\u0000\nstudy.json\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000TREE\u0000\u0000\u0002<\u000046 2\n|���\u0010\u0010R�\u00071P�&\u0006�|�\u0000LA1-isolate\u000012 2\nJq\u0007�M�����g�c�ѺB\\qexamples\u00006 0\n��z\u000e�\u0017\u001d�\u000b\u000e�/Ƙ3]q���exercises\u00005 0\n�e�\u00020\fO�^pY����\u0013V>\u001322-integrate\u000029 3\n\u0002g�韅R�\u0005X�\f�+忪\u001a�ylib\u00009 1\n�L�\u000b��\u0011-\u0000uY��U\u0012{C�dom-io\u00009 2\n\u001d�E�\u0007�f\u001d��p(�}\u0014�rȷutest\u00002 0\n� �w����t�D�\b��#T���example\u00004 0\n3���\"\\X�\u00189�(`���^J��examples\u00009 3\n\"W&]���<|��!J�A{O��1-dom-io\u00003 0\n.a8�\u0002C\u0004:\u0016��U�݋ڣ.#�2-step-over\u00003 0\n�\u001e��o)J\u0010}m����Ž�\u001f�0-the-sources-tab\u00003 0\n�T��$�v@��\u0011���C�1��exercises\u000010 3\n�\u001f����ߒ�c=���җ4\u001f�search\u00003 0\n��\u0016�&a�?\u000e�=�mA�뤮�cat-detector\u00003 0\n\u001dӓ�an�AQ3a3�\u0005���G�\u0004time-management\u00003 0\n�&�dK���Z���Q�H�,��\u000f��\u0018�מ�s��=*�V�.5k/"
+          },
+          {
+            "name": "info",
+            "type": "directory",
+            "path": "/.git/info",
+            "children": [
+              {
+                "name": "exclude",
+                "type": "file",
+                "ext": "",
+                "base": "exclude",
+                "dir": ".git/info",
+                "path": "/.git/info/exclude",
+                "lang": "",
+                "content": "# git ls-files --others --exclude-from=.git/info/exclude\n# Lines that start with '#' are comments.\n# For a project mostly in C, the following would be a good set of\n# exclude patterns (uncomment them if you want to use them):\n# *.[oa]\n# *~\n"
+              }
+            ]
+          },
+          {
+            "name": "logs",
+            "type": "directory",
+            "path": "/.git/logs",
+            "children": [
+              {
+                "name": "HEAD",
+                "type": "file",
+                "ext": "",
+                "base": "HEAD",
+                "dir": ".git/logs",
+                "path": "/.git/logs/HEAD",
+                "lang": "",
+                "content": "0000000000000000000000000000000000000000 bc0d8d0ad2f2cc8aa5f1a7a98ce39eff1bcbecd7 colevandersWands <18554853+colevandersWands@users.noreply.github.com> 1753500388 -0400\tclone: from https://github.com/denepo/predictive-stepping.git\n"
+              },
+              {
+                "name": "refs",
+                "type": "directory",
+                "path": "/.git/logs/refs",
+                "children": [
+                  {
+                    "name": "heads",
+                    "type": "directory",
+                    "path": "/.git/logs/refs/heads",
+                    "children": [
+                      {
+                        "name": "main",
+                        "type": "file",
+                        "ext": "",
+                        "base": "main",
+                        "dir": ".git/logs/refs/heads",
+                        "path": "/.git/logs/refs/heads/main",
+                        "lang": "",
+                        "content": "0000000000000000000000000000000000000000 bc0d8d0ad2f2cc8aa5f1a7a98ce39eff1bcbecd7 colevandersWands <18554853+colevandersWands@users.noreply.github.com> 1753500388 -0400\tclone: from https://github.com/denepo/predictive-stepping.git\n"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "remotes",
+                    "type": "directory",
+                    "path": "/.git/logs/refs/remotes",
+                    "children": [
+                      {
+                        "name": "origin",
+                        "type": "directory",
+                        "path": "/.git/logs/refs/remotes/origin",
+                        "children": [
+                          {
+                            "name": "HEAD",
+                            "type": "file",
+                            "ext": "",
+                            "base": "HEAD",
+                            "dir": ".git/logs/refs/remotes/origin",
+                            "path": "/.git/logs/refs/remotes/origin/HEAD",
+                            "lang": "",
+                            "content": "0000000000000000000000000000000000000000 bc0d8d0ad2f2cc8aa5f1a7a98ce39eff1bcbecd7 colevandersWands <18554853+colevandersWands@users.noreply.github.com> 1753500388 -0400\tclone: from https://github.com/denepo/predictive-stepping.git\n"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "objects",
+            "type": "directory",
+            "path": "/.git/objects",
+            "children": [
+              {
+                "name": "info",
+                "type": "directory",
+                "path": "/.git/objects/info",
+                "children": []
+              },
+              {
+                "name": "pack",
+                "type": "directory",
+                "path": "/.git/objects/pack",
+                "children": [
+                  {
+                    "name": "pack-aef94de7c055fdf7fb7e27d5536602cd2a2c998c.idx",
+                    "type": "file",
+                    "ext": ".idx",
+                    "base": "pack-aef94de7c055fdf7fb7e27d5536602cd2a2c998c",
+                    "dir": ".git/objects/pack",
+                    "path": "/.git/objects/pack/pack-aef94de7c055fdf7fb7e27d5536602cd2a2c998c.idx",
+                    "lang": ".idx",
+                    "content": "�tOc\u0000\u0000\u0000\u0002\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0002\u0000\u0000\u0000\u0002\u0000\u0000\u0000\u0002\u0000\u0000\u0000\u0003\u0000\u0000\u0000\u0003\u0000\u0000\u0000\u0003\u0000\u0000\u0000\u0003\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0005\u0000\u0000\u0000\u0005\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\b\u0000\u0000\u0000\b\u0000\u0000\u0000\t\u0000\u0000\u0000\t\u0000\u0000\u0000\t\u0000\u0000\u0000\n\u0000\u0000\u0000\n\u0000\u0000\u0000\n\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u000b\u0000\u0000\u0000\f\u0000\u0000\u0000\r\u0000\u0000\u0000\u000e\u0000\u0000\u0000\u000e\u0000\u0000\u0000\u000e\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u0010\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0014\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0015\u0000\u0000\u0000\u0016\u0000\u0000\u0000\u0016\u0000\u0000\u0000\u0016\u0000\u0000\u0000\u0017\u0000\u0000\u0000\u0017\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u0018\u0000\u0000\u0000\u001a\u0000\u0000\u0000\u001a\u0000\u0000\u0000\u001a\u0000\u0000\u0000\u001b\u0000\u0000\u0000\u001b\u0000\u0000\u0000\u001b\u0000\u0000\u0000\u001c\u0000\u0000\u0000\u001d\u0000\u0000\u0000\u001d\u0000\u0000\u0000\u001d\u0000\u0000\u0000\u001d\u0000\u0000\u0000 \u0000\u0000\u0000#\u0000\u0000\u0000#\u0000\u0000\u0000#\u0000\u0000\u0000#\u0000\u0000\u0000$\u0000\u0000\u0000$\u0000\u0000\u0000$\u0000\u0000\u0000$\u0000\u0000\u0000$\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000%\u0000\u0000\u0000&\u0000\u0000\u0000&\u0000\u0000\u0000&\u0000\u0000\u0000&\u0000\u0000\u0000&\u0000\u0000\u0000&\u0000\u0000\u0000'\u0000\u0000\u0000'\u0000\u0000\u0000(\u0000\u0000\u0000(\u0000\u0000\u0000)\u0000\u0000\u0000)\u0000\u0000\u0000)\u0000\u0000\u0000*\u0000\u0000\u0000*\u0000\u0000\u0000*\u0000\u0000\u0000*\u0000\u0000\u0000+\u0000\u0000\u0000+\u0000\u0000\u0000-\u0000\u0000\u0000.\u0000\u0000\u0000.\u0000\u0000\u0000.\u0000\u0000\u0000/\u0000\u0000\u0000/\u0000\u0000\u0000/\u0000\u0000\u00000\u0000\u0000\u00000\u0000\u0000\u00001\u0000\u0000\u00001\u0000\u0000\u00001\u0000\u0000\u00001\u0000\u0000\u00002\u0000\u0000\u00002\u0000\u0000\u00003\u0000\u0000\u00003\u0000\u0000\u00004\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00005\u0000\u0000\u00006\u0000\u0000\u00006\u0000\u0000\u00006\u0000\u0000\u00006\u0000\u0000\u00006\u0000\u0000\u00006\u0000\u0000\u00006\u0000\u0000\u00007\u0000\u0000\u00007\u0000\u0000\u00008\u0000\u0000\u00008\u0000\u0000\u00008\u0000\u0000\u00008\u0000\u0000\u00008\u0000\u0000\u00008\u0000\u0000\u00008\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000:\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000<\u0000\u0000\u0000=\u0000\u0000\u0000>\u0002g�韅R�\u0005X�\f�+忪\u001a�y\r\fG\u0011Zc�V��F�os�\fR��$\u0010�D\u0017\u001au\u0013�\u0003��\u0019\t��\f)\u0019��\u0014�q*�WVOj8R\u0017\u00171O�oe��\u0018\u0003\u0002��Ð\u000fT\u0010�<�a�\u0016\u001c#&�\u001a�9��\u0010�\u0015z\u001cF\u0004�+����Do\u001d�E�\u0007�f\u001d��p(�}\u0014�rȷu\u001dӓ�an�AQ3a3�\u0005���G�\u0004\u001f��'�;����3\u0012\"V̍\u0006�\"W&]���<|��!J�A{O��%��{\u0012���z����[��\"\u0004�.a8�\u0002C\u0004:\u0016��U�݋ڣ.#�/8b�\n��;���P�\t�f��602\n�kf��1�\u0019Bc�\n��\u0019_\b3���\"\\X�\u00189�(`���^J��It���b�L�[(� \u000eٮ��qJq\u0007�M�����g�c�ѺB\\qJ�1`i�R�\r),�w�!/��J���b+��;9�\u001f�MĽ�{r�U�V��\u0016$\b]\r�;L`)�Kn\u001a]@>ј�.\u0011��\"U����\\���h\u0004,�\u0011߯C�|S-�\u0011���\u0010�k\\�\u0004}6%P�%�E�\u000f�\u0015OF�m�E��3�\u001a�(���qt�ay�a|��\u0018�X�.���׍�\u000b�|y�6$%2���\u0013?�ё'�\u001e6AM|���\u0010\u0010R�\u00071P�&\u0006�|�\u0000LA�\u001f����ߒ�c=���җ4\u001f��_\u0000`Eoޟ��H\u0014fnu@\u001d+�ք6�&�?�;㹫�����.�݄;tl�c[�\b�\b+Ob���?rń���=a���(uʆR5�f(7�\u0013�.I��5���\u0016\"�\u0012g7r�����,\u0004I��j\u001b�d�c�B�+&����V���y�l[�����߄���I��2C���5�`P�t�*r�T��$�v@��\u0011���C�1��\u0012B��\u0016����9�R�e���\u001f�L�\u000b��\u0011-\u0000uY��U\u0012{Cݪ&�dK���Z���Q�H�,����\u0016�&a�?\u000e�=�mA�뤮��ڕ\u0003�^L\n���eŶ\u0002�ӫ\u0010!�'�\t�\u0019S�^XK��\u0003\u0003��F�P�\u0012��Gf#�K���<)���]���z\u0016\u001d��\u000e�H#�,�\u001a��B�T�������L�]SY��eu �ǹ�[�q�0X']��PG�f�^C�\r�\n��̊�񧩌��\u001b��׾�L\r;nX�S�mkg���\b�rf�PY\u0001�Qu�$���ߖ,�\u0015u_ğ�L�3$�`��Za\u0014��T[�� �w����t�D�\b��#T���Ƕ?+��\t�\u0015{,�s\u0019�c�׌�ND�.]�7�u�r��5�$����e�\u00020\fO�^pY����\u0013V>\u00132��z\u000e�\u0017\u001d�\u000b\u000e�/Ƙ3]q����\u001e��o)J\u0010}m����Ž�\u001f��y�}Rצ<F\"?hU\u0001����p�Ǻ��\ny�\u001cQچ��T�]�?�lt\u000b[׍�B��P8J&B�N�����\u0006�u����[z��\u0013���=�!�G�J\u0006���s}�rz?�\u0016�͖@-fj�o����'C��;�~\u0010�-�)�7T�6'\u0000�j�Wί?���\u0005���\u0016p��F�~\f\u0013[岨�*(>��1�\u0015��'D�&D�}&kw��Cv�\u0013�#\u000f�O�x��g�uN\u0012��,B\u0017�\u001d��\u0001'�6\u0018[\u0001�d�>�m�\u0003\u0017��96\"4\u0005}f̾fv��)t�\u0003\ruP\u001d\u0006Mf���0J��\u0007�1��K����P&\u0000\u001bDƨ��(t���Ssh'x3:�oA\u0004�~��\fZAGf�l��s\u001f\u0002�\u0001�K�\u0010\u0006�~s}D�AF��RP��:�>0���SD�\u0000\u0000\u0010�\u0000\u0000\u0012�\u0000\u0000\f�\u0000\u0000I�\u0000\u0000$�\u0000\u0000\u0005�\u0000\u0000(*\u0000\u0000\u001e]\u0000\u0000=+\u0000\u0000\u0011s\u0000\u0000L�\u0000\u0000\u0014�\u0000\u0000\u0003-\u0000\u0000\u0007�\u0000\u00001\u001d\u0000\u00002�\u0000\u0000\u0001�\u0000\u0000\u001e�\u0000\u0000%�\u0000\u0000\ry\u0000\u000045\u0000\u0000\tW\u0000\u0000\u0019�\u0000\u0000\u0019\u001a\u0000\u0000\u000fA\u0000\u00001�\u0000\u0000\u0000�\u0000\u0000\u001c�\u0000\u0000!�\u0000\u0000\u000fl\u0000\u0000/�\u0000\u0000C$\u0000\u0000\u0015N\u0000\u0000@u\u0000\u0000\u0019p\u0000\u0000 �\u0000\u0000\u0011�\u0000\u0000\u0004n\u0000\u0000(\u0000\u0000\u0000%�\u0000\u0000\"A\u0000\u0000\u0012_\u0000\u0000\u001a1\u0000\u0000\u0001�\u0000\u0000\u0010}\u0000\u0000\u0017�\u0000\u0000(�\u0000\u0000\u0000\f\u0000\u0000B�\u0000\u0000\u001dS\u0000\u0000\"�\u0000\u0000<�\u0000\u00002\u001f\u0000\u0000\u000e�\u0000\u0000\u000b�\u0000\u0000\u0002#\u0000\u0000\u0019�\u0000\u0000\n�\u0000\u0000\u0014�\u0000\u0000&B\u0000\u0000E�\u0000\u0000\u0018��M��U���~'�Sf\u0002�*,����H7��1���7�En�m��0"
+                  },
+                  {
+                    "name": "pack-aef94de7c055fdf7fb7e27d5536602cd2a2c998c.pack",
+                    "type": "file",
+                    "ext": ".pack",
+                    "base": "pack-aef94de7c055fdf7fb7e27d5536602cd2a2c998c",
+                    "dir": ".git/objects/pack",
+                    "path": "/.git/objects/pack/pack-aef94de7c055fdf7fb7e27d5536602cd2a2c998c.pack",
+                    "lang": ".pack",
+                    "content": "PACK\u0000\u0000\u0000\u0002\u0000\u0000\u0000>�\u000fx���9\u000e� \u0014\u0005{NAo\t�o�PD�o���1\u0012��%Rn\u001f����i^1��@��ހ�\b\br=\u000eP\u001c%8�n�Y��\u0011\u0000�\t$f��T�J\no�}��1��\r��BK��^�hs�\\jx�\u000f{�~\u000e�\\��\u0014\u0015\u0000rPZ�e��L{����\u0002$�أI�\u000b�rO\u0002�\u0011x�340031Q�K�,�L��/Je�*t`�{���\u001f\u0017��hno�\u0014����\u0001\u0010(\u0018�f\u0016��$��2x\u0015��������՗�\u0017&_���)�\u0010��H73�$5�\b��)}����A�X#\u0016�h?ݿJj�!�>\u001fOgW�`W���\u001b\u0007l\u0013�����Qz�-��]��9TI������^n\nÿ\u0005ߟn��6�t�Ҿg�U�/\t߿\bUTP����\\�Y��[\\�ZP���\u000e�!r�Pkax��E����g~��uP\u001d�%�)�zY��y\f�\u000f���\u0016Z7c[Ղo�G߽��r\u001f\u0000'%q\u001c<x���OI���O)�I-\u0006\u0000 D\u0004��\u0006x�31\u0000\u0002�Ԋ�܂��b����~�������?6�8�pQK�\tTIjQrf1P���EL\u0006<���\n\"O�}�B8�N�������D���4�R/�8?�ak��l�.�\u0017\u001e�_u�JM�S�t%\u0004\u0000��)��\u0011x�340031Q0�-.I-(��K�-�(�/M���*fзHz\\ϵb���+�\u0003fq.I����\u0010��H�89� U� 1/5\u0007�vQ��Ӂ'b{�\\xay'h_꤇��j�u3��R�@�\u0017\u0014��e���4Hݰ|�U�[�Jƍ���I\u001b�]�\u001aLt���J2�JSuK�u3R�RA\u001a\f���d�Mzg�W�)��k�t�x\u000e�\u0006Sݤ�����̼�b��\f\u0016���\u0004�w�V\u0013�{Ap�҃\u0002+�j�tSR�J��S��~N,I�M�+\u0001iy��rfm��e6nJ�\u0019���6��_\u0000\u0000��m��\u001ex�MQ�N�0\u0010��\u0014_�4�@݃J\u0007\u001e�\u00016��&�؊cGΙ\n!^���g`�x\u0004Ύ������;Wi&�\u001cm�ՍR�-~?�>��4M��x41��(\u0005�ζ\u0003�\u0010�::��\u0019��\u001c<8\b��\\fS\f}�#��kH\u0011e���\u0019f���,�#�\u0018�\u0019z�q�\u0010N\u000b����+u���`\u0001�p!\f����c�\u0006����.��\u0006�h�4�,�\u001cKʑ<g\r\r�#e\u0017�Vk�s�{jd�&���9\u000b�֠\rcFR'jB�}'��VE+�\u0010�!I7���x��\u0011�.d�����v��#i��.\u001f�~�^���Ʊ^O��|�r�*\fU���7�\u0013�\u000b�j�\u0007�D\u001b���v\u0014������w�\u0013��>\u001b�l`U��\u000f���+x�}�AK�@\u0010���+�s�(\f�GfEě������4��\n�\u0015�,�\u0011/���\u0013�:�E\u001d�\\B�W�}�H1$B��J)N�9>׷\u0017ܕ�\u0013nl o\f�0��<4��]B\u001f���\u0003��L=��B\\G���h��J�}T?\u0019A�i=�<&<�0i��oo/�~�����\u0005�\u0006Y�~��٭'��������\f\bu� ��'\u001d'��z�b�@�����\u0007�O\f���$��\\Q�#i\u0004��B3�,r�\u0005��\b���Vy^�0�N\t����y��\b�({\u001a��4-[\u001b����E�Z���\u0016�_�ϱ#)[n\u0010]�꡷<|f�i�?�N�43H�\u0015��rtl�'A�s����\u000e\u001b=R�]�E����R�\t\u0016�[��Óy�St�%7(�7r5�\u001f,\u000e6\u001bH\u001c�\u0010����t�T�3ȫ��H�u�k\u001cd�1�S��?���\u0005z\u0012�\f�1x�]RAn�0\u0010��\u0015�\\�\u0004H�����\\zk��-�2\u0017�D�\\�\t�~�����>�Kʮ�\b��\u0015gggf�̉ Id+͓1�{����O�\u0012N\u0014y:�K�\u0013�9\u0019\u0003p�h�-�K����U��8L\tP�㾧H�('\u001d\u0013�^\u0011dgQ�2<�\t#�7O�\u0005�g��ŅY���y�EY\u000b�bn�S��[:�\"���qRM�\u0010q\u0004B�@x$x\u000b3ĥt\u0004{��`\u001d١-��<\b��\n1�̒��WJ�΢[�#�!�/5\u000bH�DT�O�g*�\"K6\u001cI��D>c穣�d1t^���\t,z;{\u0014ꌹ�\u001a�)��={���\u0001v`��s\u001c7��\u0013�\b�O�6\f�ms��4��\u001a\u000f��,w\u000b\u0012����3�k�Qi;�9����m�\u001e/��c�\n�_M�4��Z��\u000f���\\~�6���\u001f�d׽^���S\u0011r\u000f�*���N}�t\u0007�5��s�Q�?�����H\u001cNC��M�\u0018���l.\u0000��/��\u0007�3x�eRKn�0\u0010��\u0014\u0013o�\u0004��~V\u000e�,��\u0007\b��ɑ8\u0010E\n�0�Q�\u000e�A\u0016�`�Сd���\u001d5��{of��\u00112'2��)u{\u0003_���C\fL� p�\u001f�P)\u0000����\u000e���tOp(�1TL�b�R�\fc�]�\u0003P��\u0013��T;�;H]\u001b&#�=�#�\u000e�Cmk��7q\u001800Z�\u0014pWi����s�pPk\u0010�p�\u0004q\u0016���\u0007Q�/[���0��\"��P+)݂��\u0007�b\t���\t^�f�\u0011��@�����귑\u001a\u00197[��N,�j\u0013�\u0012\"t�3\u0018�C��\u0002�\u000e������\u001e6��B���\u001eq���l>�>��\u001e�9��.��Џ\u0019�h�$�G4Ԓ�h�I��F�m�z�)e\"�5A@��r�\u000e;�P�\u0000�1\u001d�����\u0007�p6A,s<��v�9��ZL�F���\u0006+�E\u0007~?!�nn��(3'�P�����\u001cEh)\r�f���`�CX�~�k��f9�\u000e\u0005��%S\u000b�E���\u001e8\u0015��_�t\u0001ݭ\u0005�\u001bd\u0019xYbYY_-^U�R�c��\t ��\u0000��\u0010ݻ'x�]�AR�0\fE�>��M�\u000e���)\u000b8\u0000\u0007`X8��j��\u0019[i�0܁\u001b���\u001c\u00019iCa������䬏\b�\u0003\u0019�vJ\u0015k���������<9�J\u0001$\u0011\u001f\u0011�+,��\u0005ʞ�;`\u000f��j\u0014�\u000b�\u000e�\u0005r���\u0013{o�~c�4 \u001d\u001a,9\u0004׷%��o$�Q��9Q�\u0000g߃�n�Gh�;��\fz�]E�\u000f3bI5���C �j�W���~t\u001eY/w\u0003Y\u000b��\u000e�\u0011u�����W�\u0005���S\u0004\u001dde��U\u001aU\u0018�<띠�|\u001b�c\u0010���\u0006�\u001c\u0005kdma8�����E\b�s�j�օR\u0016\u0019*�\u001e�\u0002�\u001a؋�;Ph󬳨e�i�K�,��j75�\u0018���=d�E!�8CDf�����$)]L+b�N[�C�(:@~����Ť�\u0015��(7��\\\u0012�\u0001���+�\fڤ�\u0017I���\u00188�\b\u0004�\u0007P��·\u001ex�m�1N\u00031\u0010E{��'�n\"�􉶂&\u0015\u0005t\b)�w���k���D\bq\u0007n@��8\u0002�%��h,����S\f��8Z��J��\u001c\u001fo�︡��4\u0014qǚ�#�J\u0001�{¦>I\u001b�N\u001a��9t�%<�!�����C����`\u0001k:p\b.e��L\u0012t�*�@uFF�$�!�P�P�\u0004�=|`���\re�\u000eǽu��'�&��{뛜�ލh�r\u000e��\u0005�\u001fH\u001czЁ<��S\u000fb����\u001c�R�R�\u0018����5�m�J*���]Y�`&+��v�,f�/������PȮ������\u0017f��\u0002ǁfx��\u0017в\u0014�\u0005����Ĳ�6w��\u0011�����i@�?\u0001�£ʫ\rx�340031Q0�M/JM-��K��*f\u00108�\".U*|���\u0001IΦ�<���_\u0019B\u0014\u001a�e���&g$\u0016%&��\u0016\u0015�ԇ>�\u0014v�\nG,�Vk�\u0004�K�yRP�ƺ��E����E)`�\u0017�\\^��~5�[z�h�k��*�\u000f<�*5ASZ�6���W�_\u0011��>�:��\u0013��\u001a�RS����|�����T��\u0016�v������{�s�뿓�\u001e�k�\u000b\u00007�X+�\u0013x�m��n�0\fDw}�u���Ξ�C�!�!��-��\f�B\u0010\u0004��R�3\u0014�F\u0012�w�\u0016BQ�_�?�cRĴTŀE�h�))\t��\nR���7+8\n��4\u001a�M\u001c��V�0 U�\rn\u000e����3B��:�Zz��Al\u0019^�\u001e�5�\u000e����\u0005&��ɶ0�-�O�z�\u00023�����L��Y~�\u0013��\n�Y�\u0012m�RԲ|��\r�[�\u001f�S�nԌK���[�\u0007ջ���\u0002w&a�$x�}�AO�0\f���\u0015�\\�Mb;�2�\u0001q�w��m��ɔ��&��Y+\u0018b�\u00169�}��͐\u0018I���<\u0015�c���A��1��(�a/\u001c�B��Y�b��a���H�~��Y�֞S���l�f\u001b�3l��\u001f�[���jW��\u0013�t�o�ڱo��3�\f\u0012\u0002R\u0017����n7�\u001d�\u0003�ax��ހ���,(\nr\u001c����\u00152[�\u001d�܌�TP�#��a.�\u0018\u0010jnhp�\u0013����M�\fJ�\u001c��!\u001dCÏS��\u000bB�\n�*�4[�������h�\u0004�J�H�\u0003\u001a-<�_�\u001a�3�<I\u0015|m�\u0006O�����}\u0001�q@�F\u001d�B�W��\u000bNN�\u0015�\u0010x�U�A\u000e�0\u0014D��\u0014c7��\u0007�p��|�IiI�\u001bc\fw�\b\u001a�N޼\u0019U2#KrVTG�Y��R\u0004=�\u0014�Et�A8!Ǚera���\u0004�&���I�\u001eřs6#w��Ї��\u0011��-^�/P��\u0019\u000b�\t�=\u000fux\u0005�zd�~�\u000b֗�������d���R����D�(�(����Jd<'�\u0007U߿\u0001��P��\u0001�$x�keje�\u0010ϩhk��W���9�7�U!5�8ub����B\u0000�3\n�� x�]�Mn� \u0010���b�\"r�*\u0007he�\u000e���\u0010{�\u0002c�X�U��\u001d���^�{�7����8ښ��R\u000e\u0019�nC[�'z�W�PB\u0017�w\\(\u0000���*�G`��Wqc��z-�/�\u00124��Y��\u0006#��u�)F�ٍ�2ؠ�I��,��CYB�;����n�M�3cu�J�R��p��\u00173n��5S��_Ґ !�s��\u0002\u0005\u0004OQ\u0014��Cː�\u00012{�<\u0013\u0001����^��C-��\u001eS�{$\u001dh\u0000�c�?�\u001e���Io���'�%�x\\��f������\u001d�\u0007��_�8r\u0003�\u001a\u001b΋GI�Ek�\u001a����_����\rx�]�I\n�0\u0010D�}N\u0011\\{\u0002o�1�A�\u0007E�w7����?(��oX4^M�s�7��RB��'����AGK���!mg?\u0001��\u0003h���-�\u0004�R�\u0010��\u0013y��vF��o�nw�\u0007��:��\bx�31\u0000\u0002�Ԋ�܂��b\u0006�p���n��|8���~�c���\u0015&P%�Eə�@5�\u001b�\u0017�Y�{Ҷd۹3�^�n\"�\u0003Q���İ�ާ�{��zA]����OB����\u001a\u001a\u0018���(\u0014���T�e\u0015��1����k�\u0017�:�nnvzӊ�\u001c�Ei\u0000^�8��\u0007x�31\u0000\u0002\u0005\u0003ݒ�T���Ң��bݒ�$����*��\u001c��\u0015�r��u�/����\u001a����f�3�%Z<frf�\u0012�}:����[���o@�\u0018�\u0016��\u0016�日\u00161<�[:5_�K�6�������{��\u001f\u0004\u0000Q#/��\u0006x�340031QH,(��*fXk*�8\u001f�ko.�\u001e�����j\u0001EC��̼��\n����\u001c\u0006^\u001ew���a���\u001d�/>�\u0013�qA\u0005����2'�X/�������&�઼*\u0013x���ϐ��;�\u0000\u0011�-\u000f�\fx�U�A\u000e�0\f\u0004�~��\u0013T�<�\u0007�\u001bxA��ID�TN*��\u0013�\tɲvG�\u0019���iZ\u001b\u0011�b���EW�\tޑ�s�j\u0003#\u0017�k\u000f�qV��\rK\u0012�xp�P�v\\\u00074;߉FC�y�B`���A�\u001d��$\u0001\u0016��}�%IC�_aN���s��\\c��+RK�[.�<Dι���D\u001f@�Bĺ1x�uS���0\u0010��W,nh �Q!���\t\n$��\u0015@�\u001cg\u0013�Ή-{��=v��q �l&���~�������\u001d(�L{��\u0003��ǆ���\u0013@�P����$@*�\u0003R�\u0016\u001a޾g��G�d�\u001d�\u000f\u0004��\u0010�l��g��9FϏ�<\u000e\r�x��`�d\b\f<��e@!RQ�y6Oeg��8����\u0010ؽ]��x�\"�H�9\\\\�\u0001�p�Ht�g��;�x%kM���\u001a\u0012\u0006\u0014ə\u000b��\b�� �\rV슜\u0013#��X\u000fJ\u0004��\u0013+\u0010:��1Jx��j���-���0IVE����\u001a�Y�-����\u001e�2)\u001dv��<\u0019w���\u0019=�\u000e��(�*\"\u0017>p��k\u0015�i鰒v� �n����ݟ�}���˘��c��_]��GV�\u0000Z\u0001Wݣ��(�a\u001a\u0007|r|��t�\t��\u000e}%c*S��\f�Ȟ?��\b�kG�\f͟����\f�\u0006���;��\u000b�˴j¹�!���a��\u0017���yf�U�\u000b\u0016�h�\u0013~\u0003�U�y�\u0002x�K�O�T��RPHJL�N/�/�K�M���/�RH,,M�M,��K���\u0002\u0000.\u0013\u000eJ�\u0006x�340031QH,(��*fh\u0015���y��߿�Ĕ�\b��\u0017�h0����KI���(��a�o;_��-/�\u0019�g\u0015��(��_#\u0006UU\\R��Z��\\\\̐\u001d3���L5��\n�\u001b��������\u0000\u0000�1)�Ux��T=o�0\u0010��+\u000eZ� �5u��\fmP�C��k���YfJ�\u0002I�\u0016���ޑ�\u0013)\u0001Z�\u0006|���;���,K�]o�\u0007D���\u0001߫{8\f���h\u0007���\u0010���t�[�Z�q]�U\u0015p�E\u0010�5Z���t\u0005����\f���VP�FNiD��\u000b�4�9\u00038\u001dQ3��\u0013^|=\nݢ[�ۢh~y+u;Y_�Q(�d�\u001c�=Z�\u001a�z%�)�\u0005\u000e�t���\u0015}��W��Ji*�\u001b<�\u001f]�\r[0\u000bJ:�\u001a\u000e�B\u001dgǥ�]ݕ��P����\u0017΅�l�\u001c@�\u001c\u0018�\u0000'�}\"m\u00039�E�+,�6��@\t\u0013��\u000f�5�n��\u0001�Hd��pmN+�t�\u00148?4�\u001b1��h�\u000fh*�V�:\u0013%i��^m\u001a����{\u0004;h@Q�4��ˢq͉� 3P�v��Z���k��m87��f�#Y\u001a��\u0012���\u0016ӕIM$њv~R��\u000b]L\u0017:\u0015��'�c��{<��2\u0015zb���ݛ#)��,��\u001a� qK�����V1v��\u000f\u0004�\u0011�?{s�P��=&\u0018�:�<��\u0001��\u0017HR���p�\u0013�h%\u001c�Y\u0014)�\u001d��{\u0001\"�fj��\u0005�>\u001f8\u000b\u0019�M���\u000e�\u0013-l�D��~�ͤ�\r�\u0001�\u001d7!0�\u0017\"qp*��v�-\r��;Y��T\u0003�pU\u0002>�\u0016o��vE��t�4�\u001f\u0005\u0011'\\�ǚ^�yB�\u001d��/�?^\u001f�\u0019<�N��2{\"q���\u0010���ͼ��'x�uR�r� \u0010��\u0015\u0017z�6�Aj��N�&%Bg����Ic�}@HI4�T,{���\"\u001e^���\u001fo�0�5�A�\u0005�t׆�c�\u0001@\f(�\u00022�H\u0012� cBj�H��#\u0003�\u0016I��6\u0011\u0006�\u0013F�+q�U��\r�����x��`:��\u0018D4\r�ĀH���ն������멢�/>Z�}\u001e�.m0x�%I�����д\u0012\u0012E��O �\u000b#--�:NҌȀ�\r#�/�ٻv�(uq��N��ޠt;��K�\u0001խ�����r��n�\u001dƝz����kr��\u001b�\t�$\u0017�m\u0017\"�Ϗ�m\u0018(#S�3{��\u0018g�\n�Ϯ\t�%����:\u0010��J�2��gڦ��\u001f\r��z��Z���.��\u000b%R���\u0003�9x���2�uB\u0010���������h{Fn.\u00058�<��H�,1�4�V�@IA�\u000e&7�\u001c�\u0006\u0000Ǣ\u000e��\u0005x�-��\r� \f\u0000�?St\u0001\u001c\u0000�)\u0015�\b�\u0014x\u0010��\u0012��n#N�7/\u0003\u001e\u0005\u001087\u001d0]q\u0018H��\u0016$o�\u0010G\u0016\u0003t�4����C��]�wq�U��\u0000~@\u001e��\u0002Vx����\u0010��������Qb�`h��kͥ�P��R�\u0001��r\u0001\u0000�a\u000b\u001e�\u0001+x��(��(f��kͥ�P��R�a�`d\u0000��r\u0001\u0000y\u000f\u0007��\u0006x�340031QH,(��*fج>��]2�{\\���'�̟ߺ�\u000f0����KI���(��a�v�������|V�\u0006G�y�Z�0�8TUqIeNj�^rq1Cv�d�Z3Հg+To���*���\u0003\u0000A�+�Wx��TMo�0\f��W\u0010�,m��ޢ;l�n[\u0007�0\f�E�h[�,\u0019\u0012��\u0018��G�v�f]1 @\"~<�1]�\u0003��\f`ߢ��Cw�H}n�k0��\u001cP�\u0007\n�5���\u0016�[�߆�� /mboոD�@\u001d|\u0007�v[�ǚ�о�\u0018_\u0018��y�\u0018�,+.ၰ�9\u0003�w\u00182������\u0007��\u0001j�\u001f�\u0016\u0014��7Auk0\u0004{c-4��E�\u001d�\u001a�\f\u0000l6\u0011���1B=���w\u0011��\u00101�q��M]c@GP\u001b+y�wH��\f��8D���M\u001e\"\"�\"3���58O�59�'�T��\u0010��<u�9&�r �.�<�>�+��ۈ��ԡ�c�{5�.\u0004�\t\u0019��2��/��2���7����D\t�UPP\u0015��rL��\r��4��a�еw\u001f\b\u001cr\u001c77�bB$�����\u0018F�T������YR\u0013/!+�:��\u0014ո#VK̲�\"�4�C�`���\u0000�*L�K��\n�'`��+�:��4�lk}��7��\u001bQ=�\u0005��\r�r|V]oq�٘�au\u0001�\u001f��_5��jA��J0�\u000e$\u0001�\t�����\u0018Ԫ8\u0007�C/ �\u0012&�!r\b<��W��A�����9���i�-\u0012{����\bW�d��\u001d�X�� �t�3�|��|6�?�Kw>�LG��'�9����\f�Xx\"\u0010�fqF��,���A��u�\u001c�j\u0010n�\u0000g���\u000b��\u0001]A��̈́��c!�<S�s��x��?�����x����%��\"��Ӫ\b�6�Ė\u0015r��?���ѧ\tx�340031Q\brut�u��Ma8\u0014\u0010��fy`�g�\r��ߟ��V�4��\u0000\b\u0014�\u0013KtSRKR�K�\u0018d/O�����1�8�x-�]3�[X ʊS\u0013��3\u0018֬\u0017[��8˞�����\\�e����\u000eQP�������������W°JmV���7o�z\u0017�\u000e<�ѡ��\u0017\u0000\u001c#=��\u0017x�U��J�@\f���\u0014\u0001\u0017*\\ۇ���tQ7\"B�L�\u0006g&e~.���T7���p�w���yx��~0�u�L@ߔ,g��\u0004�\u0014�ڜ�$a+S?���~+q�\u0014�\u0013p̅�AYi?�Z4�Q(x�L��\u000e\u0014�\b0�\u0000\f�W>G�r�Y���5\u0016�\u0018a%��.\u0015f^�\u001a���r2\u0018��n\u001a�Y��d���9�5P,XX��]���O�{'ၥ?\u000f�c\u0017ܽ�%\b��p�2\u001c�Θ�?t\u0016=��w��9. ��p\u0019�c\\*.\u00043a�\u0019s\u001b�Vm�T��\u0014bfLm�K�\u0005���e�\u000b^q���b~\u0000�����\u0006x�340031QH,(��*f�c��y(�\u001a�����ӊ�s?��5����KI���(��ah�gHpͿ7�5\u000f���R\u0007Y��נ��K*sR�����\u0019Z\u001f?�\u001d6c����9я?n|����\u0016\u0000��.a�7x�mS�n�0\f}�W\u0010~i\u0002T�\u0007\u0004\u001e0d\u00180��\u001eֽ\u0019p\u0014����R )H�%�>Җ���|�\u000f�C\u001e���\u000e�\u0005��\u0001�\u00064߭������2=�G2;T����\u0019��\u001fF��\f\u0017蜝 /\nI�������Vj��k���,�\u0012J^�b3*�pp�wj��\u001a\u001f�\t~�g�l���g(a\u0007T\u000e\nXV��\\U�\u0010��gB�\f�.��\"x�?�bgU\u0011��Q\u0013]2�AԼ��n�����\\�J\u001c�\u0014fɅ\u0010�\u0015-��-c��S΁Y\u0004����v�\r�ѣ\u0003m\u0002:�\u0004mM��'}_�zۣP�Q!��\u001a�/�Z�\u001f�\u001e\u001d�z\u0012�\u001d�R��1���#�h(o���)%��|}��ŀ\r�w\u0010\u0006�,�A\u0001\u0005�u`�}Z�UaC�\b�9�\b�ɞ�m�GVK��B�zV\r\u000b��\u0004wD&^\u0000G�\"��}'�M��Ӡ�\u0001:�v��\u0017\b6��[i�}Uǹ��+��C�AǍ;��\u000fbbA�҄ޫ\u001eS�?c�X�J��\u0011����\u000b=�\u0001���\u0004�$x�mR=s� \f��+Tv�^�\u000eؽ^ӹ\u001d�t�X�i�����}��I�N<Г���x8}�}}��@�4\u0007�\u000f0ҝk��5\u0007\u00001��2H�\"IP�\f\u0011�f\u0013��3\u0003�\u0005I����E���3Zt$xy>\u0014���\u0002C��fG\u001ei1\u0018�*F\u0006\u0001M��ÀH[U��x���M��sA\t�>X�]J6�c�]��\u001ê�E�\b�ƉV\u001a�\u001d\u0003ZF��\u001aP]Z����5 ,~���\"xI��j�>���\np/�\u0007�*o�_��_u\u00069#<=ޕ��M�q׾F���<�������~\u001bS�Y\\v�VXɀ��22Ƥ�m�\r��\u001a�\u0013q[$_7YpTA�\u00041��\u001c��O�۷��\f���*�\u0014G�G���\u0003�0��\u0007�@x�;��yB\u0010Orb�BJjIjrI~���,���ʤT�D]���d\u0003Fu\u0007 #��DI��� �V\t�.�ILN���II-�U\u0002*�\u0001��&\u0016��)q)@����~NbRj��e�z�@5�\u0010[2��&�g�\u0001\u0000��*��\u0006x�340031QH,(��*f82��Dc�W]\tS��\u0012E67�D�7����KI���(��a�`f����\u0004�\u0010��6'\u0013O��(����*.��I-�K..f�zм\"I{�zk�E��}��]T]�\u001e\u0000��)�Bx�mSAn�0\u0010��\u0015\u000b^*\u0007���=4mNA{p\u001e`F\\I,(�!��F�wIJ2\u0015�������hW�'c=�+\u0000>\u0006��Ǝ?��O\u0003�=�G�����[�����\u0018�\\�����ey�Bg�\b��\u001b�+��\b3V�4R\u000b<�\u001c�Z\u0014wtJ��v��>M�=B�����J����h�\u0010�5ڑv�L_����#\u001e\u0010D\u0004md\u0012@�l\u0017�M\u0013\u000e�1�\u0001arh�8�\u0012�%`\u0014zHү�t�Ϻ-�ǳ\u000f\\\t�Q\u000fw@�\u0013�ˬ\u0018`-wx@���q�΁�.燭Ea��d$�&\f��g�<\u0011u\\9�U��r#��I�\u0006~몖�U����\u0016bOW@\"�+c\u000e#Wꐇ�qx�b>�>�l\u0019˳��[2��=���V�fqC�|fA����\u0018ֈ��\u001e󴖫=0�\u0006��.!e�\u000b���\u0014E��\r��`\u001e��{Yt��nq�Y�u�\u0013�&{��֮a\u0006�\u0007�}�\u0001��R\u0018�!]\u0004��\u001e��X�\u0001թ��j��ԧ>��h8V�e�&ie\u0004\r��\\�Ksv��\u0011�s���\u001a�\u0015ֱ\u0004�Ӯ\u001cC \u0001T\u0014\u000fM�\u001f��M��#x��R?W� \f��)������:x�:�8R�\u0013<Z*\t��\u0017ʡ�98\u0011�ߟ� o�O\u000f/�Ϗ����F�95�u\u001cf�7�I\u0003j�A\n' ŴQ\u0001�:\u001e�t˙�R$K\u000ez\u0004\u0015���ܮ%g�33\u0001N\u001do\u0005��\u0000[��Y\u0000��0\u0000��%�(�9\u001c��^�O>L̎��y\u001c�D⥘M�\u0000�?z@&�҆%�$YZ\u0017���(��L;k\u0017Gؓ?\"��\u001f�}U\u0019B�~'�\u0015�\u0001aFK�\u0013�����*�\r���/,��\u000f��4�g�K��<\u0002`t�E�\u0014b\u0012�S2�\u000fHz\tZY��]�a�y\u001bjY�w�ML~�\u000e2���6�\u000e�V�?�\u0005\u0002\u001d���\u0001�<x��(��(f��kͥ�P��R�a�`l\u0000��r\u0001\u0000x�\u0007��\u0006x�340031QH,(��*f���#��;�z�J�'_\u0002,�Ԝ~�\u0019BTd楤V�e���0t����网s��;��\t\u0001+KNk\u0015AU\u0015�T�\u0016�%\u0017\u00173d�Lf�5S\rx�B���*����n=\u0000HD+P�=x��SM��0\u0010��W��JWM�\u0003�{\u0000��p��\u0001u�Ibp��vw�P�;c'����(\u0017��{3of�0Z\u0017�3\u0003�z2��\u001b>� >��t�wlv$�\u0007k5\t\u0013�R�Q��sp�t����\u0001yU��ku��\u001dJeke$�����]��\u0003�Ƚ&\u001aKeZ��Pl�JUH:���\u001c�\u0001�5��+m�\"/�\u0012-�@2\f��#��|���:>R�8yrPf<�h���#p���\n\u000f=�}\n|\n=�D\u001e�#�s��\u0000�_�\u0013��\u0012�\u001c��n��\u0011�A\r����\t\u0006���\u0013w�]G��\b\u0004!_UCKw\u0011h�쑳�jQ,�?<,4�$2V�/�;���q��. �)�o��\u000e'y���B���\u001b᤯n�VH��B}��$�ƶ-�_(��`����Q�z\u0006^����J�y�ӄ����)�Ӓ#�i���� ��R0K~{\u0017ŕw7s� /q��#��\u001f�\u0018��x\u000f�!VPΫ�8�\u0000�\n�\u001a�Y\u0018�\u00107��\u0010\u00159���\u0010�ζ��5:d�c��\u0002��,8�\u0002x�31\u0000\u0002���\\��|\u0006�ծwد���{V��V�~щ��\u0000��\r��\nx�340031Qp�w\u000e��Maع:zB�{�\b��ŏ�\u0003�_���s6�(\trut�u\u0005)j�.ɹ�\u001c���\u0018�����\u0017싎�\u0018\u0000�BjEbnAN*���\u0003\u0013�b\"�JX��H�>�0Ϋ�\fԘ̼��\n��b�X\u0007��3n�\tNnV\n���ы�͍� ���\u0016�0\u001cSxZ�vÇ3%\u001d.39�]R\u000ei^�\u0016\u00007$F���\u0002x��W�o�6\u0010~�_qu�:٬�}�K�\u0018h�vk��@S�\u0018�!�$�V+�\u001eI%1�����Hɲ�\u0016YW`\u000f�!�x���w��\u0011��~E/^���}i\u001a�$o��jR��@�n�ʆ��t�|UfV�-yCk]mhkZ�V5�dqZZS'�\r�7~1]�J[��M�,m��c���s�Vyj���߾�e���M_^�\u0012Pl\u0005�+�M��\u001d�����u�tc�՚uemY\u0015�)W�t�3ڨ���a&�α\u0001\u000b'6�?M�߀���*j��\f�f�f=�!}��\u0016�6+��iͮ��*\u001b-���\u001b[��M\u0004\t��\\5Tie\u001b�U���i�B1XU��\b;\u000e��\u001a2\u0000R�\u000e�\u0012_�9��\u0002�\u001e%IJV+�\u000f\u0014y[�Ƌ\n:���y���ճ{'\u0010k\u001d\u000b����&�e�\u0017�h����\u001dcՃ\u0010@�\u0012�6>-l�_��ʪ���Kl����j\n��|M��:I���g$z�V��Zc\u0003Q��\u001d\u0010��_[s\u001d�En\"y\u0018;@\\\u0019S���\u001e�7\np�\u0013/��ؔ+\u000f�\b��\u001a�R\u001f��L/\r�0/2��\u001a�m˱��n�u^�R�\u001e�'C^��`�I�)ԕ��:ʍ��`�=\u0015o�*h\u0005�5�\u001e�m;���\u0017>¶�\"ɘ\u0001'̒1ak�\u0006�|b���\u0005�N���\u0001B��h�\t�b��\u0017�\u0004z��s9o����C\u0005\u000e�3\u001b�vˎ�lN\u001d�i>�\u0010��������^�0:�_�+��Q���\u0018�f�W\u0010@�I�\\7eVV�ߞ\b\u00018D�F���wk�繱5����kՠ��8>��\u0006�Ԍ#\u000f�e�v\\a\u001a�Ü��\u0016N�\u0000���,v�O�A���������m�i\u001b�\u001by����Tj��P���H����_i�Ư#��`��\u0010�\u0013�9\u001e��x�\u0013�d�dA\u0002�\u0005\n\u0004��\u0003\u001f\u0014-f��|ч��I�%\u0014\u0016�}7���v3���ٔ��.�\b9\u0012x��˭M�ƶV�\r���Ċ\u0014r�*/$l\f\u0015��\u0006���\"7\u000e�XP�&�BڛTZ�\u0016؎��otނ�иX,>�d:�ʬz�P�TW�^S�<i�|Y�2\r��@h;ɭ�ee)�B��O�lN%\u0004l�C�Oa�x�5 =?�,���7>�1�\u001b\u001f�<�\r�ʬ\u0016��\u001d���#�l��*��KQ(A��\u0012\u0017MAi:O$�x8\u001b�@G��T\u0012\u001c,�i?�]�{\u0014����rB7R�AA�z��.�|�Ba���Џ����\u0005٠�r\u001c���Xp;�8�-p\u000f�e�o\u0014ߙH���r���OM��g\u0014\u0002����\u000e*�\u0016\\H�f�Ge1�\u001c��f@x���I��y`]̸�е\u0014���V��6���\u0002�JU-�\u0001��Bծ�\u0019'\u001e�h��-\u001c��\u0000����8�AL5�7�j_��&5�����\u0005R��\"�u�M���qLz[���o@:p\"�nB�e��\u0002�}.Q�\u0005\\s\\�N\u0006�\u0012\u0003V�-;��\u001d?�\u0018Q'��\u000b\u0004�\u000fU�\u000e\t\rI��\u000f����\u0011�\u001a\u00054�x��H6��&M��p<�lv���&\\�^�\r��\u0003u�\u001aU�W�ӡ��:%bw/#��A[]<�\u0001��Dx$��F���\u001d�O��#,\r�\u000etd`�\u001d�\u001c\u001ef_y4���}��H�|�\u0006���#:�)���񞈝�At�x6���ˡ��FOF��@�\u0010kdR�׸��\u001e��\u0010/价\u00068��\f\u0007���޷���V����\n�Gie�\b��a\u0019��|���i�\u001e\u001e����/�R�\u0015 ���M��>W��\u0012��uE�)`vʌ��\u0002*�����y\u000es���\u0000�y��B�\u0012\u000e��{�1%��F�c����6���Qb_\b�w�M���\u0016��'鏚'���������8�\b�-�y��\u0003Aɭ�xg�J��l(��ZcX|�>|�`hl?���G6\fb`�+Y�S-��yc\u0012/!f]\u001c���1�\f}�\u0017���`�W��O����6Š\u0005�0[����W�r\u000f���S2�;�A\u001c��\u000f�`�\u000b�~�\u0017���,�>\u0017\u0006\u0018\u0003H⇼+\fY��WC�\u001f;�����a�\u0007Cv���*x�URKo�0\f��W\u0010إ\u0005���0 XzȡH��6\u0014(mӶ\u0000� RH��K�Y��,K��\"����\u0002��s\u0007��!@�]ź@\u001eal�\u0017�\u0013�d�\u000f\u0003��%\u0010����Q\u001ff\u0014��\u00034�\n>�&0�\u001c�̴bc\u001a 7�{\u0004���dp��\u001d����z\u0002��}.4����f������\u0016<\u000b%�@+��Ϙ&2ĴI�X�+�\u0016;�\f\u0006�s T+��\r�K��\u0006�\"��I\u001d����R��\u0007\bN��J&/e�VJ��JT�.b�\u0005���eX\u0012F�k�\u000b�<�q1L�%\u0010�{�\u0015F�4��\u0015�0_\u0018���Ϙ��b�\u001aN�\r�g_�#��ڻ%����_�jV�B�����6MF}�2k\u0005L$b�!��Gc�%\t^U��M��e\u001d���t\u0011��S���\\���\u0013��'�3��Hں��$\f��}q�[��p<����ã�a\u0002��=�a-����^�ס�?����������yE�\u00040�� �\tx�340031Q\brut�u��Ma��g��j�{�\u0001a�3\u0017'���3s�5�(��KI��K..f�}��n���\u0017�\u0017H�k��=VX�%\u0011EQFIn\u000e��m���/p>�)Z��^,y4y��\u001e\u0014UY�\f�%ONM��\"Z��\u0016\u0005���6�(\u0004\u0000\rz;��\bx�-�1\n�@\u0010E�=�\u0007\u000b\u001b�\u0000v�\u0016\u0016�3���,d���,�ۻ�����\u000e���p�u��\u000bS:C��L\nb��Q)�\u00104��\u001dy�\u0016�����\u0007\r��ȅ~�r���1�?rJ�-\u0010\u0015�]\u001b��o2,��a\u0014�1}\u0001?�/\f�\u000f�xx�����:!�/%?W!3_!�\"1� 'ub�\fkf^Jj��Z\u000f��Ԃ�ĒJ%;.\u0005(��ILJͱ�H(�dd\u0016[)�d�\u0015��(d��*���B��\u0014J*\u000bR�\u0002�\u0015@���dQF� �)\n`�\n��y�\n%�����@L(�\u0019�W���Z��P��S\n�\u001a*���\u0018ˏ�5'�4er<�(WiAAj�Brbq��󌦌��\u0005�� ���Ϥ\u000f\u0000l�NH�-x�}�AN�0\u0010E�=���B�\u001e���\"V�\rp\u0000��&F�\u001d�c�\u0015�ݱ�8r%�\"Rf����e?\u0018K�\u00028w�_��_\u0004�}'t�n\u0013�\u0016E�AV�6W��(\u0014:��?��U#ݠ�5�G8Y�\u0003���\r^�o�v��\u001f{8�8��+�\u0000_��S\u0002�n���o[�a,�UU���\u001dZ�z�\u0014{���hG@x!x,�9#SM�l�[t�C�d(f�t�L�J�;\u0006A\u001f�f�\u001c\u0000g��&\nK�8\r�!���\u0016R!�\u0012l�\u0019c�\u0014�T\b<�k���\u000e\u001e�aruW\"�S>PZ-��i,��\u0005�\u000b�ɀ\u001f������9�\u001c��\u0012�$�P�S�\u0013�<\u0001_��ז����W4�\u0007K��\u001b\u0001U��w�-b\u0014#\u0005�|�R�iz��3��U��x\nWgY\u0012����\u0002\t\u0005�?��\u0004x��Y[o�8\u0016~ϯ`f�J�&N�@\u0017�4IѦ�l�LR4�}i�5mѱ��葨�F��}�9�H�(_�����!�%��\\��\\�#v���X��*���=z��o�������.f#��Q.\u0019/\u001e�ޫ��#�WM\u0005��R�\\\u0014lR�c����\u0011_�PZ>{���B\u0016�w\\��)�\u001f\u0004���4����\u0003\u0006��\f\u0004�'=vzƾ�1#�ʿ�3\u0001k���\b�c�gi�L@����G\u000b�\t��a��qx\u0016\u0003�\n��r��\u0006E!��\u001e26\\Ȋ%�p.\u0015��d�il���\u000f��$-@]pV5\u0013�br}m*���\u000f\u000fH*����h�\u0016s\u0001k��}P,�ۢ�rw��W��Up�H�~�^�\u0000G&�(�|/2A[N�s\u0016j�\u001f��k����\\&�\u0002Ef\\�|�%`�V���ꮾ�W�I\u0014�\u0014qo��g_�d�Ғ|\u000ffA���a��\u0015��d�\b\u001f�\f(�(�畊\u001c�`˲�`z���8\u0000�\u000f\u000f\u000fY!x��\u000fpd�\n�\u0000\u000f-A��K܏�@8\u0004M\"%��y�\tdD��'Y$����\u0015F��[-�'�\u0006����D��\u0011�\u0018��xy��_w\u0011{�|͚����|Ӣ���ջ��]\u0004k6�nWt�섂zv�N&�ȒR�3&\u000bvR��1|6��,\fk}�6\u0015\u0000�4\u001fgU\"JG\u0002dto\u000b\u0013I_m�G�sZی_��ָ��#�D�\u00140\b,\u000f�*\u0016�*\u0011I2\u0017Hk�˥\u0000l\u0003\txr�)\u0007�3m=~\u001a����Y\u000b��\u0019�ǔ�\b�Z5��Vf���W�y\u001c�,`u-\f�D������\\}>M���Gc\u000eh\u0012L\u001cM���[GH\fڴ�AR}�?yy�G\"k\u001cF+H�B���;d6���k\"�\u0001ҿyV\t'�\u0016\u001c�W�!�\"�V�#�t)�OA#)3\u0001�\u001c�J%o�۝s���c�ɺ<�È���Mfiu�S1�<�_6j���+�9�\"WM��>��I��acQNe�%�b�\u001a�����Ab�!C�\u0005t�H:ЗW�\u0011�\u0016�\u0002���\u00050�\u000f��F\u0005vdQ��]kY;CU���A����;*�\u000f*/��mʋ_RZZ�\u0019%e+�k<�^��Z�b�K��j���\t'I�y�\u0017��\u000e|\b]�P�$�0��3�e�1]��֚?:8x\u0013\r�Et��\u001aft0jM\u001aS���g�4�?\f�{b`'�B�1�\u001f�uǁb1�I��\u0004�7,D\u0017�}@\u0015�ƕeU\b*2\u0018e 7�\u001cˢ�f���n\u0004\u0003��4��ƥ9�Zw\u001a�\u0018�\u0015�L%NcP�T��jў�\u001c�<�#\u0015��\u0016;��10��\u001b�����cb\u0007���\u001b���7ἳ\"ˀ�<\u00187\\�\n�D������vA�'�\r蓛�*�:gx�\u0014��lr'<�j����@�S=���\u001e��f\u0004ѧ����\u0004UTB�\t\fi�����\u000f\u0006�\u0004ƞ@�`�Y��b\u0011\u0015\\'��s#pu6h^dtbmK��\r&%�!e�4Gr�}�\u0019\u001bA\u0005J��\u0014\u0011;#���H���l�s�|����\u0005����t�⧍v���0��;\rlY�5�=�4t�\u001b\u0003a4Td�N@\u0000:�\u001f��\b:��F\u0002�u\b0;[\u0000��m��B÷$t�VP]��\u000e놐�\u0003��T\u0004����:\u0006\u001cR�d\"�V�sn�\u0016\u001b#X� H�h�^��#�IMY%%帱js�՞�A~�Լ<>:*\u0015\u001f����d�?��#~���|������z'i������3��/�\u0014\u000542�B��@�+�.��\u0003F2�hK�#�Њ�!\t\u0019�E63��_Lo�S5� g!����7�5��~߃�ӈ���Pš���\bj�;�1\u0001�\n�ai{�}��{�Vy\u0019\u0000y���5\u001b�'�!;���h��A��)�\u000eO;b]�뾔q�A=�B\u00051�>���f/6���\u001d��#��l�\u0016}}��\\�\t�Ȕ\u0019K]���\u0005\f��\u0001%ŀ�>F�a�V�X�+#Y��2{��s�y�\n�@�8��4[Ч`H:��.{-\u001a���L��\u0007���%�eN�I�)\u0018��>R\u0011�\u001b��\u0019�\t�\u000bH\u0001���t�C�����m���r�D\u0010�\u0015�B�g3�-x��\u001c6q�]����⾟���B�`~�\u00167�L-\u0011\u000b��.�~[t\"<�\u0018il\u0001\nŧ�\u000b��I�\u0019��\u0013��4Ҭ\u001ax��)pC��\u0007Z\u0005]&f��S���[��U�u}�S��LVݦ�\fo�}\u0012�r��[T2w\u0010�)�&�]���#�\u0017HiI\u0001��\\@��\n�h�1���_3�\u001b}_Sn6_��\u001al0�\u0002*WnE�\u00148�o`jbxf\u001bb��o$\u0002�\f\u001f\u0017:q�}���\t�0<��Wq\u00104��)�A\b.�\\�kXrK\"x��PfK�G�NU\u0003��n�AF�]D���u�1؅ޏ\f��t�j�\u0000x��M�<��\u0012�bR���5���/���\fP�K����C��#X���j��\u000bҧ3�P\u0003�~�\u0002���I$}v\u0017��\u0000w���ibh�\u00182��O��X4n\u001a�\u0010R�s�)\u0002���\u001f�~oi\f��˯}[_\u0003�J���\u0001�_�E\f�\u000fV\u0012�S\u001du���靱���}����˛��5���\u0005�\u0006u��9�s� �B��\"���\u001aJT���R�qMDo�S\\�C�\u000f��,Z\\�������k�/��,���o4�����\u0001�5AL�\u0004x�340031Q��KI���(��a�]L�����\u0007^\u001a\u000b)���e{��\u0010YUV1C��;:,���dIoIY���i���g\u0000\u0014�\u001d���\u0001x��W=s�0\f��+X�at������\u001d:�C���\b[l%RGR���\u000b~H�d%��!�,\u0002\u000f\u000f� \b���������o�u}Wݕ��t\\\u001dv\u0014\u0014��\b)[��?�c\u000f����Ƃ�����gJ����r`�T\u0007\"tO�.���.�Xw�/e\u0011?=x\u0011��c��)A\t�\u001c��y�\r\"\t\fg�0�\u001d��\u001a�~b�<�N\nRk�\u0001WD�at�0��\u0006����UeX\u000b`\u0006\u0004%�4��6-4k}��\u0010�\u0002it�\rA���~g���t��[g|گG'�Ȏ�h#,�\u001a$K�Ҷ)�l�s�������>ֈ_\f?ͺg�\u0016�\u0018��1�I�-<�Q�q\u0018�q \"�\u0000\u001c�.��%!�ĉ�ƀ��e,��������g��m�4I��B�<�j�'�\u001c.7�B\u0007M\n�\rsN[YcA��I�ȋt-Q:r#h �\u0002C��\u000b\u0011&\u0019�\u001b\u0016kzX\u001b���lp#\u0015��Ԩ���=\"����G)���I.�E)AT��S@��%t�Ams�\u0007�,����5,�JĴ�)�'f��,�˼h�\u0012:��(T��\\,�a]�Xɮ<W�?EBjJ\u0014�!��\u000e�\u0003c�\u0002��\r�\u0001D�ST\u0017eyq\u0002_MTa��C�\t�-�\u0006�\u0018�J�H\u001f ~�y�\u0016�3�a�q�|G]\u0001FJ�FH�哷�K�#>�\u0011�߈/n�\u0017W�omN�OM;�\u000e!�{0�����f�\u0000�+i�|,^/�7����JR,'�_��w��ժcL�޹\u0018/���kZ�\u0007i5��>�tl7S�\t|�$V��y�Pc_��Ɖ�i�\n�\u000e@C+<ҭ\u001e��\u0011��i\u0001\u0012�F�����q\u0001����`�򢅽O\r=�p���i\be[=v��-�j`R1μ���\u0002��\u00137\u0015\u0017f\u000ee��c�|)~����_�\u0019�\u0014\u0015m�\b\u000b�eF�i�\u0004ߩ��\u0017�EFy\u0001d\u0019��0EW*/��5\b�a�f�zs�0�}=Mꍑ�#�4;�PH%���g��k1v�Ջvq��\u0003<����?�\u001b{���\u0001x��Uˮ�0\u0010��\u0015�3� ���t�V]v�eՅ�\t�6��6\nQ��\u0018��@I*H�\n�s�q<��F*\u0003\"��\u0011�7����/G.J�\t�\u0015��Q�(��g)O�E����\u0019*�UT�9�K��A�\u001a�v��D���]��(��`o��<G�!�\u001a��E�L\u00161k5�� \u000bK ���S�0\u0001\u0015��e�*r�i��)\u0011=�>\u000bmm�4�B\u001b8KU�����Y�f�7\u001b_��5`�3CDS��\u0000�xw�'�\r��T�;�\u0018ɧ$��\u000e\u0015�\n�Ɠ)�VΤ��&O�W\u0018��\u0010bF�Q��\u0011�ߙ�f0E?�\td�\u0001�\u0018c֍Д���{��^F�\u000e������4j�>/�@R\u0015I?��v<�{�@�����]VTg\u0002D6\u0015Y�dk��#��us+1TJ���|n\r׺�ܝ��?\\�m���\u001c�mN��~�Ĩ\u0016�2���u�w]��\u00017s�<�~\u0018س.���_N�\u0003W�\u0006�/�\r�+��r[F=�\r�k�IBOE{����\u001d��e\u0015\u000f���!�\u0001�*����ϸ.\u000e\u001f[��z\u0014\u000eh��ֆ�͵\"|�O�\b7��Q޿hv���\u0012:l.\r>^,�)���n�:d�T\u0011��\u000e�\u000eq\u0018�y5�]�\u001e�ʓ\u000b����נ�><ϡM\u0004e\u00065݃�#\u001b]��E����fS\t�p������0j�>��T�\u0019��Hyj1S�6��\\r}>�C�s��)�A7s��j�ɜ<8�yD�\u0017(�\u0002\u0001]�m�\u0005x���RPP*.)M�T�R�\u0006r@�ĲT ���4U\u0007\"�����\u0003�%��%�I90�@�Z�Z.\u0000t?\u0015�Bx�]R�n�0\f��)��Z����T[i�ٖ!+�rtl%��X��,�ۏt�v\u001d\u0010�\u0010��L!\r䮵c�����:�C\u001fᮽ�ǯ���GfK{�Uv:�\u0010�\u001f�\u0005��dw�p��1�.��d-�=�}3\u001dl\u0002�C3���N\u0001\u0001~\u0017\u001b7��\u0000\r���p2�H\u0013�>^���p\u0007M\b�u\r�A���ю����w�\rp\u0017{\u000b���X��\"�m\u0006�F��[\u000b..��\u001ca�!N�%�\u0004��\u000e�<��\u0007wt7\u0005���\u0003C�s�\u0004�3���ܞ�v�u:�\u0006\u0017�\u0004:GԻs�b����r|�\u0013\u0004;\f\f\u0019\u001c���~��g���\u0016\u001ao+\nT����9�\u000bl�F��3��Y�m#Uh|��_(Z���Q��1��f���9�����h�j�\u000ep���\u0015�f\u0018`go\u000bC]\\o�O���C�ûf���f��c>��J@��fõ\u0000YC�Ջ�D\u0006\u000b^�{��F��Z\u001b�\t�K�\u0005�\u0004^n�,�\u0004įJ��\u0006��,�\\\n��2�י,��\tq��?�,�AR��\u0004oTR�DV\b���ɟd.�6aKiJ�\\*\r\u001c*��L�9�P�u�j��\u0019Җ�\\jT\u0011�(�\u0003�b\r�\u000b>�^�<')���^�?HU���ye`��L`�I�3����\u0014�Js.�\u00042^�g1�\u0014�hFcWw�Y\t*�\u001e�_j�*)F�J��`Jmޡ\u001bY�\u0004��5-d�U�0Z'\"�L��R\\Yh���\"8B�u-�\t!\u0013<G���\u0014�m���\u0005�R^��\u0001x��Vˎ�F\u0010��+�؃\u0013A\u000f$G_�}\u0004��5v\u0001-b\u0018A �Ȧ8Yj��\u0019J�|Eι�\u0010���\t��!)�V�s\n \b԰�����\u000b�w��,�\u001d�\"p]k�\u0019���Q�T�o͆Xe%y��-pn7Nm��8k��fB�\u0017��m\u001c���{v�=�n6\u001bv\u0014,e%g�ɠsk�'ޱ;�CɴW��h4�NG��\u000b�e匸�[��\u0011���\u000bz��U\u001f馍���������\u0003Kg�M9\u001e��O��L\u0019��\u0018k)FKZ7!X#(7\u0016�ќTGsDd\r\u0003�\n�e\u0013H�CAoyB�J��S�\u0003U\u001a��\b\u0012��?m|\rس\u0001���L��pu\u001e��_�1\fp=)6\u0014��&\u0017S�ک�a�MU\u0015��ƝrZ�+�\u0002��u�(m���\u0005�d��/����l��\u000eZU�wΗ\u0003��,R%�P3;�{?�_��H�\n��\u0013^y��d��8:�#�4[�� k傏Ψ�F$8z\u001c��r�\u001ek�M���L\u0016�\n��4&11\u0002�3\u0012\b\u0011\u001b#O��U�\u000b��QפJV��-�Ӆ�bn��g�*o��i�C\t\u0000\n�bQD�k\u000b� <;S�wPw�hJ\u001d\u000e�hL�,':Ex\u0000�\u0018 �\u001d-���b�*����\n�5P��U�̚K���%0�\r0���V�\u0006m�w�\u001a��C\u000f��\\\u0017\u0005;\u0016��\u001c�\fv��\u0000$vj��$�\b��Ӂ�n\u0010��Z\u001dC�/��l�))�h�C:�k.������r.�~�0&d2����r�\u000f��k[���؅yfM��v\u0005\u0010��\b�栏�m��ܠC�I��W$AK�[\u0012�Z\u0010�\u0000��کE�t\u001d:���\u0010c/B�\u001f0�P9~v\u0006ۻ�\u000f�\u0013�^,�p7w\u001f���`\r��� �ϋk�8;O���u�5�\u0010o���A��*�\u0013�ŘY��Ҵ�ǳ\u0018\u0010(�O\u001a�\u0004�2΋��\u000b�V~�\u000fn�8��+��`S����鍸��Շ����\u000b�-��Tbq����Ġ}�\u001b\u0006t���F{t��t~9�P�f6���i\u0007u�Ϳ\u0005nQo\u000b6O�]��e��E��Cg$��\u000e(X�\u0006#P$\\Ϳ�jo+X��II��UD���b+{�G\bR�\u0005�\u0015\u001b��D�e:��.�^���j<N�]\u0016�ԯ�v�hi�q����\rzI&j�\"�!��OA����ҹ\u001b���<^/�K�1�\u000fBv#�\u0017�}�\u001c���%��^fߞ����7����\u0016��\u0000*�7���aݽ\u001a�\u000b\u001e<i��fx�uTKO�0\u0010��W̊\u0003\u0012Z��N\\*\nT\u0005�R��KOțL\u0012����Ά���\u001b;Yv\u0011=������9�ߞ+SF�gZE��m�z|��#�@�B쫑�\u001c[W�вg\u001a]OϽ�+���]M�\u0012��eޑ��l�]���<\u0010�p�G��ʖ�'�N\u000fq%�t6�`bK}�3M\u0015o��a_�u\u001d٧~�\u00064M\u001b\u001dLI�ޚ�ho�_�z�%�\u0016�O��o��u�a+��L��L\u0004��<�����pA�͘\u000b\u0007S1��H�\u001e�_l�\u0006槅R߸vФc��<��/�q}<\u0010D�0��Ldj�C$�\\Qt�ۊ�[�\u0015E���\u0019LJ��/F�1�s�a�\u0006�l\u0001EG�\\��\u0014\u0013d{��,\u0002\u0000\n�[� �\b\u0017�o~��ﻛ���7��e\u001b������-�C�R[��mø\u0015\u0019\u001e\u0006��f�3�K�����ՄtA?gE�j�\b�ȍ�[Q���R�Ժ�*�ca�\"����WP2\b�L����\u001a\u000bQp;f0��s\u001d\u000e.7��=y�\"kl��O1̯u\u0019s�f�sS�GJf�\u001a�;1�;\"\u0019\u0018�\u00107�ջ\u001d�\u0003ԗ�\u001ck��C�$\\\"~qq���s]��)�\u0017\u0017Wb\u0005m\u0018�\u0006�NdD�悧�\n�\u0017�]���F��&�\u0001\u0019Sr�\u001a�\u001erߍi\u000e\u0000tp\u001eTs�\u0003��V\u0005�g2\u001e�P.��<�fiyp��s�x�\u0003��j\u001a�Qq0���o�ۥ4\u001cM�\u00184E6ͱ��OQ~X�\u0001\u0011eVi��\\��<�����\rC&��GϺ�0-G�\u000f�i���<�Ȓw}�LDi%ɚwJ�\u0010���\u000f ��y��1���\u0015�\u001c\u0017�c1�W\u0004� \\\u0012�d�$\u0007c�_\"�$M�l���R ��>\u0015i\u0015\u001f:L��K��\\�Mb�f�\u0016�\u000b�`�ȍiPhVc��=xg�+�\u000fyGb��͛�Kr^t\u0007�4�����2\u0015Y\u0017���L�\u0011�s��L�\u001f��5\u001c\u0016�\u001f�>Fp�\u0001x���RPP��-�/*Q�R0466��\u0002\u00007D\u0004��M��U���~'�Sf\u0002�*,��"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "packed-refs",
+            "type": "file",
+            "ext": "",
+            "base": "packed-refs",
+            "dir": ".git",
+            "path": "/.git/packed-refs",
+            "lang": "",
+            "content": "# pack-refs with: peeled fully-peeled sorted \nbc0d8d0ad2f2cc8aa5f1a7a98ce39eff1bcbecd7 refs/remotes/origin/main\n"
+          },
+          {
+            "name": "refs",
+            "type": "directory",
+            "path": "/.git/refs",
+            "children": [
+              {
+                "name": "heads",
+                "type": "directory",
+                "path": "/.git/refs/heads",
+                "children": [
+                  {
+                    "name": "main",
+                    "type": "file",
+                    "ext": "",
+                    "base": "main",
+                    "dir": ".git/refs/heads",
+                    "path": "/.git/refs/heads/main",
+                    "lang": "",
+                    "content": "bc0d8d0ad2f2cc8aa5f1a7a98ce39eff1bcbecd7\n"
+                  }
+                ]
+              },
+              {
+                "name": "remotes",
+                "type": "directory",
+                "path": "/.git/refs/remotes",
+                "children": [
+                  {
+                    "name": "origin",
+                    "type": "directory",
+                    "path": "/.git/refs/remotes/origin",
+                    "children": [
+                      {
+                        "name": "HEAD",
+                        "type": "file",
+                        "ext": "",
+                        "base": "HEAD",
+                        "dir": ".git/refs/remotes/origin",
+                        "path": "/.git/refs/remotes/origin/HEAD",
+                        "lang": "",
+                        "content": "ref: refs/remotes/origin/main\n"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "tags",
+                "type": "directory",
+                "path": "/.git/refs/tags",
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "shallow",
+            "type": "file",
+            "ext": "",
+            "base": "shallow",
+            "dir": ".git",
+            "path": "/.git/shallow",
+            "lang": "",
+            "content": "bc0d8d0ad2f2cc8aa5f1a7a98ce39eff1bcbecd7\n"
+          }
+        ]
+      },
+      {
+        "name": ".gitignore",
+        "type": "file",
+        "ext": "",
+        "base": ".gitignore",
+        "dir": "",
+        "path": "/.gitignore",
+        "lang": "",
+        "content": "node_modules"
+      },
+      {
+        "name": "1-isolate",
+        "type": "directory",
+        "path": "/1-isolate",
+        "children": [
+          {
+            "name": "examples",
+            "type": "directory",
+            "path": "/1-isolate/examples",
+            "children": [
+              {
+                "name": "1-stepping-through.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "1-stepping-through",
+                "dir": "1-isolate/examples",
+                "path": "/1-isolate/examples/1-stepping-through.js",
+                "lang": ".js",
+                "content": "\"use strict\";\n\n/* 🥚 Stepping Through\n\n  click the [debug] button to start the program in your debugger\n\n  see the little arrow at the top of the pane on the right?\n    it looks like this:  ->·\n    this evaluates one statement at a time\n\n  your challenge: step through to each commented line and pause\n    look around the debugger, what do you see?\n\n*/\n\nlet didClickOk = confirm('please click \"ok\":');\n\nif (didClickOk !== true) {\n  alert(\":(\");\n} else {\n  alert(\"thank you!\");\n}\n"
+              },
+              {
+                "name": "2-scope-panel.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "2-scope-panel",
+                "dir": "1-isolate/examples",
+                "path": "/1-isolate/examples/2-scope-panel.js",
+                "lang": ".js",
+                "content": "'use strict';\n\n/* 🥚 Scope Panel\n\n  go through this program one step at a time and watch the Scopes panel\n    this shows you the CURRENT VALUE of each variable in your program\n  the Scope Panel is one of the most important tools you have to understand code\n\n  before pressing the \"step\" button:\n  - predict which line will be next\n  - predict what will change in the Scopes panel -->\n\n  after pressing the \"step\":\n  - were you right about which line was next?\n  - were you right about what changed in the Scopes panel? -->\n\n*/\n\nlet didClickOk = confirm('please click \"ok\":');\n\nlet message = '';\nif (didClickOk !== true) {\n  message = ':(';\n} else {\n  message = 'thank you!';\n}\n\nalert(message);\n"
+              },
+              {
+                "name": "3-hovering-preview.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "3-hovering-preview",
+                "dir": "1-isolate/examples",
+                "path": "/1-isolate/examples/3-hovering-preview.js",
+                "lang": ".js",
+                "content": "'use strict';\n\n/* 🥚 Hovering Previews\n\n  practice previewing expressions at different steps of execution\n  - variables: hover without highlighting\n  - expressions: highlight and hover\n\n  pause this program each time you reach the `if` check:\n  - highlighting one portion of the `if` check expression\n  - hover your mouse over it to see the value\n  - check the scopes panel to understand how the value was calculated\n\n*/\n\nlet didClickOk = confirm('please click \"ok\":');\n\nlet message = '';\n\n// try previewing the value of this conditional check:\n// 1. hover over `didClickOk` to see it's value\n// |----------|\n// 2. highlight the entire expression and hover over it\n// |-------------------|\nif (didClickOk !== true) {\n  message = ':(';\n} else {\n  message = 'thank you!';\n}\n\nalert(message);\n"
+              },
+              {
+                "name": "4-continue-to-here.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "4-continue-to-here",
+                "dir": "1-isolate/examples",
+                "path": "/1-isolate/examples/4-continue-to-here.js",
+                "lang": ".js",
+                "content": "'use strict';\n\n/* 🐣 Continue to Here\n\n  click the [debug] button to study this program in the debugger\n\n  then practice skipping ahead to the commented line:\n\n  1. right click the line number on the left in the debugger\n  2. select \"continue to here\"\n  3. look around in the debugger, what do you notice?\n      - which line is highlighted?\n      - what has changed in the panels on the right? -->\n  4. keep using \"continue to here\" on the same line\n      skipping ahead helps focus on specific details in the program\n      you no longer need to step through every line all the time\n      it also helps you avoid stepping past the line you want to study\n\n*/\n\nlet didClickOk = confirm('please click \"ok\":');\n\nlet message = '';\nif (didClickOk !== true) {\n  message = ':(';\n} else {\n  message = 'thank you!';\n}\n\nalert(message);\n"
+              },
+              {
+                "name": "5-breakpoints.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "5-breakpoints",
+                "dir": "1-isolate/examples",
+                "path": "/1-isolate/examples/5-breakpoints.js",
+                "lang": ".js",
+                "content": "'use strict';\n\n/* 🐣 Breakpoints\n\n  use the [debug] button to pause this program in the devtools\n\n  click on a line number to create a breakpoint\n    you can create as many as you want\n  you can now use the big blue triangle button -->\n    this button will skip ahead to the next breakpoint\n\n  breakpoints are saved in your devtools, not in your source code\n  you can change them while the program is running\n\n*/\n\nlet didClickOk = confirm('please click \"ok\":');\n\nlet message = '';\n// try setting a breakpoint on the conditional check\nif (didClickOk !== true) {\n  message = ':(';\n} else {\n  message = 'thank you!';\n}\n\nalert(message);\n"
+              },
+              {
+                "name": "6-debugger-statement.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "6-debugger-statement",
+                "dir": "1-isolate/examples",
+                "path": "/1-isolate/examples/6-debugger-statement.js",
+                "lang": ".js",
+                "content": "'use strict';\n\n/* 🐥 Debugger Statement\n\n  The `debugger` statement will make your program pause in the devtools\n\n  `debugger` statements are saved in your source code\n  you can not change them while the program is running\n\n  If you use `debugger`, the program will stop even if you use the [run] button\n\n*/\n\nlet didClickOk = confirm('please click \"ok\":');\n\nlet message = '';\ndebugger;\nif (didClickOk !== true) {\n  message = ':(';\n} else {\n  message = 'thank you!';\n}\n\nalert(message);\n"
+              }
+            ]
+          },
+          {
+            "name": "exercises",
+            "type": "directory",
+            "path": "/1-isolate/exercises",
+            "children": [
+              {
+                "name": "1-greeting.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "1-greeting",
+                "dir": "1-isolate/exercises",
+                "path": "/1-isolate/exercises/1-greeting.js",
+                "lang": ".js",
+                "content": "'use strict';\n\nlet input = prompt('enter your name:');\n\nlet greeting = '';\nif (input === null) {\n  greeting = 'hello anonymous.';\n} else {\n  greeting = 'hello ' + input + '!';\n}\n\nalert(greeting);\n\n/*  ===== Challenges =====\n  - Ask the user for their first and last names.\n  - Greet them with their full name.\n*/\n"
+              },
+              {
+                "name": "2-five-characters.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "2-five-characters",
+                "dir": "1-isolate/exercises",
+                "path": "/1-isolate/exercises/2-five-characters.js",
+                "lang": ".js",
+                "content": "\"use strict\";\n\nlet input = prompt(\"enter something with 5 characters:\");\n\nlet message = \"\";\nif (input === null) {\n  message = \":(\";\n} else if (input.length < 5) {\n  message = \"too short\";\n} else if (input.length === 5) {\n  message = \"thank you!\";\n} else {\n  message = \"too long\";\n}\n\nalert(message);\n\n/*  ===== Challenges =====\n  - Give \"input\" a default value before asking for the user input.\n  - Change input's value after asking for the user input so that we always show \"thank you!\".\n  - Add one more conditional so that we never show \":(\" and don't always show \"thank you!\".\n*/\n"
+              },
+              {
+                "name": "3-eary-words.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "3-eary-words",
+                "dir": "1-isolate/exercises",
+                "path": "/1-isolate/exercises/3-eary-words.js",
+                "lang": ".js",
+                "content": "\"use strict\";\n\nlet input = prompt('enter something with \"ear\" in it');\n\nlet message;\nif (input === null) {\n  message = \"you canceled\";\n} else {\n  if (input.includes(\"ear\")) {\n    message = \"eary!\";\n  } else {\n    message = \"not eary :(\";\n  }\n}\n\nalert(message);\n"
+              },
+              {
+                "name": "4-eary-words.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "4-eary-words",
+                "dir": "1-isolate/exercises",
+                "path": "/1-isolate/exercises/4-eary-words.js",
+                "lang": ".js",
+                "content": "\"use strict\";\n\nlet input = prompt('enter something with \"ear\" in it');\n\nlet message;\nif (input !== null) {\n  if (input.includes(\"ear\")) {\n    message = \"eary!\";\n  } else {\n    message = \"not eary :(\";\n  }\n} else {\n  message = \"you canceled\";\n}\n\nalert(message);\n"
+              },
+              {
+                "name": "5-memory-game.js",
+                "type": "file",
+                "ext": ".js",
+                "base": "5-memory-game",
+                "dir": "1-isolate/exercises",
+                "path": "/1-isolate/exercises/5-memory-game.js",
+                "lang": ".js",
+                "content": "\"use strict\";\n\nlet thingToRemember = prompt(\n  \"enter some text, then remember it.\\n\\n\" +\n    \"if you remember it correctly you win\"\n);\n\nif (thingToRemember !== null) {\n  let displayTheText = confirm(\n    \"would you like to see your text one more time?\"\n  );\n  if (displayTheText) {\n    alert(thingToRemember);\n  }\n\n  let guess = prompt(\"now try to remember what it was:\");\n  if (guess !== null && guess === thingToRemember) {\n    alert(\"you win!\");\n  } else {\n    alert(\"try again.\");\n  }\n}\n\nalert(\"good bye\");\n"
+              }
+            ]
+          },
+          {
+            "name": "study.json",
+            "type": "file",
+            "ext": ".json",
+            "base": "study",
+            "dir": "1-isolate",
+            "path": "/1-isolate/study.json",
+            "lang": ".json",
+            "content": "{\n  \"study\": {\n    \"save\": true,\n    \"run\": true,\n    \"debug\": true,\n    \"ask\": true,\n    \"flowchart\": true,\n    \"variables\": true,\n    \"blanks\": true,\n    \"trace\": true,\n    \"table\": true,\n    \"pseudo\": true\n  }\n}\n"
+          }
+        ]
+      },
+      {
+        "name": "2-integrate",
+        "type": "directory",
+        "path": "/2-integrate",
+        "children": [
+          {
+            "name": "examples",
+            "type": "directory",
+            "path": "/2-integrate/examples",
+            "children": [
+              {
+                "name": "0-the-sources-tab",
+                "type": "directory",
+                "path": "/2-integrate/examples/0-the-sources-tab",
+                "children": [
+                  {
+                    "name": "app.js",
+                    "type": "file",
+                    "ext": ".js",
+                    "base": "app",
+                    "dir": "2-integrate/examples/0-the-sources-tab",
+                    "path": "/2-integrate/examples/0-the-sources-tab/app.js",
+                    "lang": ".js",
+                    "content": "/* A Script\n\n  this script is run when the page loads\n  \n  can you find this script in your \"sources\" tab?\n\n*/\n\ndebugger;\n\n// try adding a breakpoint on this line, then refreshing\nconsole.log(\"hello!\");\n"
+                  },
+                  {
+                    "name": "index.html",
+                    "type": "file",
+                    "ext": ".html",
+                    "base": "index",
+                    "dir": "2-integrate/examples/0-the-sources-tab",
+                    "path": "/2-integrate/examples/0-the-sources-tab/index.html",
+                    "lang": ".html",
+                    "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>first name only</title>\n\n    <link href=\"./styles.css\" rel=\"stylesheet\" />\n  </head>\n\n  <body>\n    <h1>The \"Sources\" Tab</h1>\n\n    <p>\n      The \"sources\" tab in your devtools shows you the source code for any web\n      page, and has tools for stepping through and debugging your code.\n      <br />\n      Can you find the sources for this page?\n    </p>\n\n    <p>\n      Here's\n      <a href=\"https://www.youtube.com/watch?v=CoESC2XGZLg\" target=\"_blank\"\n        >a video</a\n      >\n      and\n      <a\n        href=\"https://developer.chrome.com/docs/devtools/javascript/sources/\"\n        target=\"_blank\"\n        >an article</a\n      >.\n    </p>\n\n    <script src=\"./app.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                  },
+                  {
+                    "name": "styles.css",
+                    "type": "file",
+                    "ext": ".css",
+                    "base": "styles",
+                    "dir": "2-integrate/examples/0-the-sources-tab",
+                    "path": "/2-integrate/examples/0-the-sources-tab/styles.css",
+                    "lang": ".css",
+                    "content": "body {\n  background-color: aquamarine;\n}\n"
+                  }
+                ]
+              },
+              {
+                "name": "1-dom-io",
+                "type": "directory",
+                "path": "/2-integrate/examples/1-dom-io",
+                "children": [
+                  {
+                    "name": "app.js",
+                    "type": "file",
+                    "ext": ".js",
+                    "base": "app",
+                    "dir": "2-integrate/examples/1-dom-io",
+                    "path": "/2-integrate/examples/1-dom-io/app.js",
+                    "lang": ".js",
+                    "content": "// --- import the DOM I/O functions to use in this program ---\n\n//  there are only 5 functions, just enough to practice fundamentals\nimport {\n  whenFormDataChanges,\n  readString,\n  readBoolean,\n  readNumber,\n  displayString,\n} from \"../../lib/dom-io/index.js\";\n\n// --- listen for changes in the form's data ---\n// pass the id of a form you want to use: \"example-data\"\n// just use the `() => {` syntax for now, you'll study functions later\nwhenFormDataChanges(\"example-data\", () => {\n  // --- this code will be run each time the form data changes ---\n\n  console.log(\"\\n--- form data changed ---\");\n\n  // --- read user input from the DOM into your program ---\n\n  // reads from an input with type \"text\"\n  let string = readString(\"string-value\"); // id=\"string-value\"\n  console.log(string);\n\n  // reads from an input with type \"checkbox\"\n  let boolean = readBoolean(\"boolean-value\"); // id=\"boolean-value\"\n  console.log(boolean);\n\n  // reads from an input with type \"number\"\n  let number = readNumber(\"number-value\"); // id=\"number-value\"\n  console.log(number);\n\n  // --- display text to the user ---\n\n  let message =\n    \"string:  \" + string + \"\\nboolean: \" + boolean + \"\\nnumber:  \" + number;\n  console.log(message);\n\n  // writes text into a <pre> tag, anything that was there will be overwritten\n  displayString(\"example-output\", message); // id=\"example-output\"\n});\n"
+                  },
+                  {
+                    "name": "index.html",
+                    "type": "file",
+                    "ext": ".html",
+                    "base": "index",
+                    "dir": "2-integrate/examples/1-dom-io",
+                    "path": "/2-integrate/examples/1-dom-io/index.html",
+                    "lang": ".html",
+                    "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>DOM I/O</title>\n\n    <link href=\"./styles.css\" rel=\"stylesheet\" />\n  </head>\n\n  <body>\n    <div>\n      <form id=\"example-data\">\n        <label>a string: <input id=\"string-value\" type=\"text\" /> </label>\n        <br />\n        <label>a boolean: <input id=\"boolean-value\" type=\"checkbox\" /> </label\n        ><br />\n        <label\n          >a number: <input id=\"number-value\" type=\"number\" value=\"0\" />\n        </label>\n      </form>\n\n      <hr />\n\n      <pre id=\"example-output\" class=\"computery\"></pre>\n    </div>\n\n    <script src=\"./app.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                  },
+                  {
+                    "name": "styles.css",
+                    "type": "file",
+                    "ext": ".css",
+                    "base": "styles",
+                    "dir": "2-integrate/examples/1-dom-io",
+                    "path": "/2-integrate/examples/1-dom-io/styles.css",
+                    "lang": ".css",
+                    "content": ".computery {\n  font-family: monospace;\n  color: chartreuse;\n  background-color: black;\n  height: 5em;\n  width: 20em;\n}\n"
+                  }
+                ]
+              },
+              {
+                "name": "2-step-over",
+                "type": "directory",
+                "path": "/2-integrate/examples/2-step-over",
+                "children": [
+                  {
+                    "name": "app.js",
+                    "type": "file",
+                    "ext": ".js",
+                    "base": "app",
+                    "dir": "2-integrate/examples/2-step-over",
+                    "path": "/2-integrate/examples/2-step-over/app.js",
+                    "lang": ".js",
+                    "content": "import {\n  whenFormDataChanges,\n  readString,\n  readBoolean,\n  readNumber,\n  displayString,\n} from \"../../lib/dom-io/index.js\";\n\n/* Stepping Over\n\n  When you step through a program, it will go through every line\n    this includes functions written in a different file\n  sometimes you just want to see the result, not every line\n\n  You can use the \"step over\" button to skip the code inside a function\n    this way you can keep going through your program\n    without being distracted by the extra code\n\n  PS. you don't need to understand functions just yet\n    for now you just need to skip over them in the devtools\n\n*/\n\ndebugger; // once when the script is loaded\nconsole.log(\"--- the script is loading ---\");\n\nwhenFormDataChanges(\"example-data\", () => {\n  debugger; // each time the form data changes\n  console.log(\"--- form data has changed ---\");\n\n  // --- read user input from the DOM ---\n\n  // step over this line\n  let string = readString(\"string-value\");\n\n  // step over this line\n  let boolean = readBoolean(\"boolean-value\");\n\n  // step over this line\n  let number = readNumber(\"number-value\");\n\n  // --- display text to the user ---\n\n  // step normally through this line\n  let message =\n    \"string:  \" + string + \"\\nboolean: \" + boolean + \"\\nnumber:  \" + number;\n\n  // step over this line\n  displayString(\"example-output\", message);\n});\n\nconsole.log(\"--- the script has finished loading ---\");\n"
+                  },
+                  {
+                    "name": "index.html",
+                    "type": "file",
+                    "ext": ".html",
+                    "base": "index",
+                    "dir": "2-integrate/examples/2-step-over",
+                    "path": "/2-integrate/examples/2-step-over/index.html",
+                    "lang": ".html",
+                    "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>step over</title>\n\n    <link href=\"./styles.css\" rel=\"stylesheet\" />\n  </head>\n\n  <body>\n    <div>\n      <form id=\"example-data\">\n        <label>a string: <input id=\"string-value\" type=\"text\" /> </label>\n        <br />\n        <label>a boolean: <input id=\"boolean-value\" type=\"checkbox\" /> </label\n        ><br />\n        <label>a number: <input id=\"number-value\" type=\"number\" /> </label>\n      </form>\n\n      <hr />\n\n      <pre id=\"example-output\" class=\"computery\"></pre>\n    </div>\n\n    <script src=\"./app.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                  },
+                  {
+                    "name": "styles.css",
+                    "type": "file",
+                    "ext": ".css",
+                    "base": "styles",
+                    "dir": "2-integrate/examples/2-step-over",
+                    "path": "/2-integrate/examples/2-step-over/styles.css",
+                    "lang": ".css",
+                    "content": ".computery {\n  font-family: monospace;\n  color: chartreuse;\n  background-color: black;\n  height: 5em;\n  width: 20em;\n}\n"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "exercises",
+            "type": "directory",
+            "path": "/2-integrate/exercises",
+            "children": [
+              {
+                "name": "README.md",
+                "type": "file",
+                "ext": ".md",
+                "base": "README",
+                "dir": "2-integrate/exercises",
+                "path": "/2-integrate/exercises/README.md",
+                "lang": ".md",
+                "content": "# DOM I/O\n\nThese exercises do not use `prompt`/`alert`/`confirm`, instead they use the DOM\nI/O library. There are examples in this folder that can help you figure it out,\nand you can also check [the documentation](../../../lib/dom-io/DOCS.md) for more\ninformation.\n\nYou can solve these exercises using only JS language features you've studied so\nfar in Just Enough JavaScript\n"
+              },
+              {
+                "name": "cat-detector",
+                "type": "directory",
+                "path": "/2-integrate/exercises/cat-detector",
+                "children": [
+                  {
+                    "name": "app.js",
+                    "type": "file",
+                    "ext": ".js",
+                    "base": "app",
+                    "dir": "2-integrate/exercises/cat-detector",
+                    "path": "/2-integrate/exercises/cat-detector/app.js",
+                    "lang": ".js",
+                    "content": "import {\n  whenFormDataChanges,\n  readString,\n  displayString,\n} from \"../../lib/dom-io/index.js\";\n\n// ===== declare program constants =====\n\nconst CAT = ` \n   .       .\n   |\\\\_---_/|\n  /   o o   \\\\\n  |    U    |\n  \\\\  ._I_.  /\n   '-_____-'`;\n\nconst NOT_CAT = `\n    \\\\ \\\\  / /\n     \\\\ \\\\/ /\n      \\\\  /\n      /  \\\\\n     / /\\\\ \\\\\n    / /  \\\\ \\\\`;\n\n// ===== define user interaction =====\n\nwhenFormDataChanges(\"maybe-a-cat\", () => {\n  debugger;\n\n  // --- read user input ---\n\n  let input = readString(\"catext\");\n\n  // --- detect if the input is a cat or not ---\n\n  let isCat;\n  if (input.toLowerCase() === \"cat\") {\n    isCat = true;\n  } else {\n    isCat = false;\n  }\n\n  // --- determine which feedback to display ---\n\n  let feedback;\n  if (isCat) {\n    feedback = CAT;\n  } else {\n    feedback = NOT_CAT;\n  }\n\n  // --- display the message ---\n\n  displayString(\"cat-detection\", feedback);\n});\n"
+                  },
+                  {
+                    "name": "index.html",
+                    "type": "file",
+                    "ext": ".html",
+                    "base": "index",
+                    "dir": "2-integrate/exercises/cat-detector",
+                    "path": "/2-integrate/exercises/cat-detector/index.html",
+                    "lang": ".html",
+                    "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>cat detector</title>\n\n    <link href=\"./styles.css\" rel=\"stylesheet\" />\n  </head>\n\n  <body>\n    <div>\n      <form id=\"maybe-a-cat\">\n        <label\n          ><input id=\"catext\" type=\"text\" placeholder=\"cat, please.\"\n        /></label>\n      </form>\n\n      <hr />\n\n      <pre id=\"cat-detection\" class=\"computery\"></pre>\n    </div>\n\n    <script src=\"./app.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                  },
+                  {
+                    "name": "styles.css",
+                    "type": "file",
+                    "ext": ".css",
+                    "base": "styles",
+                    "dir": "2-integrate/exercises/cat-detector",
+                    "path": "/2-integrate/exercises/cat-detector/styles.css",
+                    "lang": ".css",
+                    "content": ".computery {\n  font-family: monospace;\n  color: chartreuse;\n  background-color: black;\n  height: 10em;\n  width: 10em;\n}\n"
+                  }
+                ]
+              },
+              {
+                "name": "search",
+                "type": "directory",
+                "path": "/2-integrate/exercises/search",
+                "children": [
+                  {
+                    "name": "app.js",
+                    "type": "file",
+                    "ext": ".js",
+                    "base": "app",
+                    "dir": "2-integrate/exercises/search",
+                    "path": "/2-integrate/exercises/search/app.js",
+                    "lang": ".js",
+                    "content": "import {\n  whenFormDataChanges,\n  readString,\n  readBoolean,\n  displayString,\n} from \"../../lib/dom-io/index.js\";\n\nwhenFormDataChanges(\"search-input\", () => {\n  debugger;\n\n  console.log(\"--- form data changed ---\");\n\n  // --- read the user's input ---\n\n  let searchThis = readString(\"text\");\n  let findThis = readString(\"query\");\n\n  let caseSensitive = readBoolean(\"sensitive\");\n\n  // --- do the search ---\n\n  let doesExist = false;\n\n  if (caseSensitive) {\n    doesExist = searchThis.includes(findThis);\n  } else {\n    let smallSearchThis = searchThis.toLowerCase();\n    let smallFindThis = findThis.toLowerCase();\n    doesExist = smallSearchThis.includes(smallFindThis);\n  }\n\n  // --- create the message ---\n\n  let message = \"\";\n\n  if (doesExist) {\n    message = \"yes\";\n  } else {\n    message = \"no\";\n  }\n\n  // --- display the search results ---\n\n  displayString(\"search-result\", message);\n});\n\n/*  ===== Challenges =====\n\n  - display a more helpful message than \"yes\" or \"no\"\n  - change the conditional so the `if` is NOT case sensitive and the `else` is\n\n*/\n"
+                  },
+                  {
+                    "name": "index.html",
+                    "type": "file",
+                    "ext": ".html",
+                    "base": "index",
+                    "dir": "2-integrate/exercises/search",
+                    "path": "/2-integrate/exercises/search/index.html",
+                    "lang": ".html",
+                    "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf8\" />\n\n    <title>search</title>\n\n    <link href=\"./styles.css\" rel=\"stylesheet\" />\n  </head>\n\n  <body>\n    <form id=\"search-input\">\n      <label>Does <input id=\"text\" type=\"text\" /></label>\n      <label>include <input id=\"query\" type=\"text\" /></label>\n      ?\n      <br />\n      <label>case-sensitive: <input id=\"sensitive\" type=\"checkbox\" /></label>\n    </form>\n\n    <hr />\n\n    <pre id=\"search-result\" class=\"computery\"></pre>\n\n    <script src=\"./app.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                  },
+                  {
+                    "name": "styles.css",
+                    "type": "file",
+                    "ext": ".css",
+                    "base": "styles",
+                    "dir": "2-integrate/exercises/search",
+                    "path": "/2-integrate/exercises/search/styles.css",
+                    "lang": ".css",
+                    "content": ".computery {\n  font-family: monospace;\n  color: chartreuse;\n  background-color: black;\n  height: 2em;\n  width: 30em;\n}\n"
+                  }
+                ]
+              },
+              {
+                "name": "time-management",
+                "type": "directory",
+                "path": "/2-integrate/exercises/time-management",
+                "children": [
+                  {
+                    "name": "app.js",
+                    "type": "file",
+                    "ext": ".js",
+                    "base": "app",
+                    "dir": "2-integrate/exercises/time-management",
+                    "path": "/2-integrate/exercises/time-management/app.js",
+                    "lang": ".js",
+                    "content": "import {\n  whenFormDataChanges,\n  readBoolean,\n  displayString,\n} from \"../../lib/dom-io/index.js\";\n\nwhenFormDataChanges(\"sleep-info\", () => {\n  debugger;\n\n  console.log(\"--- form data changed ---\");\n\n  // --- read user input ---\n\n  // read a boolean from the <input> with id \"tired\"\n  let isTired = readBoolean(\"tired\");\n\n  // read a boolean from the <input> with id \"free-time\"\n  let hasTime = readBoolean(\"free-time\");\n\n  // --- generate advice ---\n\n  let advice = \"\";\n  if (isTired && hasTime) {\n    advice = \"Take a nap!\";\n  } else if (!isTired && hasTime) {\n    advice = \"Study some flashcards.\";\n  } else if (isTired && !hasTime) {\n    advice = \"Make some coffee.\";\n  } else if (!isTired && !hasTime) {\n    advice = \"Have a great day!\";\n  }\n\n  // --- display the advice ---\n\n  // display a string to the <pre> with id \"advice-area\"\n  displayString(\"advice-area\", advice);\n});\n\n/*  ===== Challenges =====\n\n  - change the conditional so it uses `else` instead of `else if`\n\n*/\n"
+                  },
+                  {
+                    "name": "index.html",
+                    "type": "file",
+                    "ext": ".html",
+                    "base": "index",
+                    "dir": "2-integrate/exercises/time-management",
+                    "path": "/2-integrate/exercises/time-management/index.html",
+                    "lang": ".html",
+                    "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>time management</title>\n\n    <link href=\"./styles.css\" rel=\"stylesheet\" />\n  </head>\n\n  <body>\n    <div>\n      <form id=\"sleep-info\">\n        <label><input id=\"tired\" type=\"checkbox\" /> Are you tired?</label>\n        <br />\n        <label\n          ><input id=\"free-time\" type=\"checkbox\" /> Do you have 20\n          minutes?</label\n        >\n      </form>\n\n      <hr />\n\n      <pre id=\"advice-area\" class=\"computery\"></pre>\n    </div>\n\n    <script src=\"./app.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                  },
+                  {
+                    "name": "styles.css",
+                    "type": "file",
+                    "ext": ".css",
+                    "base": "styles",
+                    "dir": "2-integrate/exercises/time-management",
+                    "path": "/2-integrate/exercises/time-management/styles.css",
+                    "lang": ".css",
+                    "content": ".computery {\n  font-family: monospace;\n  color: chartreuse;\n  background-color: black;\n  height: 5em;\n  width: 20em;\n}\n"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "lib",
+            "type": "directory",
+            "path": "/2-integrate/lib",
+            "children": [
+              {
+                "name": "dom-io",
+                "type": "directory",
+                "path": "/2-integrate/lib/dom-io",
+                "children": [
+                  {
+                    "name": "DOCS.md",
+                    "type": "file",
+                    "ext": ".md",
+                    "base": "DOCS",
+                    "dir": "2-integrate/lib/dom-io",
+                    "path": "/2-integrate/lib/dom-io/DOCS.md",
+                    "lang": ".md",
+                    "content": "# DOM IO Functions\n\nThere are 5 functions in this DOM IO library to help you transition from\n`prompt`/`alert`/`confirm` to projects that use HTML/CSs/JS. They are simple\nfunctions but just enough to build basic web pages that process user input.\n\nYou will not be able to do everything you see in online DOM tutorials, but you\ncan learn many foundational skills with less distraction including:\n\n- reading documentation (this README!)\n- using functions from a library\n- using HTML + JS to read user input\n- _event-driven programming_\n- ... and much more\n\n## Helpful Errors\n\nThese functions will throw many errors, that's a good thing! The errors are\nthere to help catch your mistakes before they become frustrating mysteries, and\nto help you learn to use DOM elements correctly.\n\nThe most common errors you will get are because:\n\n- one of the arguments you passed is the wrong type\n- there is not element with the ID you requested\n- you are trying to read/set an element with the wrong data type\n- an input element does not have a label (important for accessibility)\n\n## The Functions\n\n- [When Form Data Changes](#whenformdatachangesid-function)\n- [Read String](#readstringid)\n- [Read Boolean](#readbooleanid)\n- [Read Number](#readnumberid)\n- [Display String](#displaystringid-text)\n\n---\n\n---\n\n### `whenFormDataChanges('id', function)`\n\nThis function takes the ID of a `<form>` element and a _handler\nfunction_<sup>\\*</sup> describing what should happen when the user changes the\nform's data.\n\nWhen the user change's the form data, the code in your handler will be executed.\n\n```js\n// log the user's favorite number each time they change the input\n\nwhenFormDataChanges('user-data', () => {\n  console.log('you just changed the form data!');\n});\n```\n\nThis function supports these HTML elements:\n\n```html\n<!-- a form with an id -->\n<form id=\"user-data\"></form>\n```\n\n> <sup>\\*</sup> _handler function_: You will learn about functions & handlers in\n> later modules, for now you can just use the syntax from this example.\n\n[Table of Contents](#the-functions)\n\n---\n\n---\n\n## `readString(\"id\")`\n\nThis function takes in the ID of the `<input>` or `<textarea>` and returns the\nstring value it stores.\n\n```js\nconst someWords = readString('words');\nconst anOption = readString('radio-options');\nconst aSelection = readString('selection');\n\nconsole.log(someWords, anOption, aSelection);\n```\n\nThis function supports these HTML elements:\n\n```html\n<!-- all <input>, <fieldset> and <select> must be inside a <form> -->\n<form>\n  <!-- labeled text inputs with an id -->\n  <label>inputs with type \"text\"<input id=\"words\" type=\"text\" /></label>\n\n  <!-- fieldsets with an id, containing labeled & named radio inputs -->\n  <fieldset id=\"radio-options\">\n    <label>red: <input type=\"radio\" name=\"color\" checked /></label>\n    <label>blue: <input type=\"radio\" name=\"color\" /></label>\n    <!-- ... -->\n  </fieldset>\n\n  <!-- select elements with an id, containing options -->\n  <select id=\"selection\">\n    <option>A</option>\n    <option value=\"B\">b</option>\n    <!-- ... -->\n  </select>\n</form>\n```\n\n[Table of Contents](#the-functions)\n\n---\n\n## `readBoolean(\"id\")`\n\nThis function takes in the ID of an `<input>` and returns the boolean value it\nstores.\n\n```js\nconst storeAllTheirData = readBoolean('cookies');\n\nconsole.log(storeAllTheirData);\n```\n\nThis function supports these HTML elements:\n\n```html\n<!-- all <input> must be inside a <form> -->\n<form>\n  <!-- a labeled checkbox input with an id -->\n  <label><input id=\"cookies\" type=\"checkbox\" /> accept all cookies</label>\n</form>\n```\n\n[Table of Contents](#the-functions)\n\n---\n\n## `readNumber(\"id\")`\n\nThis function takes in the ID of the `<input>` and returns the user's number.\n\n```js\nconst userAge = readNumber('age');\nconst userRange = readNumber('one-to-hundred');\n\nconsole.log(userAge, userRange);\n```\n\nThis function supports these HTML elements:\n\n```html\n<!-- all <input> must be inside a <form> -->\n<form>\n  <!-- a labeled number input with an id -->\n  <label>your age: <input id=\"age\" type=\"number\" /></label>\n\n  <!-- a labeled range input with an id -->\n  <label>between 1-100 <input id=\"one-to-hundred\" type=\"range\" /></label>\n</form>\n```\n\n[Table of Contents](#the-functions)\n\n---\n\n---\n\n## `displayString(\"id\", \"text\")`\n\nDisplays a string inside a `<pre>` tag.\n\n```js\ndisplayString('program-output', 'Good Morning!');\n```\n\nThis functions supports these HTML elements:\n\n```html\n<form></form>\n\n<!-- the <pre> element must have an id and be outside of a <form> -->\n<pre id=\"program-output\"></pre>\n```\n\n[Table of Contents](#the-functions)\n"
+                  },
+                  {
+                    "name": "README.md",
+                    "type": "file",
+                    "ext": ".md",
+                    "base": "README",
+                    "dir": "2-integrate/lib/dom-io",
+                    "path": "/2-integrate/lib/dom-io/README.md",
+                    "lang": ".md",
+                    "content": "# DOM IO\n\nA small library of functions to build simple programs that read user input from\nthe DOM and output a string to the DOM. The API is scoped for building I/O\nprograms that listen to a form change then read strings, numbers or booleans and\ndisplay a formatted string in a `<pre>` tag. There is no support for DOM\nmanipulation or dynamically modifying styles.\n\nThis tight scope allows you to focus on the relationship between program inputs\nand outputs, types, and debugging without getting lost in the syntax or\ncomplexity of a full DOM-based web page.\n\n- [documentation for the 5 library functions](DOCS.md)\n- [an example of the programs you can build](./example/README.md)\n"
+                  },
+                  {
+                    "name": "example",
+                    "type": "directory",
+                    "path": "/2-integrate/lib/dom-io/example",
+                    "children": [
+                      {
+                        "name": "README.md",
+                        "type": "file",
+                        "ext": ".md",
+                        "base": "README",
+                        "dir": "2-integrate/lib/dom-io/example",
+                        "path": "/2-integrate/lib/dom-io/example/README.md",
+                        "lang": ".md",
+                        "content": "# DOM IO: Example\n\nA program that repeats a user's input any number of times, and sets the repeated\ntext to either upper or lower case.\n"
+                      },
+                      {
+                        "name": "index.css",
+                        "type": "file",
+                        "ext": ".css",
+                        "base": "index",
+                        "dir": "2-integrate/lib/dom-io/example",
+                        "path": "/2-integrate/lib/dom-io/example/index.css",
+                        "lang": ".css",
+                        "content": ".computery {\n  font-family: monospace;\n  color: chartreuse;\n  background-color: black;\n}\n"
+                      },
+                      {
+                        "name": "index.html",
+                        "type": "file",
+                        "ext": ".html",
+                        "base": "index",
+                        "dir": "2-integrate/lib/dom-io/example",
+                        "path": "/2-integrate/lib/dom-io/example/index.html",
+                        "lang": ".html",
+                        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>dom io example</title>\n\n    <link href=\"./index.css\" rel=\"stylesheet\" />\n  </head>\n\n  <body>\n    <div>\n      <form id=\"repeaty\">\n        <label>repeat this: <input id=\"to-repeat\" type=\"text\" /></label>\n        <br />\n        <label>\n          this many times: <input id=\"repeats\" type=\"number\" value=\"1\"\n        /></label>\n        <br />\n        <label><input id=\"loud\" type=\"checkbox\" /> upper case</label>\n      </form>\n\n      <hr />\n\n      <pre id=\"out\" class=\"computery\"></pre>\n    </div>\n\n    <script src=\"index.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                      },
+                      {
+                        "name": "index.js",
+                        "type": "file",
+                        "ext": ".js",
+                        "base": "index",
+                        "dir": "2-integrate/lib/dom-io/example",
+                        "path": "/2-integrate/lib/dom-io/example/index.js",
+                        "lang": ".js",
+                        "content": "import {\n  whenFormDataChanges,\n  readString,\n  readBoolean,\n  readNumber,\n  displayString,\n} from '../index.js';\n\nwhenFormDataChanges('repeaty', () => {\n  // debugger;\n\n  // --- read user input ---\n\n  const text = readString('to-repeat');\n  const repetitions = readNumber('repeats');\n  const screaming = readBoolean('loud');\n\n  // --- repeat the string input ---\n\n  let repeated = '';\n  while (repeated.length < text.length * repetitions) {\n    repeated = repeated + text;\n  }\n\n  // --- set to upper or lower case ---\n\n  let finalText = '';\n  if (screaming) {\n    finalText = repeated.toUpperCase();\n  } else {\n    finalText = repeated.toLowerCase();\n  }\n\n  // --- display the final text ---\n\n  displayString('out', finalText);\n});\n"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "index.js",
+                    "type": "file",
+                    "ext": ".js",
+                    "base": "index",
+                    "dir": "2-integrate/lib/dom-io",
+                    "path": "/2-integrate/lib/dom-io/index.js",
+                    "lang": ".js",
+                    "content": "// ===== constants =====\n\nconst NO_ARG = Symbol('no arg');\n\n// ===== the listener function =====\n\nexport const whenFormDataChanges = (id = NO_ARG, handler = NO_ARG) => {\n  const functionName = 'whenFormDataChanges';\n\n  validateId(id, functionName);\n\n  if (handler === NO_ARG) {\n    throw new Error(\n      `you did not pass a handler function.\\n-> first argument of ${functionName}\\n`,\n    );\n  }\n  if (typeof handler !== 'function') {\n    throw new TypeError(\n      `handler must be a function.\\n-> second argument of ${functionName}\\n`,\n    );\n  }\n\n  const element = validateGetElement(id);\n\n  if (element.nodeName !== 'FORM') {\n    throw new Error(`${element.nodeName.toLowerCase()}#${id} is not a form.\\n`);\n  }\n\n  element.addEventListener('input', handler);\n};\n\n// ===== input functions =====\n\n// --- reading a string ---\n\nconst stringInputTypes = [\n  'text',\n  // 'password'\n];\n\nexport const readString = (id = NO_ARG) => {\n  const functionName = 'readString';\n\n  validateId(id, functionName);\n\n  const element = validateGetElement(id);\n\n  if (\n    element.nodeName !== 'INPUT' &&\n    element.nodeName !== 'SELECT' &&\n    element.nodeName !== 'FIELDSET'\n  ) {\n    throw new Error(\n      `${element.nodeName.toLowerCase()}#${id} is not an <input>, <fieldset> or <select> element\\n`,\n    );\n  }\n  if (\n    element.nodeName === 'INPUT' &&\n    !stringInputTypes.includes(element.type)\n  ) {\n    throw new Error(\n      `input#${id}[type=${element.type}] is not supported for strings, try using one of these instead:\\n\\n- select\\n- ` +\n        stringInputTypes.map((type) => `input[type=${type}]`).join('\\n- ') +\n        '\\n',\n    );\n  }\n\n  validateIsFormChild(element);\n\n  // if (element.nodeName === 'INPUT' || element.nodeName === 'SELECT') {\n  //   validateHasLabel(element);\n  // }\n\n  return element.nodeName === 'FIELDSET'\n    ? readFieldsetValue(element)\n    : element.nodeName === 'SELECT'\n    ? readSelectValue(element)\n    : element.value;\n};\n\n// --- reading a boolean ---\n\nexport const readBoolean = (id = NO_ARG) => {\n  const functionName = 'readBoolean';\n\n  validateId(id, functionName);\n\n  const element = validateGetElement(id);\n\n  if (element.nodeName !== 'INPUT') {\n    throw new Error(\n      `${element.nodeName.toLowerCase()}#${id} is not an <input> element\\n`,\n    );\n  }\n  if (element.type !== 'checkbox') {\n    throw new Error(\n      `input#${id}[type=${element.type.toLowerCase()}] is not for booleans.\\n\\n` +\n        '- you should use input[type=checkbox]\\n',\n    );\n  }\n\n  validateIsFormChild(element);\n\n  // validateHasLabel(element);\n\n  return element.checked;\n};\n\n// --- reading a number ---\n\nconst numberInputTypes = ['number', 'range'];\n\nexport const readNumber = (id = NO_ARG) => {\n  const functionName = 'readNumber';\n\n  validateId(id, functionName);\n\n  const element = validateGetElement(id);\n\n  if (element.nodeName !== 'INPUT') {\n    throw new Error(\n      `${element.nodeName.toLowerCase()}#${id} is not an <input> element\\n`,\n    );\n  }\n  if (!numberInputTypes.includes(element.type)) {\n    throw new Error(\n      `input#${id}[type=${element.type}] is not supported for numbers, try using one of these instead:\\n- ` +\n        numberInputTypes.map((type) => `input[type=${type}]`).join('\\n- ') +\n        '\\n',\n    );\n  }\n\n  validateIsFormChild(element);\n\n  // validateHasLabel(element);\n\n  return Number(element.value || 0);\n};\n\n// ===== output function =====\n\nexport const displayString = (id = NO_ARG, text = NO_ARG) => {\n  const functionName = 'displayString';\n\n  validateId(id, functionName);\n\n  if (text === NO_ARG) {\n    throw new Error(\n      `you did not pass a string to display.\\n-> second argument of ${functionName}\\n`,\n    );\n  }\n  if (typeof text !== 'string') {\n    throw new TypeError(\n      `value to display must be a string.\\n-> second argument of ${functionName}\\n`,\n    );\n  }\n\n  const element = validateGetElement(id);\n\n  if (element.nodeName !== 'PRE') {\n    throw new Error(\n      `${element.nodeName.toLowerCase()}#${id} is not a <pre> tag, try:\\n\\n` +\n        '- changing the tag to a <pre>\\n' +\n        '- making sure you passed the correct id\\n',\n    );\n  }\n\n  validateIsFormChild(element, false);\n\n  element.innerText = text;\n};\n\n// ===== hoisted utility functions =====\n\nfunction validateId(id = '', functionName = '') {\n  if (id === NO_ARG) {\n    throw new Error(\n      `you did not pass an id.\\n-> first argument of ${functionName}\\n`,\n    );\n  }\n  if (typeof id !== 'string') {\n    throw new TypeError(\n      `id is not a string.\\n-> first argument of ${functionName}\\n`,\n    );\n  }\n}\n\nfunction validateGetElement(id = '') {\n  const element = document.getElementById(id);\n  if (element === null) {\n    throw new Error(`there is no element with id \"${id}\"\\n`);\n  }\n  return element;\n}\n\nfunction validateIsFormChild(element, shouldBe = true) {\n  let parent = element.parentElement;\n  while (parent !== null) {\n    if (!shouldBe && parent.nodeName === 'FORM') {\n      throw new Error(\n        `${element.nodeName.toLowerCase()}#${\n          element.id\n        } is in a <form> but it should not be, try either:\\n\\n` +\n          '- moving the element out of the form\\n' +\n          '- changing the element to an input\\n' +\n          '- making sure you are using the correct id\\n',\n      );\n    } else if (shouldBe && parent.node === 'FORM') {\n      break;\n    }\n    parent = parent.parentElement;\n  }\n  if (shouldBe && parent !== null) {\n    throw new Error(\n      `${element.nodeName.toLowerCase()}#${\n        element.id\n      } is not in a <form> but it should be, try either:\\n\\n` +\n        '- moving the element into a form\\n' +\n        '- using a different element\\n' +\n        '- making sure you are using the correct id\\n',\n    );\n  }\n}\n\n// not using for the moment, too strict\nfunction validateHasLabel(element) {\n  // https://stackoverflow.com/a/285565\n  let itDoes = false;\n\n  const labels = Array.from(document.getElementsByTagName('label'));\n  for (const label of labels) {\n    if (\n      (label.htmlFor && element.id && label.htmlFor === element.id) ||\n      label.contains(element)\n    ) {\n      itDoes = true;\n      break;\n    }\n  }\n\n  if (!itDoes) {\n    throw new Error(\n      `${element.nodeName.toLowerCase()}#${element.id}${\n        element.nodeName === 'INPUT' ? `[type=${element.type}]` : ''\n      } does not have a label.\\n`,\n    );\n  }\n}\n\nfunction readFieldsetValue(element) {\n  if (element.childElementCount === 0) {\n    throw new Error(\n      `fieldset#${element.id} is empty.\\n\\n- try adding inputs with [type=radio]\\n`,\n    );\n  }\n\n  const children = Array.from(element.querySelectorAll('input'));\n  if (!children.some((child) => child.nodeName === 'INPUT')) {\n    throw new Error(`fieldset#${element.id} contains no <input> elements.\\n`);\n  }\n\n  const inputChildren = children.filter((el) => el.nodeName === 'INPUT');\n  if (!inputChildren.every((child) => child.type === 'radio')) {\n    throw new Error(\n      `fieldset#${element.id} contains <input> elements that are not [type=radio].\\n`,\n    );\n  }\n\n  const firstName = inputChildren[0].name;\n  for (const child of inputChildren) {\n    if (firstName !== child.name) {\n      throw new Error(\n        `all radio inputs in fieldset#${element.id} do not have the same name, try:\\n\\n` +\n          '- making all of the names the same\\n' +\n          '- using more than one <fieldset> elements\\n',\n      );\n    }\n  }\n\n  const radioSiblings = Array.from(\n    document.querySelectorAll(`input[name=${firstName}]`),\n  );\n\n  const isChildOfFiledset = (el) =>\n    el === element\n      ? true\n      : el === null\n      ? false\n      : isChildOfFiledset(el.parentElement);\n  if (!radioSiblings.every(isChildOfFiledset)) {\n    throw new Error(\n      `some radio inputs with [name=${firstName}] are not in fieldset#${element.id}, try:\\n\\n` +\n        `- moving all radios with this name into this fieldset#${element.id}\\n` +\n        `- renaming radios with this that are not in fieldset#${element.id}\\n`,\n    );\n  }\n\n  // for (const radioSib of radioSiblings) {\n  //   validateHasLabel(radioSib);\n  // }\n\n  const checkedSibling = radioSiblings.find((sib) => sib.checked);\n  if (checkedSibling) {\n    return checkedSibling.value;\n  } else {\n    throw new Error(\n      `Failed to read value from fieldset#${element.id}, no radios with [name=${firstName}] are selected. Try:\\n\\n` +\n        '- or adding the `checked` attribute one of the radios in this <fieldset>\\n',\n    );\n  }\n}\n\nfunction readSelectValue(element) {\n  const children = Array.from(element.children);\n\n  if (children.length === 0) {\n    throw new Error(`select#${element.id} has no children.\\n`);\n  }\n\n  if (children.some((child) => child.nodeName !== 'OPTION')) {\n    throw new Error(\n      `some children of select#${element.id} are not <option> tags.\\n`,\n    );\n  }\n\n  if (children.some((child) => child.value === '' && child.innerText === '')) {\n    throw new Error(\n      `some options in select#${element.id} do not have a value.\\n`,\n    );\n  }\n\n  if (children.some((child) => child.value !== '' && child.innerText === '')) {\n    throw new Error(\n      `some options in select#${element.id} do not have any text.\\n`,\n    );\n  }\n\n  return element.value;\n}\n"
+                  },
+                  {
+                    "name": "test",
+                    "type": "directory",
+                    "path": "/2-integrate/lib/dom-io/test",
+                    "children": [
+                      {
+                        "name": "index.html",
+                        "type": "file",
+                        "ext": ".html",
+                        "base": "index",
+                        "dir": "2-integrate/lib/dom-io/test",
+                        "path": "/2-integrate/lib/dom-io/test/index.html",
+                        "lang": ".html",
+                        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>testing dom io</title>\n\n    <style></style>\n  </head>\n\n  <body>\n    <div>\n      <form id=\"user-data\">\n        <!-- valid boolean inputs -->\n\n        <label><input id=\"red\" type=\"checkbox\" /> the color red</label>\n        <br />\n\n        <!-- valid string inputs -->\n\n        <label for=\"words\">cool fish</label\n        ><input id=\"words\" type=\"text\" value=\"ray\" />\n        <br />\n        <!-- --- error case: unsupported input type -->\n        <!-- <label\n          >a secret\n          <input id=\"pw\" type=\"password\" value=\"secret\" />\n        </label> -->\n\n        <label for=\"pig\">p, i, g</label>\n        <select id=\"pig\">\n          <!-- --- error case: an option with no value or inner text -->\n          <!-- <option></option> -->\n          <option>p</option>\n          <!-- --- error case: an option with a value but not text -->\n          <!-- <option value=\"i\"></option> -->\n          <option value=\"i\">I</option>\n          <option selected>g</option>\n          <!-- --- error case: a non-option element -->\n          <!-- <div></div> -->\n          <!-- --- error case: no options in a select -->\n        </select>\n\n        <fieldset id=\"toad\">\n          <label\n            >t<input type=\"radio\" name=\"toad-letters\" value=\"t\" checked\n          /></label>\n          <br />\n          <!-- --- error case: none of the radios are checked -->\n          <!-- <label>t<input type=\"radio\" name=\"toad-letters\" value=\"t\" /></label> -->\n          <!-- --- error case: no label -->\n          <!-- t<input type=\"radio\" name=\"toad-letters\" value=\"t\" checked /> -->\n          <label>o<input type=\"radio\" name=\"toad-letters\" value=\"o\" /></label\n          ><br />\n          <label>a<input type=\"radio\" name=\"toad-letters\" value=\"a\" /></label\n          ><br />\n          <label>d<input type=\"radio\" name=\"toad-letters\" value=\"d\" /></label\n          ><br />\n          <!-- --- error case: radio input with a different name inside this fieldset -->\n          <!-- <label>d<input type=\"radio\" name=\"letters\" value=\"d\" /></label> -->\n          <!-- --- error case: non-radio input inside this fieldset -->\n          <!-- <label>d<input type=\"text\" name=\"toad-letters\" value=\"d\" /></label> -->\n        </fieldset>\n        <!-- --- error case: radio input with matching name outside of the fieldset -->\n        <!-- <input type=\"radio\" name=\"toad-letters\" value=\"d\" /> -->\n\n        <!-- valid number inputs  -->\n\n        <label>x<input type=\"range\" id=\"x\" /></label>\n        <br />\n        <label>y<input type=\"number\" id=\"y\" value=\"22\" /></label>\n\n        <!-- --- error case: <pre> output is in a form -->\n        <!-- <pre id=\"should-not-be-in-a-form\"></pre> -->\n      </form>\n\n      <hr />\n\n      <!-- valid output container -->\n      <pre id=\"out\"></pre>\n\n      <!-- --- error cases: inputs are out of a form -->\n      <!-- <input id=\"should-be-in-a-form-n\" type=\"number\" /> -->\n      <!-- <input id=\"should-be-in-a-form-s\" type=\"text\" /> -->\n      <!-- <input id=\"should-be-in-a-form-b\" type=\"checkbox\" /> -->\n    </div>\n\n    <script src=\"./index.js\" type=\"module\"></script>\n  </body>\n</html>\n"
+                      },
+                      {
+                        "name": "index.js",
+                        "type": "file",
+                        "ext": ".js",
+                        "base": "index",
+                        "dir": "2-integrate/lib/dom-io/test",
+                        "path": "/2-integrate/lib/dom-io/test/index.js",
+                        "lang": ".js",
+                        "content": "import {\n  whenFormDataChanges,\n  readString,\n  readBoolean,\n  readNumber,\n  displayString,\n} from '../index.js';\n\n// ===== success cases =====\n\nwhenFormDataChanges('user-data', () => {\n  // debugger\n\n  // --- reading strings ---\n\n  const word = readString('words'); // input text\n  const pig = readString('pig'); // select options\n  const toad = readString('toad'); // fieldset input radio\n\n  // --- reading booleans ---\n\n  const red = readBoolean('red'); // input checkbox\n\n  // --- reading numbers ---\n\n  const x = readNumber('x'); // input range\n  const y = readNumber('y'); // input number\n\n  // --- displaying strings ---\n\n  const message = [red, word, pig, toad, x, y].join(', ');\n  displayString('out', message);\n});\n\n// ===== error cases =====\n\n// --- passing no/wrong arguments ---\n\n// whenFormDataChanges();\n// whenFormDataChanges(true);\n// whenFormDataChanges('');\n// whenFormDataChanges('', true);\n\n// whenFormDataChanges('user-data', () => readNumber());\n// whenFormDataChanges('user-data', () => readNumber(true));\n\n// whenFormDataChanges('user-data', () => readString());\n// whenFormDataChanges('user-data', () => readString(true));\n\n// whenFormDataChanges('user-data', () => readBoolean());\n// whenFormDataChanges('user-data', () => readBoolean(true));\n\n// whenFormDataChanges('user-data', () => displayString());\n// whenFormDataChanges('user-data', () => displayString(true));\n// whenFormDataChanges('user-data', () => displayString(''));\n// whenFormDataChanges('user-data', () => displayString('', true));\n\n// --- element does not exist ---\n\n// whenFormDataChanges('asdf', () => {});\n// whenFormDataChanges('user-data', () => readBoolean('asdf'));\n// whenFormDataChanges('user-data', () => readString('asdf'));\n// whenFormDataChanges('user-data', () => readNumber('asdf'));\n// whenFormDataChanges('user-data', () => displayString('asdf', ''));\n\n// --- accessing wrong element types ---\n\n// whenFormDataChanges('user-data', () => readString('red')); // wrong input type\n// whenFormDataChanges('user-data', () => readNumber('red')); // wrong input type\n// whenFormDataChanges('user-data', () => readBoolean('t')); // wrong input type\n// whenFormDataChanges('user-data', () => readBoolean('out')); // not an input\n// whenFormDataChanges('user-data', () => readNumber('out')); // not an input\n// whenFormDataChanges('user-data', () => readString('out')); // not an input\n// whenFormDataChanges('user-data', () => displayString('t', ''));\n// whenFormDataChanges('red', () => {});\n\n// --- elements are/not in a form ---\n\n// whenFormDataChanges('user-data', () =>\n//   readNumber('should-be-in-a-form-n'),\n// );\n// whenFormDataChanges('user-data', () =>\n//   readString('should-be-in-a-form-s'),\n// );\n// whenFormDataChanges('user-data', () =>\n//   readBoolean('should-be-in-a-form-b'),\n// );\n// whenFormDataChanges('user-data', () =>\n//   displayString('should-not-be-in-a-form', ''),\n// );\n"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "study.json",
+            "type": "file",
+            "ext": ".json",
+            "base": "study",
+            "dir": "2-integrate",
+            "path": "/2-integrate/study.json",
+            "lang": ".json",
+            "content": "{\n  \"study\": {\n    \"save\": true,\n    \"highlight\": true,\n    \"table\": true\n  }\n}\n"
+          }
+        ]
+      },
+      {
+        "name": "LICENSE",
+        "type": "file",
+        "ext": "",
+        "base": "LICENSE",
+        "dir": "",
+        "path": "/LICENSE",
+        "lang": "",
+        "content": "MIT License\n\nCopyright (c) 2023 @DeNepo\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+      },
+      {
+        "name": "README.md",
+        "type": "file",
+        "ext": ".md",
+        "base": "README",
+        "dir": "",
+        "path": "/README.md",
+        "lang": ".md",
+        "content": "# Predictive Stepping\n\nPractice predicting each step of program execution, using your browser's debugger to check your predictions every step of the way.\n\n---\n\n## Learning Objectives\n\n### The Browser's Debugger\n\n- 🥚 **Stepping Through**: You can use the _Step_ button to go through a program\n  one statement at a time, pausing an any line you want to inspect.\n- 🥚 **Scope Panel**: You can use the _Scope_ panel in your debugger to find the\n  value of all active variables at step of execution, including when a variable\n  is _uninitialized_.\n- 🥚 **Hovering Previews**: You can preview the value of any expression or\n  initialized variable in your program, including parts of a longer expression.\n- 🥚 **Breakpoints**: Once in the Debugger, you can set and unset breakpoints to\n  skip ahead to specific lines. You can also set and unset breakpoints within a\n  line when possible.\n- 🥚 **Stepping Over**: You can step over functions in your program to skip\n  their _implementation_ and focus on your program's behavior.\n- 🐣 **`debugger` Statement**: You understand the difference between `debugger`\n  and a breakpoint, and can write a `debugger` statement in your source code to\n  pause the program before specific lines.\n\n### Debugging Workflows\n\n- **Programs with `prompt/alert/confirm` interactions**:\n  - 🥚 You can open, run, debug _and_ edit these JavaScript programs programs with Study Lenses.\n- **Programs with HTML, CSS and DOM Interactions**:\n  - 🥚 You can edit these programs in VSCode.\n  - 🥚 You can open these programs' in the browser using a file path, LiveServer or Study Lenses.\n  - 🥚 You run and debug these programs in the browser using your browser's devtools.\n\n---\n\n## During Class\n\nPractice stepping through and predicting programs behavior using your browser's debugger.\n\n### Before Break\n\n- **All Together**:\n  - Discuss the [Predictive Stepping](./predictive-stepping.md) study method.\n  - A coach demonstrates the debugger features in `/1-isolate/examples`\n- **In Small Groups**:\n  - Practice stepping through and predicting the programs in\n    `/1-isolate/exercises`\n\n**Break!**\n\n### After Break\n\n- **All Together**:\n  - A coach demonstrates how to step through JavaScript in an\n    HTML project with `/2-integrate/examples`\n- **In Small Groups**:\n  - Practice stepping through and predicting the programs in\n    `/2-integrate/exercises`\n- **All Together**\n  - Each group will share: What went well? What went less well? Lessons learned?\n  - Discuss!\n"
+      },
+      {
+        "name": "predictive-stepping.md",
+        "type": "file",
+        "ext": ".md",
+        "base": "predictive-stepping",
+        "dir": "",
+        "path": "/predictive-stepping.md",
+        "lang": ".md",
+        "content": "# Predictive Stepping\n\n_Predictive Stepping_ is a study method where you quiz yourself on each step of a program's execution, checking your predictions with using a debugger. After you have a basic familiarity with your debugger, this study method is simple and effective - it's like having a teacher by your side every day of the week!\n\nBefore learning more about predictive stepping, you first need to understand ...\n\n## Program Memory\n\n_Program Memory_ is a term that refers to the values stored in memory at EACH\nSPECIFIC moment of execution. These values can change often, sometimes at every\nstep of your program! Learning to program requires you to understand:\n\n- how does the JS engine represent memory?\n- how does the JS engine interpret your code line-by-line?\n- how does each instruction interact with program memory?\n\nYour first goal is learning to see what is happening inside your program at each\nstep:\n\n- **DevTools Debugger**: The best way to peek inside program memory. It will\n  take some practice to use effectively and is worth every second. You can see\n  every value in memory, at every step of your program's execution. Debuggers\n  are designed to help you understand how memory is structured in JS\n\n## The Study Technique\n\nTo check if you _really_ understand a program, practice stepping through it in the debugger like so:\n\n0. Don't step forward yet!\n1. Predict which line will execute next and how it will change program state\n2. Step forward in the program.\n3. Check your prediction.\n4. Investigate if you were wrong: Is this a bug in the program, or is it something you did not understand?\n\nThat's it, happy studies!\n"
+      },
+      {
+        "name": "study.json",
+        "type": "file",
+        "ext": ".json",
+        "base": "study",
+        "dir": "",
+        "path": "/study.json",
+        "lang": ".json",
+        "content": "{\n  \"--port\": 1337\n}\n"
+      }
+    ],
+    "metadata": {
+      "source": "https://github.com/denepo/predictive-stepping",
+      "processed_at": "2025-07-26T03:26:28.982Z",
+      "processor_version": "1.0.0"
+    }
+  },
+  "timestamp": "2025-07-26T03:26:28.983Z",
+  "ttl": 3600000
+}

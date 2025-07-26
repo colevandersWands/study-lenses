@@ -1,0 +1,62 @@
+.fullPageContainer {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	background: var(--color-bg);
+}
+
+.studyBar {
+	flex-shrink: 0;
+	border-bottom: 1px solid var(--color-border);
+	background: var(--color-bg-secondary);
+}
+
+.mainContent {
+	flex: 1;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.lensContainer {
+	flex: 1;
+	overflow: auto;
+	padding: 0;
+}
+
+.error {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	text-align: center;
+	padding: 40px 20px;
+}
+
+.error h3 {
+	color: var(--color-error);
+	margin-bottom: 12px;
+	font-size: 24px;
+}
+
+.error p {
+	color: var(--color-text-secondary);
+	margin-bottom: 12px;
+	max-width: 500px;
+	line-height: 1.5;
+}
+
+.executionContainer {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	max-width: 400px;
+	max-height: 300px;
+	overflow: auto;
+	background: var(--color-bg-secondary);
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+}

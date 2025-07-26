@@ -1,0 +1,13 @@
+{
+	"name": "Study Lenses",
+	"short_name": "Study Lenses",
+	"description": "Learn programming through interactive code study lenses",
+	"theme_color": "#2d2d30",
+	"background_color": "#1e1e1e",
+	"display": "standalone",
+	"scope": "/",
+	"start_url": "/",
+	"icons": [],
+	"categories": ["education", "developer", "productivity"],
+	"screenshots": []
+}

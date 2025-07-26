@@ -1,0 +1,33 @@
+/* Override xterm.js styles to match app theme */
+.xterm {
+  padding: 8px !important;
+}
+
+.xterm .xterm-viewport {
+  background-color: #1e1e1e !important;
+}
+
+.xterm .xterm-screen {
+  background-color: #1e1e1e !important;
+}
+
+/* Python console specific styles */
+.python-terminal-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.python-plot-container {
+  background: #2d2d30;
+  margin: 8px 0;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.python-plot-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}

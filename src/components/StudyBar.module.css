@@ -1,0 +1,397 @@
+/* StudyBar Component Styles */
+
+.studyBar {
+	display: flex;
+	flex-direction: column;
+	background: #252526;
+	border: 1px solid #464647;
+	border-radius: 6px;
+	padding: 8px;
+	margin: 8px 0;
+	position: relative;
+}
+
+/* Layout variants */
+.studyBar.horizontal .buttonContainer {
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.studyBar.vertical .buttonContainer {
+	flex-direction: column;
+	gap: 4px;
+}
+
+.studyBar.grid .buttonContainer {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 6px;
+}
+
+/* Variant styles */
+.studyBar.full {
+	padding: 12px;
+}
+
+.studyBar.compact {
+	padding: 6px;
+}
+
+.studyBar.compact .header {
+	display: none;
+}
+
+.studyBar.compact .footer {
+	display: none;
+}
+
+.studyBar.minimal {
+	padding: 4px;
+	background: transparent;
+	border: none;
+	margin: 4px 0;
+}
+
+.studyBar.minimal .header {
+	display: none;
+}
+
+.studyBar.minimal .footer {
+	display: none;
+}
+
+.studyBar.minimal .buttonContainer {
+	gap: 2px;
+}
+
+/* Disabled state */
+.studyBar.disabled {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+/* Header */
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid #464647;
+}
+
+.title {
+	font-size: 12px;
+	font-weight: 600;
+	color: #9cdcfe;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.buttonCount {
+	font-size: 10px;
+	color: #858585;
+	background: #383838;
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+
+/* Button container */
+.buttonContainer {
+	display: flex;
+	align-items: center;
+}
+
+/* Button wrapper */
+.buttonWrapper {
+	display: flex;
+	align-items: center;
+}
+
+/* Separator */
+.separator {
+	width: 1px;
+	height: 20px;
+	background: #464647;
+	margin: 0 4px;
+}
+
+.studyBar.vertical .separator {
+	width: 100%;
+	height: 1px;
+	margin: 2px 0;
+}
+
+.studyBar.grid .separator {
+	display: none;
+}
+
+/* Footer */
+.footer {
+	margin-top: 8px;
+	padding-top: 6px;
+	border-top: 1px solid #464647;
+}
+
+.hint {
+	font-size: 10px;
+	color: #858585;
+	font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.studyBar.horizontal .buttonContainer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.studyBar.horizontal .separator {
+		width: 100%;
+		height: 1px;
+		margin: 2px 0;
+	}
+
+	.studyBar.grid .buttonContainer {
+		grid-template-columns: 1fr;
+	}
+
+	.header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+}
+
+@media (max-width: 480px) {
+	.studyBar {
+		padding: 6px;
+	}
+
+	.studyBar.full {
+		padding: 8px;
+	}
+}
+
+/* Dark mode adjustments (already dark by default) */
+@media (prefers-color-scheme: light) {
+	.studyBar {
+		background: #f8f8f8;
+		border-color: #e0e0e0;
+		color: #333;
+	}
+
+	.title {
+		color: #0066cc;
+	}
+
+	.buttonCount {
+		background: #e0e0e0;
+		color: #666;
+	}
+
+	.separator {
+		background: #e0e0e0;
+	}
+
+	.hint {
+		color: #666;
+	}
+
+	.header {
+		border-bottom-color: #e0e0e0;
+	}
+
+	.footer {
+		border-top-color: #e0e0e0;
+	}
+}
+
+/* Animation for smooth interactions */
+.buttonContainer {
+	transition: all 0.2s ease;
+}
+
+.studyBar:hover {
+	border-color: #5a5a5a;
+}
+
+.studyBar.minimal:hover {
+	border: none;
+}
+
+/* Focus indicators for accessibility */
+.studyBar:focus-within {
+	outline: 2px solid #007acc;
+	outline-offset: 2px;
+}
+
+/* Render Lens Dropdown Styles */
+.renderLensDropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdownToggle {
+	background: #383838;
+	color: #d4d4d4;
+	border: 1px solid #464647;
+	border-radius: 4px;
+	padding: 6px 10px;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.dropdownToggle:hover {
+	background: #404040;
+	border-color: #5a5a5a;
+}
+
+.dropdownToggle:active {
+	background: #2d2d2d;
+}
+
+.dropdownMenu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	min-width: 200px;
+	background: #252526;
+	border: 1px solid #464647;
+	border-radius: 6px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	z-index: 10000;
+	margin-top: 2px;
+}
+
+.dropdownHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border-bottom: 1px solid #464647;
+	background: #2d2d30;
+	border-radius: 6px 6px 0 0;
+}
+
+.dropdownHeader span {
+	font-size: 11px;
+	font-weight: 600;
+	color: #9cdcfe;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.dropdownClose {
+	background: none;
+	border: none;
+	color: #858585;
+	font-size: 16px;
+	cursor: pointer;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 2px;
+}
+
+.dropdownClose:hover {
+	background: #404040;
+	color: #d4d4d4;
+}
+
+.dropdownItem {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 8px 12px;
+	background: none;
+	border: none;
+	color: #d4d4d4;
+	font-size: 13px;
+	cursor: pointer;
+	text-align: left;
+	transition: background 0.2s ease;
+}
+
+.dropdownItem:hover {
+	background: #2d2d30;
+}
+
+.dropdownItem:active {
+	background: #383838;
+}
+
+.dropdownItem:last-child {
+	border-radius: 0 0 6px 6px;
+}
+
+.lensIcon {
+	color: #9cdcfe;
+	font-size: 14px;
+}
+
+/* Light mode dropdown styles */
+@media (prefers-color-scheme: light) {
+	.dropdownToggle {
+		background: #f0f0f0;
+		color: #333;
+		border-color: #d0d0d0;
+	}
+
+	.dropdownToggle:hover {
+		background: #e8e8e8;
+		border-color: #c0c0c0;
+	}
+
+	.dropdownMenu {
+		background: #ffffff;
+		border-color: #d0d0d0;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		z-index: 10000;
+	}
+
+	.dropdownHeader {
+		background: #f8f8f8;
+		border-bottom-color: #d0d0d0;
+	}
+
+	.dropdownHeader span {
+		color: #0066cc;
+	}
+
+	.dropdownClose {
+		color: #666;
+	}
+
+	.dropdownClose:hover {
+		background: #f0f0f0;
+		color: #333;
+	}
+
+	.dropdownItem {
+		color: #333;
+	}
+
+	.dropdownItem:hover {
+		background: #f8f8f8;
+	}
+
+	.dropdownItem:active {
+		background: #f0f0f0;
+	}
+
+	.lensIcon {
+		color: #0066cc;
+	}
+}
