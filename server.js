@@ -32,7 +32,7 @@ const __dirname = path.dirname(__filename);
 
 // Initialize Express app
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4567;
 
 // Initialize services
 const githubClient = new GitHubClient();
@@ -74,8 +74,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve Study Lenses static files directly from the dist directory
-// const studyLensesPath = path.join(__dirname, 'dist');
-// app.use('/', express.static(studyLensesPath));
+const studyLensesPath = path.join(__dirname, 'dist');
+app.use('/', express.static(studyLensesPath));
 
 // Input validation middleware
 const validateGitHubName = (req, res, next) => {
