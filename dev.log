@@ -3,130 +3,80 @@
 > vite
 
 Port 3000 is in use, trying another one...
+Port 3001 is in use, trying another one...
 
-  VITE v5.4.19  ready in 276 ms
+  VITE v5.4.19  ready in 335 ms
 
-  ➜  Local:   http://localhost:3001/
-  ➜  Network: http://10.253.18.138:3001/
-3:49:06 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-3:50:21 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-3:56:11 PM [vite] hmr update /src/lenses/StudyLens.jsx
-3:56:20 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:24:45 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:25:01 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:25:12 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:26:17 PM [vite] hmr update /shared/components/LensIcon.jsx
-4:26:25 PM [vite] hmr update /shared/components/LensIcon.jsx
-4:26:33 PM [vite] hmr update /shared/components/LensIcon.jsx
-4:26:42 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:26:51 PM [vite] hmr update /shared/components/LensIcon.jsx
-4:36:19 PM [vite] hmr update /shared/components/RunCode.jsx
-4:36:27 PM [vite] hmr update /shared/components/RunCode.jsx
-4:44:50 PM [vite] hmr update /shared/components/RunCode.jsx
-4:44:58 PM [vite] hmr update /shared/components/RunCode.jsx
-4:45:05 PM [vite] hmr update /shared/components/RunCode.jsx
-4:45:12 PM [vite] hmr update /shared/components/RunCode.jsx
-4:45:19 PM [vite] hmr update /shared/components/RunCode.jsx
-4:45:27 PM [vite] hmr update /shared/components/RunCode.jsx
-4:54:57 PM [vite] hmr update /shared/components/RunCode.jsx
-4:55:14 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:55:23 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:55:49 PM [vite] hmr update /src/lenses/StudyLens.jsx
-4:55:56 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:14:47 PM [vite] hmr update /shared/components/RunCode.jsx
-5:15:06 PM [vite] hmr update /shared/components/RunCode.jsx
-5:16:29 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:16:39 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:16:49 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:16:59 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:17:10 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:17:36 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:19:47 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:20:01 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:20:15 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:20:25 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:20:33 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:20:44 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:23:04 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:23:14 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:23:30 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:23:47 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:31:01 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:31:35 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:31:46 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:32:11 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:32:19 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:34:26 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:34:34 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:35:33 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:35:41 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:35:54 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:36:27 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:48:40 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:48:54 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:56:07 PM [vite] hmr update /src/lenses/StudyLens.jsx
-5:56:29 PM [vite] hmr update /src/lenses/StudyLens.jsx
-6:09:34 PM [vite] hmr update /src/lenses/StudyLens.jsx
-6:10:21 PM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-6:10:54 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-6:11:44 PM [vite] hmr update /src/lenses/StudyLens.jsx
-6:11:53 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:26:27 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:26:41 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:27:23 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:27:36 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:27:43 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:27:57 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:28:07 PM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-9:34:19 PM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-9:34:38 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-9:39:25 PM [vite] hmr update /src/components/ExercisePicker.jsx
-9:39:33 PM [vite] hmr update /src/components/ExercisePicker.jsx
-9:39:53 PM [vite] hmr update /src/components/ExercisePicker.jsx
-10:36:30 PM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-10:36:57 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-10:39:20 PM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-10:39:35 PM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-10:39:53 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-9:42:22 AM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-9:42:30 AM [vite] hmr update /src/components/ExerciseRenderer.jsx
-9:53:28 AM [vite] hmr update /src/components/ExercisePicker.jsx
-9:53:37 AM [vite] hmr update /src/components/ExercisePicker.jsx
-10:03:58 AM [vite] hmr update /src/lenses/StudyLens.jsx
-10:04:25 AM [vite] hmr update /src/lenses/StudyLens.jsx
-10:04:50 AM [vite] hmr update /src/lenses/StudyLens.jsx
-10:11:19 AM [vite] hmr update /src/lenses/StudyLens.jsx
-10:11:28 AM [vite] hmr update /src/lenses/StudyLens.jsx
-10:11:36 AM [vite] hmr update /src/lenses/StudyLens.jsx
-10:12:11 AM [vite] hmr update /src/components/FileBrowser.jsx
-10:12:18 AM [vite] hmr update /src/components/FileBrowser.jsx
-10:16:02 AM [vite] page reload index.html
-10:52:48 AM [vite] page reload index.html
-8:10:50 PM [vite] hmr update /src/lenses/StudyLens.jsx
-8:38:22 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-8:38:29 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-8:47:51 PM [vite] hmr update /src/App.jsx
-8:48:07 PM [vite] hmr update /src/App.jsx
-8:48:13 PM [vite] hmr update /src/App.jsx
-8:48:21 PM [vite] hmr update /src/App.jsx
-8:48:28 PM [vite] hmr update /src/App.jsx
-8:48:54 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:49:02 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:53:30 PM [vite] hmr update /src/App.jsx
-8:53:37 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:53:58 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:54:05 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:54:13 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:54:20 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:54:28 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-8:54:37 PM [vite] hmr update /src/App.jsx, /src/components/FileBrowser.jsx, /src/components/RepoLoader.jsx
-9:01:06 PM [vite] page reload index.html
-9:04:34 PM [vite] page reload index.html
-9:44:19 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:44:35 PM [vite] hmr update /src/lenses/StudyLens.jsx
-9:46:22 PM [vite] page reload index.html
-9:54:58 PM [vite] hmr update /src/components/ExercisePicker.jsx, /shared/components/LensIcon.jsx
-9:55:14 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
-9:56:16 PM [vite] hmr update /shared/components/LensIcon.jsx
-9:56:30 PM [vite] hmr update /shared/components/LensIcon.jsx
-9:56:47 PM [vite] hmr update /shared/components/LensIcon.jsx
+  ➜  Local:   http://localhost:3002/
+  ➜  Network: http://10.1.10.20:3002/
+[vite-plugin-static-copy] Collected 1 items.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/master/Documents/0-teach-code/0---the-big-idea/00--evancole-be/0--snippetry/dump/00-claude-refactoring/0--study-lenses--it-begins/public/static/ask/multiple-choice/qlcjs.mjs as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/master/Documents/0-teach-code/0---the-big-idea/00--evancole-be/0--snippetry/dump/00-claude-refactoring/0--study-lenses--it-begins/public/static/ask/multiple-choice/qlcjs.mjs as it exceeds the max of 500KB.
+Files in the public directory are served at the root path.
+Instead of /public/static/blanks/blankenate.js, use /static/blanks/blankenate.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/component/ask-questions.js, use /static/ask/component/ask-questions.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/ask.js, use /static/ask/open-ended/ask.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/multiple-choice/index.js, use /static/ask/multiple-choice/index.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/multiple-choice/qlcjs.mjs, use /static/ask/multiple-choice/qlcjs.mjs.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/config.js, use /static/ask/config.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/state.js, use /static/ask/open-ended/state.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/walking.js, use /static/ask/open-ended/walking.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/estree-walker/index.js, use /static/estree-walker/index.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/random-question/index.js, use /static/ask/open-ended/random-question/index.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/trace-loader.js, use /static/trace-loader.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/estree-walker/sync.js, use /static/estree-walker/sync.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/estree-walker/async.js, use /static/estree-walker/async.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/random-question/questions.js, use /static/ask/open-ended/random-question/questions.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/lib/shuffle.js, use /static/ask/open-ended/lib/shuffle.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/data/state.js, use /static/data/state.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/data/config.js, use /static/data/config.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/index.js, use /static/advice/index.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/pointcut.js, use /static/pointcut.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/lib/trace-log.js, use /static/lib/trace-log.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/estree-walker/walker.js, use /static/estree-walker/walker.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/random-question/node-filters.js, use /static/ask/open-ended/random-question/node-filters.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/random-question/helpers.js, use /static/ask/open-ended/random-question/helpers.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/ask/open-ended/random-question/node-type-collections.js, use /static/ask/open-ended/random-question/node-type-collections.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/variables.js, use /static/advice/variables.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/functions.js, use /static/advice/functions.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/operators.js, use /static/advice/operators.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/exception.js, use /static/advice/exception.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/blocks.js, use /static/advice/blocks.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/error-handling.js, use /static/advice/error-handling.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/advice/control-flow.js, use /static/advice/control-flow.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/lib/deep-clone.js, use /static/lib/deep-clone.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/lib/is-in-range.js, use /static/lib/is-in-range.js.
+Files in the public directory are served at the root path.
+Instead of /public/static/lib/is-built-in.js, use /static/lib/is-built-in.js.

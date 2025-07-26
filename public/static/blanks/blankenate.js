@@ -1,3 +1,6 @@
+
+import * as acorn from 'acorn';
+
 // SL1 Blanks Generation Logic
 // Uses Acorn parser to intelligently create blanks based on AST analysis
 
