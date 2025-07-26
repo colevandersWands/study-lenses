@@ -10,6 +10,15 @@ import { deepFreeze } from '../utils/deepFreeze.js';
 import styles from './MarkdownLens.module.css';
 import { BASE_PATH } from '../CONSTANTS.js';
 
+// Import Prism.js for syntax highlighting
+import Prism from 'prismjs';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/themes/prism-tomorrow.css'; // Dark theme to match editor
+
 // Import marked for robust markdown parsing
 import { marked } from 'marked';
 
@@ -17,8 +26,107 @@ import { marked } from 'marked';
 function processMarkdownWithCodeBlocks(content, resource, editorializedFiles) {
 	let codeBlockCounter = 0;
 
+	// Extract repository information from URL path for GitHub raw image resolution
+	const getRepoFromPath = () => {
+		const pathParts = window.location.pathname.split('/').filter(Boolean);
+		// Remove base path parts if present
+		const basePathParts = BASE_PATH.split('/').filter(Boolean);
+		const relevantParts = pathParts.slice(basePathParts.length);
+
+		if (relevantParts.length >= 2) {
+			return {
+				username: relevantParts[0],
+				repository: relevantParts[1],
+			};
+		}
+		return null;
+	};
+
+	// Extract repository information for GitHub raw image resolution
+	const repoInfo = getRepoFromPath();
+	if (repoInfo) {
+		console.log(
+			`🖼️ Repository context: ${repoInfo.username}/${repoInfo.repository}`
+		);
+		console.log(`📁 Current file directory: "${resource.dir || 'root'}"`);
+	} else {
+		console.log(
+			`📄 Not in GitHub repository context - images will use default relative paths`
+		);
+	}
+
 	// Create custom renderer
 	const renderer = new marked.Renderer();
+
+	// Custom image renderer for GitHub repository support
+	if (repoInfo) {
+		console.log('--------', repoInfo);
+		renderer.image = function ({ href, title, text }) {
+			console.log(href);
+			// If the href is already a full URL, use it as-is
+			if (href.startsWith('http://') || href.startsWith('https://')) {
+				console.log(`🖼️ External image URL: ${href}`);
+				return `<img src="${href}" alt="${text}" ${title ? `title="${title}"` : ''} />`;
+			}
+
+			// Get current file directory, normalized
+			const currentFileDir = (resource.dir || '').replace(
+				/^\/+|\/+$/g,
+				''
+			);
+			let resolvedPath = href;
+
+			// Handle different path patterns
+			if (href.startsWith('./')) {
+				// Current directory reference: './image.png' -> 'currentDir/image.png'
+				const imageName = href.substring(2);
+				resolvedPath = currentFileDir
+					? `${currentFileDir}/${imageName}`
+					: imageName;
+			} else if (href.startsWith('../')) {
+				// Parent directory reference: '../image.png' or '../../images/pic.png'
+				const pathParts = currentFileDir.split('/').filter(Boolean);
+				const relativeParts = href.split('/').filter(Boolean);
+
+				// Count how many levels up we need to go
+				let upLevels = 0;
+				for (const part of relativeParts) {
+					if (part === '..') {
+						upLevels++;
+					} else {
+						break;
+					}
+				}
+
+				// Build the resolved path by going up the directory tree
+				const remainingPath = pathParts.slice(
+					0,
+					Math.max(0, pathParts.length - upLevels)
+				);
+				const imagePath = relativeParts.slice(upLevels);
+				resolvedPath = [...remainingPath, ...imagePath].join('/');
+			} else if (href.startsWith('/')) {
+				// Absolute path from repository root: '/images/pic.png'
+				resolvedPath = href.substring(1);
+			} else {
+				// Relative path without prefix: 'image.png' -> 'currentDir/image.png'
+				resolvedPath = currentFileDir
+					? `${currentFileDir}/${href}`
+					: href;
+			}
+
+			// Clean up the resolved path
+			resolvedPath = resolvedPath.replace(/\/+/g, '/'); // Remove double slashes
+
+			// Construct the full GitHub raw URL
+			const imageUrl = `https://raw.githubusercontent.com/${repoInfo.username}/${repoInfo.repository}/refs/heads/main/${resolvedPath}`;
+			console.log(
+				`🖼️ Resolving image: "${href}" (from "${resource.dir || 'root'}") -> "${imageUrl}"`
+			);
+
+			return `<img src="${imageUrl}" alt="${text}" ${title ? `title="${title}"` : ''} />`;
+		};
+	}
 
 	// Custom code block renderer
 	renderer.code = (code) => {
@@ -60,15 +168,6 @@ function processMarkdownWithCodeBlocks(content, resource, editorializedFiles) {
 		gfm: true,
 	});
 }
-
-// Import Prism.js for syntax highlighting
-import Prism from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-markdown';
-import 'prismjs/themes/prism-tomorrow.css'; // Dark theme to match editor
 
 /**
  * Markdown Exercise Component - Renders markdown files as HTML
@@ -517,24 +616,41 @@ const MarkdownExercise = ({ resource }) => {
 					<div className={styles.panelContent}>
 						{runCode ? (
 							<div>
-								<button 
+								<button
 									onClick={async () => {
-										const { executeJavaScript } = await import('../utils/execution/index.js');
+										const { executeJavaScript } =
+											await import(
+												'../utils/execution/index.js'
+											);
 										// Create execution container in the panel
-										const existingContainer = document.getElementById('markdown-execution-output');
+										const existingContainer =
+											document.getElementById(
+												'markdown-execution-output'
+											);
 										if (existingContainer) {
 											existingContainer.remove();
 										}
-										
-										const container = document.createElement('div');
-										container.id = 'markdown-execution-output';
-										container.style.cssText = 'margin: 10px 0; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;';
-										
+
+										const container =
+											document.createElement('div');
+										container.id =
+											'markdown-execution-output';
+										container.style.cssText =
+											'margin: 10px 0; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;';
+
 										// Insert container after the button
-										document.querySelector(`.${styles.panelContent}`).appendChild(container);
-										
+										document
+											.querySelector(
+												`.${styles.panelContent}`
+											)
+											.appendChild(container);
+
 										// Execute the code
-										await executeJavaScript(runCode, {}, container);
+										await executeJavaScript(
+											runCode,
+											{},
+											container
+										);
 									}}
 									style={{
 										padding: '8px 16px',
@@ -542,7 +658,7 @@ const MarkdownExercise = ({ resource }) => {
 										color: 'white',
 										border: 'none',
 										borderRadius: '4px',
-										cursor: 'pointer'
+										cursor: 'pointer',
 									}}
 								>
 									▶️ Run Code

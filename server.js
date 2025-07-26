@@ -1,7 +1,7 @@
 /**
  * Study Lenses Server
  * A Node.js server that integrates GitHub repositories with Study Lenses
- * 
+ *
  * Routes:
  * - GET / : Landing page describing Study Lenses
  * - GET /:username : List user's GitHub repositories
@@ -40,18 +40,29 @@ const cacheManager = new CacheManager();
 const repoProcessor = new RepoProcessor(cacheManager);
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://api.github.com"]
-    },
-  },
-}));
+app.use(
+	helmet({
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: ["'self'"],
+				scriptSrc: [
+					"'self'",
+					"'unsafe-inline'",
+					"'unsafe-eval'",
+					'https://cdn.jsdelivr.net',
+				],
+				styleSrc: [
+					"'self'",
+					"'unsafe-inline'",
+					'https://fonts.googleapis.com',
+				],
+				fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+				imgSrc: ["'self'", 'data:', 'https:'],
+				connectSrc: ["'self'", 'https://api.github.com'],
+			},
+		},
+	})
+);
 
 // Performance middleware
 app.use(compression());
@@ -59,12 +70,12 @@ app.use(cors());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // increased limit for testing
-  message: {
-    error: 'Too many requests from this IP, please try again later.',
-    retryAfter: '15 minutes'
-  }
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 1000, // increased limit for testing
+	message: {
+		error: 'Too many requests from this IP, please try again later.',
+		retryAfter: '15 minutes',
+	},
 });
 
 app.use(limiter);
@@ -73,153 +84,189 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve Study Lenses static files directly from the dist directory
-const studyLensesPath = path.join(__dirname, 'dist');
-// app.use('/', express.static(studyLensesPath));
-
 // Input validation middleware
 const validateGitHubName = (req, res, next) => {
-  const { username, repository } = req.params;
-  
-  // GitHub username/repository name validation
-  const validName = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/;
-  
-  if (username && !validName.test(username)) {
-    return res.status(400).json({ 
-      error: 'Invalid username format',
-      message: 'GitHub usernames can contain alphanumeric characters and hyphens'
-    });
-  }
-  
-  if (repository && !validName.test(repository)) {
-    return res.status(400).json({ 
-      error: 'Invalid repository name format',
-      message: 'Repository names can contain alphanumeric characters and hyphens'
-    });
-  }
-  
-  next();
+	const { username, repository } = req.params;
+
+	// GitHub username/repository name validation
+	const validName = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/;
+
+	if (username && !validName.test(username)) {
+		return res.status(400).json({
+			error: 'Invalid username format',
+			message:
+				'GitHub usernames can contain alphanumeric characters and hyphens',
+		});
+	}
+
+	if (repository && !validName.test(repository)) {
+		return res.status(400).json({
+			error: 'Invalid repository name format',
+			message:
+				'Repository names can contain alphanumeric characters and hyphens',
+		});
+	}
+
+	next();
 };
 
 // Routes
 
 // Landing page - both root and under BASE_PATH
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'landing.html'));
+	res.sendFile(path.join(__dirname, 'views', 'landing.html'));
 });
 
-app.get('//', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'landing.html'));
-});
+// Serve Study Lenses static files directly from the dist directory
+const studyLensesPath = path.join(__dirname, 'dist');
+app.use('/', express.static(studyLensesPath));
+
 
 // User repository listing
-app.get('//:username', validateGitHubName, async (req, res) => {
-  try {
-    const { username } = req.params;
-    console.log(`Fetching repositories for user: ${username}`);
-    
-    const repos = await githubClient.getUserRepos(username);
-    
-    // Filter for educational repositories
-    const educationalRepos = repos.filter(repo => 
-      !repo.fork && 
-      !repo.archived && 
-      repo.size > 0 && // Has content
-      ['JavaScript', 'Python', 'HTML', 'CSS', 'TypeScript', 'Java', 'C++', 'C'].includes(repo.language)
-    );
-    
-    // Render repository listing page
-    res.send(generateRepoListingHTML(username, educationalRepos));
-    
-  } catch (error) {
-    console.error(`Error fetching repos for ${req.params.username}:`, error);
-    
-    if (error.status === 404) {
-      res.status(404).send(generateErrorHTML(`User '${req.params.username}' not found`));
-    } else {
-      res.status(500).send(generateErrorHTML('Failed to fetch repositories. Please try again later.'));
-    }
-  }
+app.get('/:username', validateGitHubName, async (req, res) => {
+	try {
+		const { username } = req.params;
+		console.log(`Fetching repositories for user: ${username}`);
+
+		const repos = await githubClient.getUserRepos(username);
+
+		// Filter for educational repositories
+		const educationalRepos = repos.filter(
+			(repo) =>
+				!repo.fork &&
+				!repo.archived &&
+				repo.size > 0 && // Has content
+				[
+					'JavaScript',
+					'Python',
+					'HTML',
+					'CSS',
+					'TypeScript',
+					'Java',
+					'C++',
+					'C',
+				].includes(repo.language)
+		);
+
+		// Render repository listing page
+		res.send(generateRepoListingHTML(username, educationalRepos));
+	} catch (error) {
+		console.error(
+			`Error fetching repos for ${req.params.username}:`,
+			error
+		);
+
+		if (error.status === 404) {
+			res.status(404).send(
+				generateErrorHTML(`User '${req.params.username}' not found`)
+			);
+		} else {
+			res.status(500).send(
+				generateErrorHTML(
+					'Failed to fetch repositories. Please try again later.'
+				)
+			);
+		}
+	}
 });
 
 // Repository viewer - serves Study Lenses frontend
-app.get('//:username/:repository', validateGitHubName, async (req, res) => {
-  const { username, repository } = req.params;
-  
-  try {
-    // Validate that the repository exists before serving the frontend
-    await githubClient.validateRepo(username, repository);
-    
-    // Serve the Study Lenses frontend (built React/Preact app)
-    res.sendFile(path.join(studyLensesPath, 'index.html'));
-    
-  } catch (error) {
-    console.error(`Error validating repo ${username}/${repository}:`, error);
-    
-    if (error.status === 404) {
-      res.status(404).send(generateErrorHTML(`Repository '${username}/${repository}' not found`));
-    } else {
-      res.status(500).send(generateErrorHTML('Failed to load repository. Please try again later.'));
-    }
-  }
+app.get('/:username/:repository', validateGitHubName, async (req, res) => {
+	const { username, repository } = req.params;
+
+	try {
+		// Validate that the repository exists before serving the frontend
+		await githubClient.validateRepo(username, repository);
+
+		// Serve the Study Lenses frontend (built React/Preact app)
+		res.sendFile(path.join(studyLensesPath, 'index.html'));
+	} catch (error) {
+		console.error(
+			`Error validating repo ${username}/${repository}:`,
+			error
+		);
+
+		if (error.status === 404) {
+			res.status(404).send(
+				generateErrorHTML(
+					`Repository '${username}/${repository}' not found`
+				)
+			);
+		} else {
+			res.status(500).send(
+				generateErrorHTML(
+					'Failed to load repository. Please try again later.'
+				)
+			);
+		}
+	}
 });
 
 // API endpoint for repository content
-app.get('//api/:username/:repository/content.json', validateGitHubName, async (req, res) => {
-  try {
-    const { username, repository } = req.params;
-    console.log(`Processing repository: ${username}/${repository}`);
-    
-    const repoData = await repoProcessor.processRepo(username, repository);
-    
-    // Set appropriate cache headers
-    res.set({
-      'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
-      'Content-Type': 'application/json'
-    });
-    
-    res.json(repoData);
-    
-  } catch (error) {
-    console.error(`Error processing repo ${req.params.username}/${req.params.repository}:`, error);
-    
-    res.status(500).json({ 
-      error: 'Failed to process repository',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
+app.get(
+	'/api/:username/:repository/content.json',
+	validateGitHubName,
+	async (req, res) => {
+		try {
+			const { username, repository } = req.params;
+			console.log(`Processing repository: ${username}/${repository}`);
+
+			const repoData = await repoProcessor.processRepo(
+				username,
+				repository
+			);
+
+			// Set appropriate cache headers
+			res.set({
+				'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+				'Content-Type': 'application/json',
+			});
+
+			res.json(repoData);
+		} catch (error) {
+			console.error(
+				`Error processing repo ${req.params.username}/${req.params.repository}:`,
+				error
+			);
+
+			res.status(500).json({
+				error: 'Failed to process repository',
+				message: error.message,
+				timestamp: new Date().toISOString(),
+			});
+		}
+	}
+);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || '1.0.0'
-  });
+	res.json({
+		status: 'healthy',
+		uptime: process.uptime(),
+		timestamp: new Date().toISOString(),
+		version: process.env.npm_package_version || '1.0.0',
+	});
 });
 
 // Global error handler
 app.use((error, req, res, next) => {
-  console.error('Unhandled error:', error);
-  
-  res.status(500).json({
-    error: 'Internal server error',
-    timestamp: new Date().toISOString(),
-    path: req.path
-  });
+	console.error('Unhandled error:', error);
+
+	res.status(500).json({
+		error: 'Internal server error',
+		timestamp: new Date().toISOString(),
+		path: req.path,
+	});
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).send(generateErrorHTML('Page not found'));
+	res.status(404).send(generateErrorHTML('Page not found'));
 });
 
 // Helper functions for generating HTML responses
 function generateRepoListingHTML(username, repos) {
-  return `
+	return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -247,9 +294,12 @@ function generateRepoListingHTML(username, repos) {
             <h1>${username}'s Repositories</h1>
             <p>Select a repository to study with Study Lenses</p>
         </div>
-        ${repos.length === 0 ? 
-          '<p>No educational repositories found for this user.</p>' :
-          repos.map(repo => `
+        ${
+			repos.length === 0
+				? '<p>No educational repositories found for this user.</p>'
+				: repos
+						.map(
+							(repo) => `
             <a href="/${username}/${repo.name}">
                 <div class="repo">
                     <div class="repo-name">${repo.name}</div>
@@ -260,15 +310,17 @@ function generateRepoListingHTML(username, repos) {
                     </div>
                 </div>
             </a>
-          `).join('')
-        }
+          `
+						)
+						.join('')
+		}
     </div>
 </body>
 </html>`;
 }
 
 function generateStudyLensesHTML(username, repository) {
-  return `
+	return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -295,7 +347,7 @@ function generateStudyLensesHTML(username, repository) {
 }
 
 function generateErrorHTML(message) {
-  return `
+	return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -321,8 +373,8 @@ function generateErrorHTML(message) {
 
 // Start server
 app.listen(port, () => {
-  console.log(`Study Lenses Server running on http://localhost:${port}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+	console.log(`Study Lenses Server running on http://localhost:${port}`);
+	console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 export default app;

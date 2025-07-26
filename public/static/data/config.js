@@ -17,14 +17,14 @@ export const config = {
 	variablesDeclare: true,
 	variablesAssign: true,
 	variablesRead: true /* declare, write, read.
-                      passing true sets to these defaults
+                      passing true sets to these defaults}
                       hosting should represented as step 0
                       function declarations fall under variables
                       how to visually differentiate block and lexical without too much clutter? */,
 
 	// --- other options ---
 	operatorsList: [],
-	operators: false, // for stepping through operations & precedence
+	operators: true, // for stepping through operations & precedence
 
 	controlFlowList: [],
 	controlFlow: false, // all occurrences of the 'test' trap, and break/continue

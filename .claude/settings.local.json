@@ -60,7 +60,12 @@
       "Bash(npm run:*)",
       "Bash(touch:*)",
       "Bash(flyctl logs:*)",
-      "Bash(flyctl deploy:*)"
+      "Bash(flyctl deploy:*)",
+      "Bash(flyctl status:*)",
+      "Bash(flyctl machine start:*)",
+      "Bash(flyctl machine destroy:*)",
+      "WebFetch(domain:study-lenses.fly.dev)",
+      "Bash(flyctl ssh console:*)"
     ],
     "deny": []
   }

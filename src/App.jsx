@@ -93,7 +93,7 @@ const AppContent = () => {
 				if (repoInfo) {
 					// Load from repository API endpoint
 					const baseUrl = window.location.origin;
-					contentUrl = `${baseUrl}${BASE_PATH}/api/${repoInfo.username}/${repoInfo.repository}/content.json`;
+					contentUrl = `${baseUrl}${BASE_PATH}api/${repoInfo.username}/${repoInfo.repository}/content.json`;
 					console.log(
 						`Loading repository: ${repoInfo.username}/${repoInfo.repository}`
 					);
