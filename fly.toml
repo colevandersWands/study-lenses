@@ -1,83 +1,20 @@
-# Fly.io configuration for Study Lenses Server
+# fly.toml app configuration file generated for snippetry on 2025-02-03T23:26:24-05:00
+#
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "study-lenses-server"
-primary_region = "ord"  # Chicago - change to your preferred region
+app = 'study-lenses'
+primary_region = 'ewr'
 
 [build]
 
-[env]
-  NODE_ENV = "production"
-  PORT = "8080"
-
 [http_service]
-  internal_port = 8080
+  internal_port = 4567
   force_https = true
-  auto_stop_machines = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 1
-  processes = ["app"]
-
-  [http_service.checks]
-    [http_service.checks.health]
-      grace_period = "30s"
-      interval = "15s"
-      method = "GET"
-      path = "/health"
-      port = 8080
-      timeout = "10s"
-      type = "http"
+  min_machines_running = 0
+  processes = ['app']
 
 [[vm]]
-  size = "shared-cpu-1x"
-  memory = "512mb"
-
-[metrics]
-  port = 9091
-  path = "/metrics"
-
-# Cache and temporary directories
-[mounts]
-  source = "study_lenses_cache"
-  destination = "/app/cache"
-
-# Environment variables for production
-# Set these in Fly.io dashboard or via flyctl secrets set
-# GITHUB_TOKEN - for higher GitHub API rate limits
-# CACHE_TTL - cache time-to-live in milliseconds
-# MAX_REPO_FILES - maximum files to process per repository
-# MAX_REPO_SIZE - maximum repository size in bytes
-
-# Optional: Configure log shipping
-# [logging]
-#   structured = true
-#   level = "info"
-
-# Optional: Configure auto-scaling
-# [[services]]
-#   internal_port = 8080
-#   protocol = "tcp"
-  
-#   [services.concurrency]
-#     type = "requests"
-#     hard_limit = 1000
-#     soft_limit = 800
-  
-#   [[services.ports]]
-#     handlers = ["http"]
-#     port = 80
-#     force_https = true
-  
-#   [[services.ports]]
-#     handlers = ["tls", "http"]
-#     port = 443
-  
-#   [services.http_checks]
-#     interval = 10000
-#     grace_period = "5s"
-#     method = "get"
-#     path = "/health"
-#     protocol = "http"
-#     restart_limit = 0
-#     timeout = 2000
-#     tls_skip_verify = false
+  size = 'shared-cpu-1x'

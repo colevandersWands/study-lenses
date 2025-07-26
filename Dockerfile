@@ -1,42 +1,39 @@
-# Study Lenses Server - Production Dockerfile
+# syntax = docker/dockerfile:1
 
-# Use Node.js 20 Alpine for smaller image size
-FROM node:20-alpine
+# Adjust NODE_VERSION as desired
+ARG NODE_VERSION=20.11.0
+FROM node:${NODE_VERSION}-slim AS base
 
-# Install git (required for cloning repositories)
-RUN apk add --no-cache git
+LABEL fly_launch_runtime="Node.js"
 
-# Set working directory
-WORKDIR /app
+# Node.js app lives here
+WORKDIR /
 
-# Copy package files
-COPY package*.json ./
+# Set production environment
+ENV NODE_ENV="production"
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+
+# Throw-away build stage to reduce size of final image
+FROM base AS build
+
+# Install packages needed to build node modules
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+
+# Install node modules
+COPY package-lock.json package.json ./
+RUN npm ci
 
 # Copy application code
 COPY . .
 
-# Create directories for cache and temp files
-RUN mkdir -p cache temp
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S studylenses -u 1001
+# Final stage for app image
+FROM base
 
-# Change ownership of app directory
-RUN chown -R studylenses:nodejs /app
+# # Copy built application
+# COPY --from=build / /
 
-# Switch to non-root user
-USER studylenses
-
-# Expose port
-EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
-
-# Start the application
-CMD ["node", "server.js"]
+# Start the server by default, this can be overwritten at runtime
+EXPOSE 4567
+CMD [ "npm", "start" ]
