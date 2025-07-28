@@ -9,12 +9,12 @@ import styles from './PrintLens.module.css';
  * Print Lens - Optimized code viewing and printing
  * Based on SL1's print lens with modern enhancements
  */
-const PrintLens = ({ resource }) => {
+const PrintLens = () => {
 	const { trackStudyAction, currentFile } = useApp();
 	const { enableColorize } = useColorize();
 
-	const fileName = resource?.name || '';
-	const language = resource?.lang || '.txt';
+	const fileName = currentFile?.name || '';
+	const language = currentFile?.lang || '.txt';
 
 	// Get current content from enliven file
 	const code = currentFile?.content || '';
@@ -136,7 +136,7 @@ const PrintLens = ({ resource }) => {
 	const handlePrint = () => {
 		if (window.print) {
 			// Track print action
-			trackStudyAction('print_code', resource, {
+			trackStudyAction('print_code', currentFile, {
 				fontSize,
 				showLineNumbers,
 				colorized: enableColorize,
@@ -165,7 +165,7 @@ const PrintLens = ({ resource }) => {
 			printWindow.print();
 		};
 
-		trackStudyAction('print_new_window', resource, {
+		trackStudyAction('print_new_window', currentFile, {
 			fontSize,
 			showLineNumbers,
 			colorized: enableColorize,

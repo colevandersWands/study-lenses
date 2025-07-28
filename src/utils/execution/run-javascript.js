@@ -51,7 +51,7 @@ export const executeJavaScript = async (
 		}
 
 		if (finalConfig.debug) {
-			finalCode = `debugger;\n\n${finalCode}\n\ndebugger;`;
+			finalCode = `/* ----------------------------- */ debugger;\n\n${finalCode}\n\n/* ----------------------------- */ debugger;`;
 		}
 
 		// Create iframe for execution

@@ -1,12 +1,15 @@
 # Predictive Stepping
 
-> Practicing these games will help you learn how to trace code, and prepare you for
-> learning about program memory:
+> These games teach you to read code and prepare you for predictive stepping:
 >
 > - 🥚 [compute-it](http://compute-it.toxicode.fr/)
 > - 🐣 [little-dot](http://little-dot.toxicode.fr/)
 
-> [Full guide video for Predictive Stepping in the browser](https://denepo.js.org/welcome-to-js/3-understanding-programs/1-predicting-execution/guide.mp4)
+> These videos cover predictive stepping:
+>
+> - [How to use this version of Study Lenses]()
+> - [A guide to the files in this folder](https://denepo.js.org/welcome-to-js/3-understanding-programs/1-predicting-execution/guide.mp4).
+> - [A class recording](https://www.youtube.com/watch?v=GAjQbsqTt4A) covering [these examples](https://github.com/denepo/predictive-stepping).
 
 _Predictive Stepping_ is a study method where you quiz yourself on each step of a
 program's execution, checking your predictions with using a debugger. After you have a

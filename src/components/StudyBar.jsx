@@ -55,6 +55,13 @@ const StudyBar = ({
 
 	// Sort action lenses by priority order
 	const orderMap = {
+		editor: -7,
+		variables: -6,
+		highlight: -5,
+		dropdowns: -4,
+		parsons: -3,
+		blanks: -2,
+		writeme: -1,
 		'run-javascript': 1,
 		'run-python': 1,
 		'debug-javascript': 2,
@@ -70,10 +77,12 @@ const StudyBar = ({
 		return aOrder - bOrder;
 	});
 
-	// Sort render lenses alphabetically by label
-	const sortedRenderLenses = [...renderLenses].sort((a, b) =>
-		(a.label || a.id).localeCompare(b.label || b.id)
-	);
+	const sortedRenderLenses = [...renderLenses].sort((a, b) => {
+		debugger;
+		const aOrder = orderMap[a.id] || 999;
+		const bOrder = orderMap[b.id] || 999;
+		return aOrder - bOrder;
+	});
 
 	// Create wrapper function for action lens execution
 	const handleActionLensTrigger = (lensId, config) => {

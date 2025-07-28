@@ -302,10 +302,10 @@ const TracingLens = ({ resource }) => {
 export const id = 'tracing';
 export const label = 'Tracing';
 export const applicable = (file) => true; // Always applicable
-export const render = (resource, _config) => {
-	const finalConfig = { ...config, ..._config };
-	return <TracingLens resource={resource} config={finalConfig} />;
-};
+// export const render = (resource, _config) => {
+// 	const finalConfig = { ...config, ..._config };
+// 	return <TracingLens resource={resource} config={finalConfig} />;
+// };
 export const config = deepFreeze({});
 export const renderConfig = () => null; // No configuration UI needed
 
