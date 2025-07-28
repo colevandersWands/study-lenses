@@ -78,7 +78,6 @@ const StudyBar = ({
 	});
 
 	const sortedRenderLenses = [...renderLenses].sort((a, b) => {
-		debugger;
 		const aOrder = orderMap[a.id] || 999;
 		const bOrder = orderMap[b.id] || 999;
 		return aOrder - bOrder;
