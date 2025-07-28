@@ -51,7 +51,7 @@ export const executeJavaScript = async (
 		}
 
 		if (finalConfig.debug) {
-			finalCode = `/* ----------------------------- */ debugger;\n\n${finalCode}\n\n/* ----------------------------- */ debugger;`;
+			finalCode = `/* ----------------------------- */   debugger;\n\n\n\n${finalCode}\n\n\n/* ----------------------------- */   debugger;`;
 		}
 
 		// Create iframe for execution
@@ -77,27 +77,6 @@ export const executeJavaScript = async (
 
 				// Add globals to iframe (like old-runner.js)
 				Object.assign(iframeWindow, finalConfig.globals || {});
-
-				// Add browser dialog functions
-				iframeWindow.alert = (message) => window.alert(message);
-				iframeWindow.prompt = (message, defaultValue) =>
-					window.prompt(message, defaultValue);
-				iframeWindow.confirm = (message) => window.confirm(message);
-
-				// Override console methods to capture output
-				// const originalConsole = iframeWindow.console;
-				// iframeWindow.console = {
-				// 	...originalConsole,
-				// 	log: (...args) => {
-				// 		originalConsole.log(...args);
-				// 	},
-				// 	error: (...args) => {
-				// 		originalConsole.error(...args);
-				// 	},
-				// 	warn: (...args) => {
-				// 		originalConsole.warn(...args);
-				// 	},
-				// };
 
 				// Initialize testing framework if enabled
 				if (finalConfig.testing) {

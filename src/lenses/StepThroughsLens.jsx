@@ -287,8 +287,8 @@ const StepThroughsLens = ({ resource }) => {
 export const id = 'stepthroughs';
 export const label = 'Step Through';
 export const applicable = (file) => file.lang === 'javascript'; // Always applicable
-export const render = (file) => <StepThroughsLens resource={file} />;
-export const execute = render;
+// export const render = (file) => <StepThroughsLens resource={file} />;
+export const execute = (file) => <StepThroughsLens resource={file} />;
 export const config = deepFreeze({});
 // export const renderConfig = () => null; // No configuration UI needed
 

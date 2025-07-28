@@ -14,7 +14,7 @@ const StudyBar = ({
 	currentLensId,
 	className = '',
 	disabled = false,
-	size = 'normal',
+	size = 'compact',
 }) => {
 	const [showRenderLensDropdown, setShowRenderLensDropdown] = useState(false);
 	if (!file) {

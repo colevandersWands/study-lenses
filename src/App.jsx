@@ -43,6 +43,7 @@ const AppContent = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [currentFilePath, setCurrentFilePath] = useState(null);
+	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
 	// Get exercise type from URL lens parameters
 	const getExerciseFromURL = (lensParams) => {
@@ -383,31 +384,50 @@ const AppContent = () => {
 
 	return (
 		<div className={styles.appContainer}>
-			<div className={styles.sidebar}>
+			<div className={`${styles.sidebar} ${isSidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
 				<div className={styles.sidebarHeader}>
 					<div className={styles.headerTop}>
-						<h1 className={styles.appTitle}>Study Lenses</h1>
 						<button
-							className={styles.sandboxButton}
-							onClick={() => setIsSandboxModalOpen(true)}
-							title="Open Sandbox - experiment with code"
+							className={styles.toggleButton}
+							onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+							title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
 						>
-							🏖️ Sandbox
+							{isSidebarCollapsed ? '▶' : '◀'}
 						</button>
+						{!isSidebarCollapsed && (
+							<>
+								<h1 className={styles.appTitle}>Study Lenses</h1>
+								<button
+									className={styles.sandboxButton}
+									onClick={() => setIsSandboxModalOpen(true)}
+									title="Open Sandbox - experiment with code"
+								>
+									🏖️ Sandbox
+								</button>
+							</>
+						)}
 					</div>
-					<a
-						className={styles.appSubtitle}
-						href="https://github.com/colevandersWands/"
-						target="_blank"
-					>
-						(github repo)
-					</a>
+					{!isSidebarCollapsed && (
+						<a
+							className={styles.appSubtitle}
+							href="https://github.com/colevandersWands/"
+							target="_blank"
+						>
+							(github repo)
+						</a>
+					)}
 					{/* <p className={styles.appSubtitle}>Learn code through interactive lenses</p> */}
 				</div>
 
-				<FileBrowser />
-
-				<ExercisePicker />
+				<div style={{ 
+					display: isSidebarCollapsed ? 'none' : 'flex', 
+					flexDirection: 'column', 
+					flex: 1,
+					overflow: 'hidden'
+				}}>
+					<FileBrowser />
+					<ExercisePicker />
+				</div>
 			</div>
 
 			<div className={styles.mainContent}>

@@ -142,17 +142,8 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-	.studyBar.horizontal .buttonContainer {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.studyBar.horizontal .separator {
-		width: 100%;
-		height: 1px;
-		margin: 2px 0;
-	}
-
+	/* Let buttons wrap naturally instead of forcing vertical stack */
+	
 	.studyBar.grid .buttonContainer {
 		grid-template-columns: 1fr;
 	}

@@ -60,6 +60,11 @@ app.use(
 				fontSrc: ["'self'", 'https://fonts.gstatic.com'],
 				imgSrc: ["'self'", 'data:', 'https:'],
 				connectSrc: ["'self'", 'https://api.github.com'],
+				frameSrc: [
+					"'self'", 
+					'https://pythontutor.com', 
+					'https://jsviz.klve.nl'
+				],
 			},
 		},
 	})

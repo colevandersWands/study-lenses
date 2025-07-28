@@ -69,36 +69,14 @@
 	justify-content: center;
 }
 
-.dropdownGroup {
-	display: flex;
-	align-items: center;
-	gap: 12px;
+.sandboxStudyBar {
+	background: transparent !important;
+	border: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
-.languageDropdown,
-.lensDropdown {
-	background: #3c3c3c;
-	border: 1px solid #464647;
-	color: #d4d4d4;
-	padding: 6px 10px;
-	border-radius: 4px;
-	font-size: 14px;
-	font-family: inherit;
-	cursor: pointer;
-	min-width: 140px;
-}
-
-.languageDropdown {
-	border-color: #4caf50;
-	background: #2d4030;
-}
-
-.languageDropdown:focus,
-.lensDropdown:focus {
-	outline: none;
-	border-color: #4caf50;
-	box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
+/* Old dropdown styles removed - now using StudyBar */
 
 .lensDescription {
 	color: #9d9d9d;

@@ -144,7 +144,7 @@ const EditorLens = ({ resource }) => {
 			}}
 		>
 			<div className={styles.header}>
-				<h3>📖 Study Mode</h3>
+				<h3>📖 Editor Mode</h3>
 				{fileName && (
 					<span className={styles.fileName}>{fileName}</span>
 				)}

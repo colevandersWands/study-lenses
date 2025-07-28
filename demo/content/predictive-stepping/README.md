@@ -7,7 +7,7 @@
 
 > These videos cover predictive stepping:
 >
-> - [How to use this version of Study Lenses]()
+> - [How to use this version of Study Lenses](https://youtube.com/video/oXrZZgTN0oY)
 > - [A guide to the files in this folder](https://denepo.js.org/welcome-to-js/3-understanding-programs/1-predicting-execution/guide.mp4).
 > - [A class recording](https://www.youtube.com/watch?v=GAjQbsqTt4A) covering [these examples](https://github.com/denepo/predictive-stepping).
 
@@ -17,6 +17,20 @@ basic familiarity with your debugger, this study method is simple and effective 
 like having a teacher by your side every day of the week!
 
 Before learning more about predictive stepping, you first need to understand ...
+
+## The Study Technique
+
+To check if you _really_ understand a program, practice stepping through it in the
+debugger like so:
+
+0. Don't step forward yet!
+1. Predict which line will execute next and how it will change program state
+2. Step forward in the program.
+3. Check your prediction.
+4. Investigate if you were wrong: Is this a bug in the program, or is it something you did
+   not understand?
+
+That's it, happy studies!
 
 ## Program Memory
 
@@ -34,17 +48,3 @@ Your first goal is learning to see what is happening inside your program at each
   practice to use effectively and is worth every second. You can see every value in
   memory, at every step of your program's execution. Debuggers are designed to help you
   understand how memory is structured in JS
-
-## The Study Technique
-
-To check if you _really_ understand a program, practice stepping through it in the
-debugger like so:
-
-0. Don't step forward yet!
-1. Predict which line will execute next and how it will change program state
-2. Step forward in the program.
-3. Check your prediction.
-4. Investigate if you were wrong: Is this a bug in the program, or is it something you did
-   not understand?
-
-That's it, happy studies!

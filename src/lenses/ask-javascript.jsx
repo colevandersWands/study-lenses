@@ -14,25 +14,21 @@ export const label = 'Study Question';
 
 // Plugin configuration with deep freezing
 export const config = deepFreeze({
-	// Question Types
-	theCode: true,
-	howItWorks: true,
-	variableTraces: true,
-	connections: true,
-	goals: true,
-	userExperience: true,
-
-	// Language Features
-	variables: true,
-	data: true,
-	operators: true,
-	controlFlow: true,
-	functions: true,
-
-	// Special Options
-	alertQuestions: false,
-	multipleChoice: false, // false = open-ended, true = multiple choice
-	showAnswerHints: true,
+	openEnded: {
+		controlFlow: { ask: true },
+		data: { ask: true },
+		functions: { ask: true },
+		operators: { ask: true },
+		variables: { ask: true },
+		traces: { ask: true },
+		generic: { ask: true },
+		levels: [1, 2, 3, 4, 5],
+		alert: { ask: false },
+		range: { start: 0, end: 0 },
+	},
+	multipleChoice: {
+		types: [],
+	},
 });
 
 /**
@@ -68,7 +64,7 @@ export const applicable = (file) => {
  */
 export const execute = async (file, _config = {}) => {
 	const finalConfig = { ...config, ..._config };
-	const code = file.content
+	const code = file.content;
 
 	try {
 		// Try to use the SL1 ask system first

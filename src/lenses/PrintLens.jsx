@@ -88,14 +88,20 @@ const PrintLens = () => {
 			// Use SL1-style approach: let Prism handle the highlighting
 			return (
 				<div className={styles.printCodeContainer}>
-					<pre className={showLineNumbers ? 'line-numbers' : ''}>
+					<pre>
 						<code
 							key={`${showLineNumbers}-${langClass}-${code.length}`}
 							ref={(el) => {
 								if (el && window.Prism) {
 									// SL1 approach: escape HTML, set innerHTML, then let Prism highlight
 									el.textContent = code; // This automatically escapes HTML
-									el.className = `language-${langClass}`;
+									// Apply both language and line-numbers classes to code element
+									// The Prism line-numbers plugin will move line-numbers to pre element
+									const codeClasses = [`language-${langClass}`];
+									if (showLineNumbers) {
+										codeClasses.push('line-numbers');
+									}
+									el.className = codeClasses.join(' ');
 									// Use Prism.highlightAllUnder on the parent <pre> element
 									window.Prism.highlightAllUnder(
 										el.parentElement

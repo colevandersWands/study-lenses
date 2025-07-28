@@ -4,16 +4,9 @@ import { AppContext } from '../context/AppContext.jsx';
 import { LanguageConfiguration } from '../utils/LanguageConfiguration.js';
 import { LanguageDetector } from '../utils/LanguageDetector.js';
 import { editorialize } from '../../load-virtual-fs.js';
-
-// Import lens components
-import EditorLens from '../lenses/EditorLens.jsx';
-import VariablesLens from '../lenses/VariablesLens.jsx';
-import HighlightLens from '../lenses/HighlightLens.jsx';
-import BlanksLens from '../lenses/BlanksLens.jsx';
-import ParsonsLens from '../lenses/ParsonsLens.jsx';
-import WritemeLens from '../lenses/WritemeLens.jsx';
-import PrintLens from '../lenses/PrintLens.jsx';
-import TracingLens from '../lenses/TracingLens.jsx';
+import { getLens } from '../lenses/index.js';
+import StudyBar from './StudyBar.jsx';
+import ModalContainer from '../containers/ModalContainer.jsx';
 
 import styles from './SandboxModal.module.css';
 
@@ -27,9 +20,10 @@ const SandboxModal = ({ isOpen, onClose }) => {
 	const modalRef = useRef(null);
 
 	// Local state
-	const [activeLensType, setActiveLensType] = useState('study');
+	const [currentLensId, setCurrentLensId] = useState('editor');
 	const [sandboxFile, setSandboxFile] = useState(null);
 	const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+	const [modalState, setModalState] = useState(null); // For action lens results
 
 	// Get language-specific file extension
 	const getFileExtensionForLanguage = (language) => {
@@ -129,62 +123,43 @@ const SandboxModal = ({ isOpen, onClose }) => {
 
 	if (!isOpen || !sandboxFile) return null;
 
-	// Available lenses configuration
-	const AVAILABLE_LENSES = {
-		study: {
-			component: EditorLens,
-			title: 'Editor',
-			icon: '📚',
-			description: 'Edit and experiment with code',
-		},
-		variables: {
-			component: VariablesLens,
-			title: 'Variables',
-			icon: '📊',
-			description: 'Track variable values and scope',
-		},
-		trace: {
-			component: TracingLens,
-			title: 'Trace',
-			icon: '🔍',
-			description: 'Step through code execution',
-		},
-		highlight: {
-			component: HighlightLens,
-			title: 'Highlight',
-			icon: '🎨',
-			description: 'Annotate and highlight code',
-		},
-		blanks: {
-			component: BlanksLens,
-			title: 'Blanks',
-			icon: '📝',
-			description: 'Fill-in-the-blank exercises',
-		},
-		parsons: {
-			component: ParsonsLens,
-			title: 'Parsons',
-			icon: '🧩',
-			description: 'Drag-and-drop code assembly',
-		},
-		writeme: {
-			component: WritemeLens,
-			title: 'Write Me',
-			icon: '✍️',
-			description: 'Code writing exercises',
-		},
-		print: {
-			component: PrintLens,
-			title: 'Print',
-			icon: '🖨️',
-			description: 'Print-optimized view',
-		},
+	// Get current lens using the lens system
+	const currentLens = getLens(currentLensId);
+	if (!currentLens || !currentLens.render) {
+		// Fallback to editor if current lens doesn't exist or isn't a render lens
+		setCurrentLensId('editor');
+		return null;
+	}
+
+	// Handle lens switching
+	const handleLensAction = (lensId, config) => {
+		setCurrentLensId(lensId);
 	};
 
-	const currentLens = AVAILABLE_LENSES[activeLensType];
-	if (!currentLens) return null;
+	// Handle action lens execution (Run, Debug, Ask buttons)
+	const handleActionLensExecution = async (actionLens, config) => {
+		try {
+			const result = await actionLens.execute(sandboxFile, config);
+			
+			// If execute returns a component, show it in modal
+			if (result && typeof result === 'object' && result.type) {
+				setModalState({
+					lensId: actionLens.id,
+					config, 
+					component: result,
+				});
+			}
+			// Otherwise, it was a side-effect only action (existing behavior)
+		} catch (error) {
+			console.error(`Failed to execute ${actionLens.id}:`, error);
+			// Future enhancement: add toast notification here
+		}
+	};
 
-	const LensComponent = currentLens.component;
+	// Close action lens modal
+	const closeModal = () => {
+		setModalState(null);
+	};
 
 	// Create temporary context that provides the sandboxFile as currentFile
 	const tempContext = {
@@ -201,58 +176,20 @@ const SandboxModal = ({ isOpen, onClose }) => {
 			>
 				<div className={styles.modalHeader}>
 					<div className={styles.headerLeft}>
-						<h3>🏖️ Sandbox Mode</h3>
+						<h3>🏖️ Sandbox</h3>
 						<span className={styles.fileName}>
 							{sandboxFile.name}
 						</span>
 					</div>
 					<div className={styles.headerCenter}>
-						<div className={styles.dropdownGroup}>
-							<select
-								value={selectedLanguage}
-								onChange={(e) =>
-									handleLanguageChange(e.target.value)
-								}
-								className={styles.languageDropdown}
-								title="Select programming language"
-							>
-								{LanguageConfiguration.getAllLanguages().map(
-									(language) => {
-										const languageInfo =
-											LanguageDetector.getLanguageInfo(
-												language
-											);
-										return (
-											<option
-												key={language}
-												value={language}
-											>
-												{languageInfo.name}
-											</option>
-										);
-									}
-								)}
-							</select>
-							<select
-								value={activeLensType}
-								onChange={(e) =>
-									setActiveLensType(e.target.value)
-								}
-								className={styles.lensDropdown}
-								title="Switch between different learning lenses"
-							>
-								{Object.entries(AVAILABLE_LENSES).map(
-									([key, lens]) => (
-										<option key={key} value={key}>
-											{lens.icon} {lens.title}
-										</option>
-									)
-								)}
-							</select>
-						</div>
-						<span className={styles.lensDescription}>
-							{currentLens.description}
-						</span>
+						<StudyBar
+							file={sandboxFile}
+							onLensAction={handleLensAction}
+							onActionLensExecution={handleActionLensExecution}
+							currentLensId={currentLensId}
+							className={styles.sandboxStudyBar}
+							size="compact"
+						/>
 					</div>
 					<div className={styles.headerRight}>
 						<button
@@ -267,24 +204,34 @@ const SandboxModal = ({ isOpen, onClose }) => {
 
 				<div className={styles.modalBody}>
 					<AppContext.Provider value={tempContext}>
-						<LensComponent resource={sandboxFile} />
+						{currentLens.render ? 
+							currentLens.render(sandboxFile, currentLens.config || {}) :
+							null
+						}
 					</AppContext.Provider>
 				</div>
 
 				<div className={styles.modalFooter}>
 					<div className={styles.instructions}>
 						<p>
-							<strong>🏖️ Sandbox Mode:</strong> Experiment with
-							code freely! Your changes are saved and will persist
-							between sessions.
-						</p>
-						<p>
-							Use the dropdown to switch between different
-							learning lenses. Press <kbd>Escape</kbd> or click X
-							to return to your lesson.
+							<strong>🏖️ Sandbox:</strong> Experiment with
+							code freely! Your changes will not be saved between sessions.
+							Use the buttons above to switch between different learning lenses. 
+							Press <kbd>Escape</kbd> or click ✕ to return to your lesson.
 						</p>
 					</div>
 				</div>
+
+				{/* Action lens modal results */}
+				{modalState && (
+					<ModalContainer
+						lensId={modalState.lensId}
+						code={sandboxFile.content}
+						config={modalState.config}
+						component={modalState.component}
+						onClose={closeModal}
+					/>
+				)}
 			</div>
 		</div>
 	);
