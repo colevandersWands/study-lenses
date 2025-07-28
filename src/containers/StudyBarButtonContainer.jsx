@@ -5,7 +5,7 @@ import styles from './StudyBarButtonContainer.module.css';
  * StudyBarButtonContainer - Renders a lens as a configurable button in the StudyBar
  * Shows lens config options + trigger button that opens lens in modal
  */
-const StudyBarButtonContainer = ({ lens, file, onTrigger }) => {
+const StudyBarButtonContainer = ({ lens, file, onTrigger, size = 'normal' }) => {
 	const [config, setConfig] = useState(lens.config || {});
 	const [showConfig, setShowConfig] = useState(false);
 
@@ -21,7 +21,7 @@ const StudyBarButtonContainer = ({ lens, file, onTrigger }) => {
 	return (
 		<div className={styles.studyBarButton}>
 			<button
-				className={styles.lensTrigger}
+				className={`${styles.lensTrigger} ${size === 'compact' ? styles.compact : ''}`}
 				onClick={handleTrigger}
 				title={lens.config.description}
 			>
@@ -30,7 +30,7 @@ const StudyBarButtonContainer = ({ lens, file, onTrigger }) => {
 
 			{lens.renderConfig && (
 				<button
-					className={styles.configToggle}
+					className={`${styles.configToggle} ${size === 'compact' ? styles.compact : ''}`}
 					onClick={handleConfigToggle}
 					title="Configure options"
 				>

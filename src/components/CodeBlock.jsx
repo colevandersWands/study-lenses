@@ -14,20 +14,22 @@ const CodeBlock = ({
 }) => {
 	const { enableColorize } = useColorize();
 	const codeRef = useRef(null);
+	const preRef = useRef(null);
 
 	useEffect(() => {
-		if (enableColorize && codeRef.current && window.Prism) {
-			// Apply Prism highlighting if enabled and Prism is available
-			window.Prism.highlightElement(codeRef.current);
+		if (enableColorize && preRef.current && window.Prism) {
+			// Use highlightAllUnder approach for better plugin support (especially line-numbers)
+			// This follows the same pattern as PrintLens
+			window.Prism.highlightAllUnder(preRef.current);
 		}
 	}, [enableColorize, children]);
 
 	const prismClass = enableColorize ? `language-${language}` : '';
-	const combinedClassName = `${prismClass} ${className}`.trim();
+	const preClassNameFinal = `${prismClass} ${className}`.trim();
 
 	return (
-		<pre className={className} style={style} {...props}>
-			<code ref={codeRef} className={combinedClassName}>
+		<pre ref={preRef} className={preClassNameFinal} style={style} {...props}>
+			<code ref={codeRef}>
 				{children}
 			</code>
 		</pre>

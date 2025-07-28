@@ -14,6 +14,7 @@ const StudyBar = ({
 	currentLensId,
 	className = '',
 	disabled = false,
+	size = 'normal',
 }) => {
 	const [showRenderLensDropdown, setShowRenderLensDropdown] = useState(false);
 	if (!file) {
@@ -100,6 +101,7 @@ const StudyBar = ({
 							}}
 							file={file}
 							onTrigger={handleActionLensTrigger}
+							size={size}
 						/>
 						{(index < sortedActionLenses.length - 1 ||
 							sortedRenderLenses.length > 0) && (
@@ -113,7 +115,7 @@ const StudyBar = ({
 					<div className={styles.buttonWrapper}>
 						<div className={styles.renderLensDropdown}>
 							<button
-								className={styles.dropdownToggle}
+								className={`${styles.dropdownToggle} ${size === 'compact' ? styles.compact : ''}`}
 								onClick={() =>
 									setShowRenderLensDropdown(
 										!showRenderLensDropdown

@@ -30,7 +30,6 @@ export const EXERCISES = {
 			'html',
 			'css',
 			'json',
-			'markdown',
 			'typescript',
 		],
 		features: ['highlight', 'annotate', 'draw', 'copy', 'flowchart'],
@@ -80,7 +79,7 @@ export const EXERCISES = {
 	flashcards: {
 		name: 'Flashcards',
 		description: 'Interactive spaced repetition learning with flip cards',
-		supportedLangs: ['markdown'],
+		supportedLangs: [],
 		features: [
 			'spaced-repetition',
 			'flip-cards',

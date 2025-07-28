@@ -296,54 +296,81 @@ const DropDownsLens = () => {
 	}, []);
 
 	/**
-	 * Transform code into elements for rendering
+	 * Transform code into line-based elements for rendering with line numbers
 	 */
 	const transformCodeToElements = useCallback(
 		(code, selectedTokens, allTokens, useDistractors) => {
-			const elements = [];
+			const lines = code.split('\n');
 			const correctAnswers = {};
-			let lastIndex = 0;
+			const lineElements = [];
 
-			selectedTokens.forEach((token) => {
-				// Add code before this token
-				if (token.start > lastIndex) {
+			lines.forEach((line, lineIndex) => {
+				const lineStart =
+					lines.slice(0, lineIndex).join('\n').length +
+					(lineIndex > 0 ? 1 : 0);
+				const lineEnd = lineStart + line.length;
+
+				// Find tokens that belong to this line
+				const lineTokens = selectedTokens.filter(
+					(token) => token.start >= lineStart && token.end <= lineEnd
+				);
+
+				// Sort line tokens by position
+				lineTokens.sort((a, b) => a.start - b.start);
+
+				const elements = [];
+				let lastIndex = 0; // Relative to line start
+
+				lineTokens.forEach((token) => {
+					const relativeStart = token.start - lineStart;
+					const relativeEnd = token.end - lineStart;
+
+					// Add code before this token
+					if (relativeStart > lastIndex) {
+						elements.push({
+							type: 'code',
+							content: line.slice(lastIndex, relativeStart),
+						});
+					}
+
+					// Generate options for this dropdown
+					const options = generateOptions(
+						token,
+						allTokens,
+						useDistractors
+					);
+
+					// Add dropdown element
+					elements.push({
+						type: 'dropdown',
+						id: token.id,
+						options: options,
+						correctValue: token.value,
+						tokenType: token.type,
+					});
+
+					// Track correct answer
+					correctAnswers[token.id] = token.value;
+
+					lastIndex = relativeEnd;
+				});
+
+				// Add remaining code in this line
+				if (lastIndex < line.length) {
 					elements.push({
 						type: 'code',
-						content: code.slice(lastIndex, token.start),
+						content: line.slice(lastIndex),
 					});
 				}
 
-				// Generate options for this dropdown
-				const options = generateOptions(
-					token,
-					allTokens,
-					useDistractors
-				);
-
-				// Add dropdown element
-				elements.push({
-					type: 'dropdown',
-					id: token.id,
-					options: options,
-					correctValue: token.value,
-					tokenType: token.type,
+				lineElements.push({
+					type: 'line',
+					lineNumber: lineIndex + 1,
+					elements: elements,
 				});
-
-				// Track correct answer
-				correctAnswers[token.id] = token.value;
-
-				lastIndex = token.end;
 			});
 
-			// Add remaining code
-			if (lastIndex < code.length) {
-				elements.push({
-					type: 'code',
-					content: code.slice(lastIndex),
-				});
-			}
-
-			return { elements, correctAnswers };
+			return { elements: lineElements, correctAnswers };
 		},
 		[generateOptions]
 	);
@@ -510,7 +537,9 @@ const DropDownsLens = () => {
 				showFeedback={showFeedback}
 			/>
 
-			<div className={styles.codeContainer}>
+			<div
+				className={`${styles.codeContainer} ${styles.withLineNumbers}`}
+			>
 				{elements.length === 0 ? (
 					<div className={styles.emptyState}>
 						<p>No tokens found with current settings.</p>
@@ -520,54 +549,65 @@ const DropDownsLens = () => {
 						</p>
 					</div>
 				) : (
-					elements.map((element, index) => {
-						if (element.type === 'code') {
-							return (
-								<span
-									key={index}
-									className={styles.codeSegment}
-								>
-									{element.content}
-								</span>
-							);
-						}
-
-						const isCorrect =
-							userAnswers[element.id] === element.correctValue;
-						const hasAnswer = userAnswers[element.id];
-						const showResult = showFeedback && hasAnswer;
-
-						return (
-							<select
-								key={element.id}
-								className={`${styles.dropdown} ${
-									showResult
-										? isCorrect
-											? styles.correct
-											: styles.incorrect
-										: ''
-								}`}
-								value={userAnswers[element.id] || ''}
-								onChange={(e) =>
-									handleAnswerChange(
-										element.id,
-										e.target.value
-									)
+					elements.map((line, lineIndex) => (
+						<div
+							key={lineIndex}
+							className={`${styles.codeLine} ${styles.withLineNumbers}`}
+						>
+							{line.elements.map((element, elementIndex) => {
+								if (element.type === 'code') {
+									return (
+										<span
+											key={elementIndex}
+											className={styles.codeSegment}
+										>
+											{element.content}
+										</span>
+									);
 								}
-								title={`Choose the correct ${element.tokenType}`}
-							>
-								<option value="">{`{${element.tokenType
-									.split('')
-									.slice(0, element.tokenType.length - 1)
-									.join('')}}`}</option>
-								{element.options.map((option, i) => (
-									<option key={i} value={option}>
-										{option}
-									</option>
-								))}
-							</select>
-						);
-					})
+
+								const isCorrect =
+									userAnswers[element.id] ===
+									element.correctValue;
+								const hasAnswer = userAnswers[element.id];
+								const showResult = showFeedback && hasAnswer;
+
+								return (
+									<select
+										key={element.id}
+										className={`${styles.dropdown} ${
+											showResult
+												? isCorrect
+													? styles.correct
+													: styles.incorrect
+												: ''
+										}`}
+										value={userAnswers[element.id] || ''}
+										onChange={(e) =>
+											handleAnswerChange(
+												element.id,
+												e.target.value
+											)
+										}
+										title={`Choose the correct ${element.tokenType}`}
+									>
+										<option value="">{`{${element.tokenType
+											.split('')
+											.slice(
+												0,
+												element.tokenType.length - 1
+											)
+											.join('')}}`}</option>
+										{element.options.map((option, i) => (
+											<option key={i} value={option}>
+												{option}
+											</option>
+										))}
+									</select>
+								);
+							})}
+						</div>
+					))
 				)}
 			</div>
 		</div>

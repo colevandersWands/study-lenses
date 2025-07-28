@@ -227,10 +227,41 @@
 	overflow: auto;
 	padding: 1rem;
 	font-family: 'Courier New', Monaco, monospace;
-	font-size: 14px;
+	font-size: 1em;
 	line-height: 1.6;
 	white-space: pre-wrap;
 	background: #1e1e1e;
+	counter-reset: line-number;
+}
+
+/* Code Container with line numbers */
+.codeContainer.withLineNumbers {
+	padding-left: 4rem;
+	position: relative;
+}
+
+/* Line styling */
+.codeLine {
+	display: block;
+	counter-increment: line-number;
+	position: relative;
+}
+
+/* Line numbers */
+.codeLine.withLineNumbers::before {
+	content: counter(line-number);
+	position: absolute;
+	left: -3.5rem;
+	width: 3rem;
+	text-align: right;
+	color: #666;
+	font-size: 1em;
+	line-height: inherit;
+	pointer-events: none;
+	user-select: none;
+	border-right: 1px solid #444;
+	padding-right: 0.1em;
+    margin-right: 3em;
 }
 
 .codeSegment {

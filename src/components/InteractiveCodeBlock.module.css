@@ -31,13 +31,14 @@
 	background: transparent;
 	border: none;
 	border-radius: 0;
-	padding: 0;
 	margin: 0;
 }
 
 .studyBarInline :global(.studyBar .buttonContainer) {
 	gap: 2px;
 }
+
+/* StudyBar buttons are now sized via size="compact" prop */
 
 /* Block-specific controls */
 .blockControls {

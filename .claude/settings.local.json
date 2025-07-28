@@ -69,7 +69,8 @@
       "Bash(open \"http://localhost:4567/demo\")",
       "Bash(open \"http://localhost:4567/\")",
       "Bash(npx eslint:*)",
-      "Bash(timeout 30 npm run dev)"
+      "Bash(timeout 30 npm run dev)",
+      "Bash(timeout 10 npm run dev:*)"
     ],
     "deny": []
   }

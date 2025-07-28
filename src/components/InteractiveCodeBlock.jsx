@@ -97,11 +97,11 @@ const InteractiveCodeBlock = ({ file, codeId, onOpenInLens }) => {
 
 			containerRef.current.innerHTML = `<pre><code class="language-${prismLanguage}">${currentContent}</code></pre>`;
 
-			// Apply Prism highlighting if available
+			// Apply Prism highlighting if available - use highlightAllUnder for better plugin support
 			if (window.Prism) {
-				const codeElement = containerRef.current.querySelector('code');
-				if (codeElement) {
-					window.Prism.highlightElement(codeElement);
+				const preElement = containerRef.current.querySelector('pre');
+				if (preElement) {
+					window.Prism.highlightAllUnder(preElement);
 				}
 			}
 		}
@@ -121,12 +121,12 @@ const InteractiveCodeBlock = ({ file, codeId, onOpenInLens }) => {
 				const prismLanguage = getPrismLanguageClass(file);
 				containerRef.current.innerHTML = `<pre><code class="language-${prismLanguage}">${currentContent}</code></pre>`;
 
-				// Apply Prism highlighting
+				// Apply Prism highlighting - use highlightAllUnder for better plugin support
 				if (window.Prism) {
-					const codeElement =
-						containerRef.current.querySelector('code');
-					if (codeElement) {
-						window.Prism.highlightElement(codeElement);
+					const preElement =
+						containerRef.current.querySelector('pre');
+					if (preElement) {
+						window.Prism.highlightAllUnder(preElement);
 					}
 				}
 			}
@@ -158,6 +158,7 @@ const InteractiveCodeBlock = ({ file, codeId, onOpenInLens }) => {
 					}}
 					currentLensId={null} // InteractiveCodeBlock isn't a lens, so no current lens to filter
 					className={styles.studyBarInline}
+					size="compact"
 				/>
 
 				{/* Interactive Code Block specific controls */}

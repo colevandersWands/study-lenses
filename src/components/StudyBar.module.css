@@ -248,6 +248,11 @@
 	gap: 4px;
 }
 
+.dropdownToggle.compact {
+	padding: 4px 8px;
+	font-size: 12px;
+}
+
 .dropdownToggle:hover {
 	background: #404040;
 	border-color: #5a5a5a;

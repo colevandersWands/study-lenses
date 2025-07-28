@@ -17,6 +17,11 @@
 	transition: background-color 0.2s;
 }
 
+.lensTrigger.compact {
+	padding: 4px 8px;
+	font-size: 14px;
+}
+
 .lensTrigger:hover {
 	background: var(--color-primary-dark);
 }
@@ -30,6 +35,11 @@
 	cursor: pointer;
 	font-size: 12px;
 	transition: background-color 0.2s;
+}
+
+.configToggle.compact {
+	padding: 3px 6px;
+	font-size: 11px;
 }
 
 .configToggle:hover {

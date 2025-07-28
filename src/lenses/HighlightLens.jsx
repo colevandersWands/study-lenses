@@ -472,7 +472,6 @@ const HighlightExercise = ({ resource }) => {
 					className={`${styles.syntaxHighlightedCode} line-numbers`}
 				>
 					{content}
-					{window.Prism.highlightAllUnder(document)}
 				</CodeBlock>
 
 				{/* Annotation overlay */}
