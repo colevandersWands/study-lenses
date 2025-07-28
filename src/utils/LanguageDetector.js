@@ -54,9 +54,9 @@ export class LanguageDetector {
 	 */
 	static detectFromFile(file) {
 		if (!file || !file.ext) {
-			console.log(
-				'🔍 LanguageDetector: No file extension found, defaulting to plaintext'
-			);
+			// console.log(
+			// 	'🔍 LanguageDetector: No file extension found, defaulting to plaintext'
+			// );
 			return 'plaintext';
 		}
 
@@ -87,13 +87,13 @@ export class LanguageDetector {
 
 		const loader = cmMappings[language];
 		if (loader) {
-			console.log(
-				`LanguageDetector: CodeMirror loader available for ${language}`
-			);
+			// console.log(
+			// 	`LanguageDetector: CodeMirror loader available for ${language}`
+			// );
 		} else {
-			console.log(
-				`LanguageDetector: No CodeMirror support for ${language}`
-			);
+			// console.log(
+			// 	`LanguageDetector: No CodeMirror support for ${language}`
+			// );
 		}
 
 		return loader || null;

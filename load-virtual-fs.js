@@ -47,7 +47,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			difficulty: 'beginner',
 			commonMistakes: [
 				'Redeclaration: let x = 1; let x = 2; // Error!',
-				'Use before declaration: console.log(y); let y = 5; // Error!',
+				'Use before declaration: // console.log(y); let y = 5; // Error!',
 			],
 			whenToUse: 'When you need a variable that might change',
 			alternatives: [
@@ -133,7 +133,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		// Console Operations (Essential for learning)
 		console: {
 			description: 'Browser/Node.js object for debugging and output',
-			example: 'console.log("Hello!");\nconsole.error("Oops!");',
+			example: '// console.log("Hello!");\nconsole.error("Oops!");',
 			category: 'debugging',
 			difficulty: 'beginner',
 			commonMistakes: [
@@ -148,7 +148,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		log: {
 			description: 'Outputs a message to the console for debugging',
 			example:
-				'console.log("Debug:", x);\nconsole.log("User age:", age);',
+				'// console.log("Debug:", x);\n console.log("User age:", age);',
 			category: 'debugging',
 			difficulty: 'beginner',
 			commonMistakes: [
@@ -457,7 +457,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		push: {
 			description: 'Adds one or more elements to the end of an array',
 			example:
-				'let fruits = ["apple", "banana"];\nfruits.push("orange");\nconsole.log(fruits); // ["apple", "banana", "orange"]',
+				'let fruits = ["apple", "banana"];\nfruits.push("orange");\n console.log(fruits); // ["apple", "banana", "orange"]',
 			category: 'arrays',
 			difficulty: 'beginner',
 			commonMistakes: [
@@ -476,7 +476,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		pop: {
 			description: 'Removes and returns the last element from an array',
 			example:
-				'let numbers = [1, 2, 3];\nlet last = numbers.pop();\nconsole.log(last); // 3\nconsole.log(numbers); // [1, 2]',
+				'let numbers = [1, 2, 3];\nlet last = numbers.pop();\n console.log(last); // 3\n console.log(numbers); // [1, 2]',
 			category: 'arrays',
 			difficulty: 'beginner',
 			commonMistakes: [
@@ -496,7 +496,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		shift: {
 			description: 'Removes and returns the first element from an array',
 			example:
-				'let colors = ["red", "green", "blue"];\nlet first = colors.shift();\nconsole.log(first); // "red"\nconsole.log(colors); // ["green", "blue"]',
+				'let colors = ["red", "green", "blue"];\nlet first = colors.shift();\n console.log(first); // "red"\n console.log(colors); // ["green", "blue"]',
 			category: 'arrays',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -517,7 +517,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Adds one or more elements to the beginning of an array',
 			example:
-				'let numbers = [2, 3];\nnumbers.unshift(1);\nconsole.log(numbers); // [1, 2, 3]',
+				'let numbers = [2, 3];\nnumbers.unshift(1);\n console.log(numbers); // [1, 2, 3]',
 			category: 'arrays',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -536,7 +536,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		slice: {
 			description: 'Returns a shallow copy of a portion of an array',
 			example:
-				'let animals = ["cat", "dog", "bird", "fish"];\nlet pets = animals.slice(0, 2);\nconsole.log(pets); // ["cat", "dog"]\nconsole.log(animals); // unchanged',
+				'let animals = ["cat", "dog", "bird", "fish"];\nlet pets = animals.slice(0, 2);\n console.log(pets); // ["cat", "dog"]\n console.log(animals); // unchanged',
 			category: 'arrays',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -557,7 +557,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Changes an array by removing/replacing existing elements and/or adding new ones',
 			example:
-				'let items = ["a", "b", "c", "d"];\nitems.splice(1, 2, "x", "y");\nconsole.log(items); // ["a", "x", "y", "d"]',
+				'let items = ["a", "b", "c", "d"];\nitems.splice(1, 2, "x", "y");\n console.log(items); // ["a", "x", "y", "d"]',
 			category: 'arrays',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -595,7 +595,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Creates a new array with results of calling a function on every element',
 			example:
-				'let numbers = [1, 2, 3];\nlet doubled = numbers.map(num => num * 2);\nconsole.log(doubled); // [2, 4, 6]\nconsole.log(numbers); // [1, 2, 3] unchanged',
+				'let numbers = [1, 2, 3];\nlet doubled = numbers.map(num => num * 2);\n console.log(doubled); // [2, 4, 6]\n console.log(numbers); // [1, 2, 3] unchanged',
 			category: 'arrays',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -613,7 +613,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Creates a new array with elements that pass a test function',
 			example:
-				'let numbers = [1, 2, 3, 4, 5];\nlet evens = numbers.filter(num => num % 2 === 0);\nconsole.log(evens); // [2, 4]',
+				'let numbers = [1, 2, 3, 4, 5];\nlet evens = numbers.filter(num => num % 2 === 0);\n console.log(evens); // [2, 4]',
 			category: 'arrays',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -633,7 +633,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Returns the first element that satisfies a test function',
 			example:
-				'let users = [{name: "Alice", age: 25}, {name: "Bob", age: 30}];\nlet adult = users.find(user => user.age >= 18);\nconsole.log(adult); // {name: "Alice", age: 25}',
+				'let users = [{name: "Alice", age: 25}, {name: "Bob", age: 30}];\nlet adult = users.find(user => user.age >= 18);\n console.log(adult); // {name: "Alice", age: 25}',
 			category: 'arrays',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -654,7 +654,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Built-in constructor for creating and manipulating objects',
 			example:
-				'let person = {name: "Alice", age: 25};\nconsole.log(Object.keys(person)); // ["name", "age"]',
+				'let person = {name: "Alice", age: 25};\n console.log(Object.keys(person)); // ["name", "age"]',
 			category: 'objects',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -674,7 +674,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		keys: {
 			description: "Returns an array of an object's property names",
 			example:
-				'let car = {brand: "Toyota", year: 2020, color: "blue"};\nlet properties = Object.keys(car);\nconsole.log(properties); // ["brand", "year", "color"]',
+				'let car = {brand: "Toyota", year: 2020, color: "blue"};\nlet properties = Object.keys(car);\n console.log(properties); // ["brand", "year", "color"]',
 			category: 'objects',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -694,7 +694,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		values: {
 			description: "Returns an array of an object's property values",
 			example:
-				'let scores = {math: 95, english: 87, science: 92};\nlet grades = Object.values(scores);\nconsole.log(grades); // [95, 87, 92]',
+				'let scores = {math: 95, english: 87, science: 92};\nlet grades = Object.values(scores);\n console.log(grades); // [95, 87, 92]',
 			category: 'objects',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -714,7 +714,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Returns an array of [key, value] pairs from an object',
 			example:
-				'let user = {name: "Bob", age: 30};\nlet pairs = Object.entries(user);\nconsole.log(pairs); // [["name", "Bob"], ["age", 30]]',
+				'let user = {name: "Bob", age: 30};\nlet pairs = Object.entries(user);\n console.log(pairs); // [["name", "Bob"], ["age", 30]]',
 			category: 'objects',
 			difficulty: 'intermediate',
 			commonMistakes: [
@@ -731,7 +731,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 		'.': {
 			description: 'Dot notation for accessing object properties',
 			example:
-				'let person = {name: "Alice", age: 25};\nconsole.log(person.name); // "Alice"\nperson.city = "New York"; // adds new property',
+				'let person = {name: "Alice", age: 25};\n console.log(person.name); // "Alice"\nperson.city = "New York"; // adds new property',
 			category: 'objects',
 			difficulty: 'beginner',
 			commonMistakes: [
@@ -752,7 +752,7 @@ const jsHoverTooltip = hoverTooltip((view, pos, side) => {
 			description:
 				'Property that returns the number of characters in a string',
 			example:
-				'let message = "Hello World";\nconsole.log(message.length); // 11\nlet empty = "";\nconsole.log(empty.length); // 0',
+				'let message = "Hello World";\nconsole.log(message.length); // 11\nlet empty = "";\n console.log(empty.length); // 0',
 			category: 'strings',
 			difficulty: 'beginner',
 			commonMistakes: [
@@ -961,7 +961,7 @@ const errorTransforms = {
 			title: `Variable '${varName}' is not defined`,
 			explanation: `You're trying to use a variable called '${varName}', but JavaScript doesn't know what it is yet.`,
 			solution: `Declare it first with: let ${varName} = someValue;`,
-			example: `let ${varName} = "hello";\nconsole.log(${varName}); // Now this works!`,
+			example: `let ${varName} = "hello";\n console.log(${varName}); // Now this works!`,
 			category: 'variables',
 			beginner: true,
 			helpfulness: 0.95,
@@ -991,7 +991,7 @@ const errorTransforms = {
 			solution:
 				'Either use this variable somewhere, or remove the declaration.',
 			tip: 'Removing unused variables keeps your code clean and readable.',
-			example: `let ${varName} = "value";\nconsole.log(${varName}); // Now it's used!`,
+			example: `let ${varName} = "value";\n console.log(${varName}); // Now it's used!`,
 			category: 'code-quality',
 			beginner: true,
 			helpfulness: 0.7,
@@ -1312,11 +1312,11 @@ function showFormattingFeedback(original, result) {
 
 	const feedback = pedagogicalMessages[level] || pedagogicalMessages.beginner;
 
-	console.log('Formatting Applied!', {
-		original: original.substring(0, 100) + '...',
-		formatted: formatted.substring(0, 100) + '...',
-		level,
-	});
+	// 	// console.log('Formatting Applied!', {
+	// 	original: original.substring(0, 100) + '...',
+	// 	formatted: formatted.substring(0, 100) + '...',
+	// 	level,
+	// });
 
 	// Show toast notification
 	if (window.showToast) {
@@ -1375,21 +1375,21 @@ export const editorialize = (file = {}) => {
 
 			// Create enhanced CodeMirror extensions with dynamic language support
 			const createExtensions = async () => {
-				console.log('Creating enhanced extensions...');
+				// 				// console.log('Creating enhanced extensions...');
 				const extensions = [];
 
 				try {
-					console.log('Adding basicSetup...');
+					// 					// console.log('Adding basicSetup...');
 					extensions.push(basicSetup);
-					console.log('basicSetup added successfully');
+					// 					// console.log('basicSetup added successfully');
 
 					// Dynamic language loading based on file type
 					const detectedLanguage =
 						LanguageDetector.detectFromFile(processedFile);
-					console.log(
-						`Detected language: ${detectedLanguage} for file:`,
-						processedFile.name || 'unknown'
-					);
+					// 					// console.log(
+					// 	`Detected language: ${detectedLanguage} for file:`,
+					// 	processedFile.name || 'unknown'
+					// );
 
 					const languageLoader =
 						LanguageDetector.getCodeMirrorLanguage(
@@ -1398,9 +1398,9 @@ export const editorialize = (file = {}) => {
 
 					if (languageLoader) {
 						try {
-							console.log(
-								`Loading CodeMirror language package for ${detectedLanguage}...`
-							);
+							// 							// console.log(
+							// 	`Loading CodeMirror language package for ${detectedLanguage}...`
+							// );
 							const languagePkg = await languageLoader();
 							const modeName =
 								LanguageDetector.getCodeMirrorModeName(
@@ -1413,130 +1413,130 @@ export const editorialize = (file = {}) => {
 								detectedLanguage === 'typescript'
 							) {
 								extensions.push(languagePkg.javascript());
-								console.log(
-									`${detectedLanguage} language added successfully`
-								);
+								// 								// console.log(
+								// 	`${detectedLanguage} language added successfully`
+								// );
 							} else if (detectedLanguage === 'python') {
 								extensions.push(languagePkg.python());
-								console.log(
-									'Python language added successfully'
-								);
+								// 								// console.log(
+								// 	'Python language added successfully'
+								// );
 							} else if (detectedLanguage === 'html') {
 								extensions.push(languagePkg.html());
-								console.log('HTML language added successfully');
+								// 								// console.log('HTML language added successfully');
 							} else if (detectedLanguage === 'css') {
 								extensions.push(languagePkg.css());
-								console.log('CSS language added successfully');
+								// 								// console.log('CSS language added successfully');
 							} else if (detectedLanguage === 'markdown') {
 								extensions.push(languagePkg.markdown());
-								console.log(
-									'Markdown language added successfully'
-								);
+								// 								// console.log(
+								// 	'Markdown language added successfully'
+								// );
 							} else if (detectedLanguage === 'json') {
 								extensions.push(languagePkg.json());
-								console.log('JSON language added successfully');
+								// 								// console.log('JSON language added successfully');
 							} else if (detectedLanguage === 'xml') {
 								extensions.push(languagePkg.xml());
-								console.log('XML language added successfully');
+								// 								// console.log('XML language added successfully');
 							}
 						} catch (error) {
-							console.warn(
-								`Failed to load language ${detectedLanguage}:`,
-								error
-							);
-							console.log(
-								'Continuing without language-specific syntax highlighting...'
-							);
+							// console.warn(
+							// 	`Failed to load language ${detectedLanguage}:`,
+							// 	error
+							// );
+							// 							// console.log(
+							// 	'Continuing without language-specific syntax highlighting...'
+							// );
 						}
 					} else {
-						console.log(
-							`No CodeMirror support for language: ${detectedLanguage}`
-						);
-						console.log(
-							'Using basic text editing without syntax highlighting'
-						);
+						// 						// console.log(
+						// 	`No CodeMirror support for language: ${detectedLanguage}`
+						// );
+						// 						// console.log(
+						// 		'Using basic text editing without syntax highlighting'
+						// 	);
 					}
 
-					console.log('Adding oneDark theme...');
+					// 					// console.log('Adding oneDark theme...');
 					extensions.push(oneDark);
-					console.log('oneDark added successfully');
+					// 					// console.log('oneDark added successfully');
 
 					// Skip basic autocompletion - we'll add enhanced version later
 
 					// Test search extension
-					console.log('Adding search...');
+					// 					// console.log('Adding search...');
 					extensions.push(search());
-					console.log('search() added successfully');
+					// 					// console.log('search() added successfully');
 
 					// Test bracket matching extension
-					console.log('Adding bracketMatching...');
+					// 					// console.log('Adding bracketMatching...');
 					extensions.push(bracketMatching());
-					console.log('bracketMatching() added successfully');
+					// 					// console.log('bracketMatching() added successfully');
 
 					// Test close brackets extension
-					console.log('Adding closeBrackets...');
+					// 					// console.log('Adding closeBrackets...');
 					extensions.push(closeBrackets());
-					console.log('closeBrackets() added successfully');
+					// 					// console.log('closeBrackets() added successfully');
 
 					// Test fold gutter extension
-					console.log('Adding foldGutter...');
+					// 					// console.log('Adding foldGutter...');
 					extensions.push(foldGutter());
-					console.log('foldGutter() added successfully');
+					// 					// console.log('foldGutter() added successfully');
 
 					// Test highlight selection matches extension
-					console.log('Adding highlightSelectionMatches...');
+					// 					// console.log('Adding highlightSelectionMatches...');
 					extensions.push(highlightSelectionMatches());
-					console.log(
-						'highlightSelectionMatches() added successfully'
-					);
+					// 					// console.log(
+					// 	'highlightSelectionMatches() added successfully'
+					// );
 
 					// Add language-specific features based on detected language
 					if (
 						detectedLanguage === 'javascript' ||
 						detectedLanguage === 'typescript'
 					) {
-						console.log('Adding JavaScript-specific features...');
+						// 						// console.log('Adding JavaScript-specific features...');
 
-						console.log('Adding JavaScript hover tooltips...');
+						// 						// console.log('Adding JavaScript hover tooltips...');
 						extensions.push(jsHoverTooltip);
-						console.log(
-							'JavaScript hover tooltips added successfully'
-						);
+						// 						// console.log(
+						// 	'JavaScript hover tooltips added successfully'
+						// );
 
-						console.log('Adding enhanced autocompletion...');
+						// 						// console.log('Adding enhanced autocompletion...');
 						extensions.push(
 							autocompletion({ override: [jsBuiltinCompletions] })
 						);
-						console.log(
-							'Enhanced autocompletion added successfully'
-						);
+						// 						// console.log(
+						// 	'Enhanced autocompletion added successfully'
+						// );
 
-						console.log('Adding ESLint linter...');
+						// 						// console.log('Adding ESLint linter...');
 						extensions.push(jsLinter);
-						console.log('ESLint linter added successfully');
+						// 						// console.log('ESLint linter added successfully');
 
-						console.log('Adding lint gutter...');
+						// 						// console.log('Adding lint gutter...');
 						extensions.push(lintGutter());
-						console.log('Lint gutter added successfully');
+						// 						// console.log('Lint gutter added successfully');
 					} else if (detectedLanguage === 'python') {
-						console.log(
-							'Python language detected - no Python-specific linting available yet'
-						);
+						// 						// console.log(
+						// 	'Python language detected - no Python-specific linting available yet'
+						// );
 						// Future: Add Python-specific extensions when implemented
 						// extensions.push(pythonLinter);
 					} else {
-						console.log(
-							`Language ${detectedLanguage} detected - using universal features only`
-						);
+						// 						// console.log(
+						// 		`Language ${detectedLanguage} detected - using universal features only`
+						// 	);
 					}
 
 					// Configure indentation to use hard tabs
-					console.log('Adding tab indentation configuration...');
+					// 					// console.log('Adding tab indentation configuration...');
 					extensions.push(indentUnit.of('\t'));
 					extensions.push(EditorState.tabSize.of(4)); // Visual tab width
 
 					// Add format keyboard shortcut
-					console.log('Adding format keyboard shortcut...');
+					// 					// console.log('Adding format keyboard shortcut...');
 					extensions.push(
 						keymap.of([
 							indentWithTab,
@@ -1562,19 +1562,19 @@ export const editorialize = (file = {}) => {
 							},
 						])
 					);
-					console.log('Format keyboard shortcut added successfully');
+					// 					// console.log('Format keyboard shortcut added successfully');
 				} catch (error) {
 					console.error('Error adding extensions:', error);
 				}
 
-				console.log('Enhanced extensions created:', extensions.length);
+				// 				// console.log('Enhanced extensions created:', extensions.length);
 				return extensions;
 			};
 
 			try {
-				console.log('Creating EditorView...');
+				// 				// console.log('Creating EditorView...');
 				const extensions = await createExtensions();
-				console.log('Extensions to use:', extensions);
+				// 				// console.log('Extensions to use:', extensions);
 
 				editor = new EditorView({
 					doc: initialContent,
@@ -1585,7 +1585,7 @@ export const editorialize = (file = {}) => {
 				// Store reference to file object for keyboard shortcut
 				view.__file = this;
 
-				console.log('EditorView created successfully');
+				// 				// console.log('EditorView created successfully');
 			} catch (error) {
 				console.error('Error creating EditorView:', error);
 				console.error('Error stack:', error.stack);
@@ -1718,16 +1718,16 @@ export const editorialize = (file = {}) => {
 		format: 'function',
 	};
 
-	console.log(
-		`🔍 Editorialize: Final returned object properties:`,
-		Object.keys(finalObj)
-	);
-	console.log(`🔍 Editorialize: Final object name/lang/ext/metadata:`, {
-		name: finalObj.name,
-		lang: finalObj.lang,
-		ext: finalObj.ext,
-		languageMetadata: finalObj.languageMetadata,
-	});
+	// 	// console.log(
+	// 	`🔍 Editorialize: Final returned object properties:`,
+	// 	Object.keys(finalObj)
+	// );
+	// 	// console.log(`🔍 Editorialize: Final object name/lang/ext/metadata:`, {
+	// 	name: finalObj.name,
+	// 	lang: finalObj.lang,
+	// 	ext: finalObj.ext,
+	// 	languageMetadata: finalObj.languageMetadata,
+	// });
 
 	// Return the actual object (not the debug version)
 	return {
@@ -1752,7 +1752,7 @@ export const editorialize = (file = {}) => {
 
 			// Create enhanced CodeMirror extensions with dynamic language support
 			const createExtensions = async () => {
-				console.log('Creating enhanced extensions...');
+				// 				// console.log('Creating enhanced extensions...');
 
 				// Build extensions array dynamically
 				let extensions = [];
@@ -1783,55 +1783,55 @@ export const editorialize = (file = {}) => {
 						} else if (languagePackage.xml) {
 							extensions.push(languagePackage.xml());
 						}
-						console.log(
-							`Loaded language support for: ${detectedLanguage}`
-						);
+						// 						// console.log(
+						// 	`Loaded language support for: ${detectedLanguage}`
+						// );
 					} else {
-						console.log(
-							`No language support available for: ${detectedLanguage}`
-						);
+						// 						// console.log(
+						// 	`No language support available for: ${detectedLanguage}`
+						// );
 					}
 				} catch (error) {
-					console.warn(
-						`Failed to load language support for ${detectedLanguage}:`,
-						error
-					);
+					// console.warn(
+					// 	`Failed to load language support for ${detectedLanguage}:`,
+					// 	error
+					// );
 				}
 
 				// Test if dark theme should be used
 				if (enableColorize) {
-					console.log('Adding oneDark theme...');
+					// 					// console.log('Adding oneDark theme...');
 					extensions.push(oneDark);
-					console.log('oneDark theme added successfully');
+					// 					// console.log('oneDark theme added successfully');
 				}
 
 				// Test if Tab key handler can be added
 				try {
-					console.log('Adding indentWithTab keymap...');
+					// 					// console.log('Adding indentWithTab keymap...');
 					extensions.push(keymap.of([indentWithTab]));
-					console.log('indentWithTab keymap added successfully');
+					// 					// console.log('indentWithTab keymap added successfully');
 				} catch (error) {
 					console.warn('Failed to add indentWithTab keymap:', error);
 				}
 
 				// Test if autocompletion can be added
 				try {
-					console.log('Adding autocompletion...');
+					// 					// console.log('Adding autocompletion...');
 					extensions.push(
 						autocompletion({
 							override: [jsCompletion],
 						})
 					);
-					console.log('autocompletion() added successfully');
+					// 					// console.log('autocompletion() added successfully');
 				} catch (error) {
 					console.warn('Failed to add autocompletion:', error);
 				}
 
 				// Test if hover tooltip can be added
 				try {
-					console.log('Adding jsHoverTooltip...');
+					// 					// console.log('Adding jsHoverTooltip...');
 					extensions.push(jsHoverTooltip);
-					console.log('jsHoverTooltip added successfully');
+					// 					// console.log('jsHoverTooltip added successfully');
 				} catch (error) {
 					console.warn('Failed to add jsHoverTooltip:', error);
 				}
@@ -1842,52 +1842,52 @@ export const editorialize = (file = {}) => {
 						detectedLanguage === 'javascript' ||
 						detectedLanguage === 'typescript'
 					) {
-						console.log('Adding linting for JavaScript...');
+						// 						// console.log('Adding linting for JavaScript...');
 						extensions.push(linter(esLinter()));
 						extensions.push(lintGutter());
-						console.log('JavaScript linting added successfully');
+						// 						// console.log('JavaScript linting added successfully');
 					} else {
-						console.log(
-							`Skipping linting for non-JavaScript language: ${detectedLanguage}`
-						);
+						// 						// console.log(
+						// 	`Skipping linting for non-JavaScript language: ${detectedLanguage}`
+						// );
 					}
 				} catch (error) {
 					console.warn('Failed to add linting:', error);
 				}
 
 				// Test search extension
-				console.log('Adding search...');
+				// 				// console.log('Adding search...');
 				extensions.push(search());
-				console.log('search() added successfully');
+				// 				// console.log('search() added successfully');
 
 				// Test highlight selection matches extension
-				console.log('Adding highlightSelectionMatches...');
+				// 				// console.log('Adding highlightSelectionMatches...');
 				extensions.push(highlightSelectionMatches());
-				console.log('highlightSelectionMatches() added successfully');
+				// 				// console.log('highlightSelectionMatches() added successfully');
 
 				// Test bracket matching extension
-				console.log('Adding bracketMatching...');
+				// 				// console.log('Adding bracketMatching...');
 				extensions.push(bracketMatching());
-				console.log('bracketMatching() added successfully');
+				// 				// console.log('bracketMatching() added successfully');
 
 				// Test close brackets extension
-				console.log('Adding closeBrackets...');
+				// 				// console.log('Adding closeBrackets...');
 				extensions.push(closeBrackets());
-				console.log('closeBrackets() added successfully');
+				// 				// console.log('closeBrackets() added successfully');
 
 				// Test fold gutter extension
-				console.log('Adding foldGutter...');
+				// 				// console.log('Adding foldGutter...');
 				extensions.push(foldGutter());
-				console.log('foldGutter() added successfully');
+				// 				// console.log('foldGutter() added successfully');
 
 				// Test indent unit extension
-				console.log('Adding indentUnit...');
+				// 				// console.log('Adding indentUnit...');
 				extensions.push(indentUnit.of('  ')); // 2 spaces
-				console.log('indentUnit() added successfully');
+				// 				// console.log('indentUnit() added successfully');
 
-				console.log(
-					`Created ${extensions.length} CodeMirror extensions successfully`
-				);
+				// 				// console.log(
+				// 	`Created ${extensions.length} CodeMirror extensions successfully`
+				// );
 				return extensions;
 			};
 
@@ -1900,7 +1900,7 @@ export const editorialize = (file = {}) => {
 					extensions: extensions,
 				});
 
-				console.log('CodeMirror editor initialized successfully');
+				// 				// console.log('CodeMirror editor initialized successfully');
 			} catch (error) {
 				console.error('Failed to initialize CodeMirror editor:', error);
 				// Fallback to basic textarea

@@ -76,11 +76,11 @@ const InteractiveCodeBlock = ({ file, codeId, onOpenInLens }) => {
 	};
 
 	// Debug: Show file object received from MarkdownLens
-	console.log(`🔍 InteractiveCodeBlock: Received file object:`, {
-		name: file?.name,
-		lang: file?.lang,
-		ext: file?.ext,
-	});
+	// 	console.log(`🔍 InteractiveCodeBlock: Received file object:`, {
+	// 	name: file?.name,
+	// 	lang: file?.lang,
+	// 	ext: file?.ext,
+	// });
 
 	const containerRef = useRef();
 
@@ -91,9 +91,9 @@ const InteractiveCodeBlock = ({ file, codeId, onOpenInLens }) => {
 			const prismLanguage = getPrismLanguageClass(file);
 
 			// Debug: Track Prism language mapping
-			console.log(
-				`🔍 InteractiveCodeBlock: Prism language mapping: "${file.lang}" → "language-${prismLanguage}"`
-			);
+			// 			console.log(
+			// 	`🔍 InteractiveCodeBlock: Prism language mapping: "${file.lang}" → "language-${prismLanguage}"`
+			// );
 
 			containerRef.current.innerHTML = `<pre><code class="language-${prismLanguage}">${currentContent}</code></pre>`;
 

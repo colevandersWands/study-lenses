@@ -80,3 +80,133 @@ Files in the public directory are served at the root path.
 Instead of /public/static/lib/is-in-range.js, use /static/lib/is-in-range.js.
 Files in the public directory are served at the root path.
 Instead of /public/static/lib/is-built-in.js, use /static/lib/is-built-in.js.
+6:41:15 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+7:29:30 PM [vite] hmr update /src/App.jsx
+7:29:52 PM [vite] page reload views/landing.html
+7:29:59 PM [vite] page reload views/landing.html
+7:33:42 PM [vite] hmr update /src/App.jsx
+7:34:04 PM [vite] hmr update /src/App.jsx
+7:46:14 PM [vite] hmr update /src/App.jsx
+7:47:07 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+7:48:24 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+7:48:48 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+7:48:53 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+7:48:55 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+7:49:20 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+7:49:28 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+7:57:50 PM [vite] hmr update /src/App.jsx
+7:58:34 PM [vite] hmr update /src/App.jsx
+7:58:39 PM [vite] hmr update /src/App.jsx
+7:58:46 PM [vite] hmr update /src/App.jsx
+7:59:31 PM [vite] hmr update /src/lenses/BlanksLens.jsx
+8:00:04 PM [vite] hmr update /src/lenses/BlanksLens.jsx
+8:00:23 PM [vite] hmr update /src/lenses/BlanksLens.jsx
+8:00:45 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:01:01 PM [vite] hmr update /src/context/ColorizeContext.jsx
+8:01:01 PM [vite] hmr update /src/context/ToastContext.jsx
+8:01:01 PM [vite] hmr update /src/context/AppContext.jsx
+8:01:01 PM [vite] hmr update /src/components/StudyBar.jsx
+8:01:01 PM [vite] hmr update /src/components/FileBrowser.jsx
+8:01:01 PM [vite] hmr update /src/components/ErrorBoundary.jsx
+8:01:01 PM [vite] hmr update /src/components/CodeBlock.jsx
+8:01:01 PM [vite] hmr update /src/components/Toast.jsx
+8:01:01 PM [vite] hmr update /src/components/StepThroughModal.jsx
+8:01:01 PM [vite] hmr update /src/components/ExerciseRenderer.jsx
+8:01:01 PM [vite] hmr update /src/components/ToastContainer.jsx
+8:01:01 PM [vite] hmr update /src/components/InteractiveCodeBlock.jsx
+8:01:01 PM [vite] hmr update /src/components/LensModal.jsx
+8:01:01 PM [vite] hmr update /src/components/ExercisePicker.jsx
+8:01:01 PM [vite] page reload src/main.jsx
+8:01:01 PM [vite] hmr update /src/App.jsx
+8:01:01 PM [vite] hmr update /src/containers/ModalContainer.jsx
+8:01:01 PM [vite] hmr update /src/containers/FullPageContainer.jsx
+8:01:01 PM [vite] hmr update /src/containers/StudyBarButtonContainer.jsx
+8:01:01 PM [vite] hmr update /src/lenses/TracingLens.jsx
+8:01:01 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:01:01 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:01:01 PM [vite] hmr update /src/lenses/EditorLens.jsx
+8:01:01 PM [vite] hmr update /src/lenses/MarkdownLens.jsx
+8:01:01 PM [vite] hmr update /src/lenses/ParsonsLens.jsx
+8:01:01 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:01:01 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:01:01 PM [vite] hmr update /src/lenses/BlanksLens.jsx
+8:01:02 PM [vite] hmr update /src/lenses/PrintLens.jsx
+8:01:02 PM [vite] hmr update /src/lenses/VariablesLens.jsx
+8:01:02 PM [vite] hmr update /src/lenses/StepThroughsLens.jsx
+8:01:02 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:01:02 PM [vite] hmr update /src/lenses/HighlightLens.jsx
+8:01:02 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:01:19 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:01:34 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:04:50 PM [vite] hmr update /src/App.jsx
+8:08:13 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:08:29 PM [vite] hmr update /src/containers/FullPageContainer.jsx
+8:08:32 PM [vite] hmr update /src/containers/FullPageContainer.jsx
+8:08:33 PM [vite] hmr update /src/containers/FullPageContainer.jsx
+8:08:35 PM [vite] hmr update /src/containers/FullPageContainer.jsx
+8:08:37 PM [vite] hmr update /src/containers/FullPageContainer.jsx
+8:09:41 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:09:42 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:10:03 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:10:35 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:10:40 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:10:42 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:10:47 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:11:25 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:11:44 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:11:56 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:13:11 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:13:53 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:16:10 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:16:15 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:16:37 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:17:03 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:18:23 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:18:37 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:18:39 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:20:03 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:21:34 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:21:35 PM [vite] hmr update /src/App.jsx, /src/context/AppContext.jsx, /src/components/SandboxModal.jsx, /src/lenses/MarkdownLens.jsx
+8:22:13 PM [vite] hmr update /src/lenses/MarkdownLens.jsx
+8:22:33 PM [vite] hmr update /src/lenses/MarkdownLens.jsx
+8:22:38 PM [vite] hmr update /src/lenses/MarkdownLens.jsx
+8:23:02 PM [vite] hmr update /src/lenses/MarkdownLens.jsx
+8:23:34 PM [vite] hmr update /src/lenses/MarkdownLens.jsx
+8:23:56 PM [vite] hmr update /src/components/InteractiveCodeBlock.jsx
+8:25:01 PM [vite] hmr update /src/utils/PluginRegistry.js
+8:25:48 PM [vite] hmr update /src/components/ExerciseRenderer.jsx, /src/containers/FullPageContainer.jsx, /src/containers/ModalContainer.jsx, /src/components/StudyBar.jsx
+8:27:01 PM [vite] hmr update /src/utils/PluginRegistry.js
+8:29:09 PM [vite] hmr update /src/App.jsx
+8:29:46 PM [vite] hmr update /src/App.jsx
+8:30:06 PM [vite] hmr update /src/App.jsx
+8:30:17 PM [vite] hmr update /src/App.jsx
+8:33:30 PM [vite] vite.config.js changed, restarting server...
+[vite-plugin-static-copy] Error: No file was found to copy on content/assets src.
+8:33:30 PM [vite] server restarted.
+
+  ➜  Local:   http://localhost:3002/
+  ➜  Network: http://10.29.218.61:3002/
+[vite-plugin-static-copy] No items found.
+8:35:28 PM [vite] vite.config.js changed, restarting server...
+[vite-plugin-static-copy] Error: No file was found to copy on content/assets src.
+8:35:29 PM [vite] server restarted.
+[vite-plugin-static-copy] No items found.
+8:35:35 PM [vite] vite.config.js changed, restarting server...
+[vite-plugin-static-copy] Error: No file was found to copy on content/assets src.
+8:35:35 PM [vite] server restarted.
+[vite-plugin-static-copy] No items found.
+8:35:51 PM [vite] vite.config.js changed, restarting server...
+8:35:51 PM [vite] server restarted.
+[vite-plugin-static-copy] Collected 1 items.
+8:38:52 PM [vite] vite.config.js changed, restarting server...
+[vite-plugin-static-copy] Error: No file was found to copy on content/assets src.
+8:38:52 PM [vite] server restarted.
+[vite-plugin-static-copy] No items found.
+8:39:17 PM [vite] vite.config.js changed, restarting server...
+[vite-plugin-static-copy] Error: No file was found to copy on content/assets src.
+8:39:17 PM [vite] server restarted.
+[vite-plugin-static-copy] No items found.
+8:39:43 PM [vite] vite.config.js changed, restarting server...
+8:39:43 PM [vite] server restarted.
+[vite-plugin-static-copy] Collected 1 items.
+10:01:12 AM [vite] page reload public/parsons-iframe.html

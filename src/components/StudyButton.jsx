@@ -39,7 +39,7 @@ const StudyButton = ({
 		dragOffset: { x: 0, y: 0 },
 		startPos: { x: 0, y: 0 },
 	});
-	console.log(showConfig, type);
+// 	console.log(showConfig, type);
 
 	// Refs
 	const executionContainerRef = useRef(null);

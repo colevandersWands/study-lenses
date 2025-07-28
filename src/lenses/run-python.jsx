@@ -20,7 +20,7 @@ export const applicable = (file) => {
  * @returns {Promise} Execution result
  */
 export const execute = async (file, config = {}) => {
-	console.log('🐍 Python execute called with:', { file, config });
+// 	console.log('🐍 Python execute called with:', { file, config });
 	const code = file?.content || file;
 	
 	if (!code) {

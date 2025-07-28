@@ -12,6 +12,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -121,6 +122,11 @@ app.get('/', (req, res) => {
 const studyLensesPath = path.join(__dirname, 'dist');
 app.use('/', express.static(studyLensesPath));
 
+// Demo route - serves Study Lenses frontend with demo content
+app.get('/demo', (req, res) => {
+	// Serve the Study Lenses frontend for demo mode
+	res.sendFile(path.join(studyLensesPath, 'index.html'));
+});
 
 // User repository listing
 app.get('/:username', validateGitHubName, async (req, res) => {
@@ -210,6 +216,36 @@ app.get(
 		try {
 			const { username, repository } = req.params;
 			console.log(`Processing repository: ${username}/${repository}`);
+
+			// Handle demo content specially
+			if (username === 'demo' && repository === 'demo') {
+				console.log('Serving demo content from /public/demo.json');
+
+				// Serve the static demo content
+				const demoContentPath = path.join(
+					__dirname,
+					'public',
+					'demo.json'
+				);
+
+				// Check if demo content exists
+				if (!fs.existsSync(demoContentPath)) {
+					return res.status(404).json({
+						error: 'Demo content not found',
+						message: 'The demo content file is missing',
+						timestamp: new Date().toISOString(),
+					});
+				}
+
+				// Set appropriate cache headers
+				res.set({
+					'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+					'Content-Type': 'application/json',
+				});
+
+				res.sendFile(demoContentPath);
+				return;
+			}
 
 			const repoData = await repoProcessor.processRepo(
 				username,

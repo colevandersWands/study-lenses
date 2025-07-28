@@ -85,19 +85,19 @@ export const executeJavaScript = async (
 				iframeWindow.confirm = (message) => window.confirm(message);
 
 				// Override console methods to capture output
-				const originalConsole = iframeWindow.console;
-				iframeWindow.console = {
-					...originalConsole,
-					log: (...args) => {
-						originalConsole.log(...args);
-					},
-					error: (...args) => {
-						originalConsole.error(...args);
-					},
-					warn: (...args) => {
-						originalConsole.warn(...args);
-					},
-				};
+				// const originalConsole = iframeWindow.console;
+				// iframeWindow.console = {
+				// 	...originalConsole,
+				// 	log: (...args) => {
+				// 		originalConsole.log(...args);
+				// 	},
+				// 	error: (...args) => {
+				// 		originalConsole.error(...args);
+				// 	},
+				// 	warn: (...args) => {
+				// 		originalConsole.warn(...args);
+				// 	},
+				// };
 
 				// Initialize testing framework if enabled
 				if (finalConfig.testing) {

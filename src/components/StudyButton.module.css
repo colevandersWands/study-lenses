@@ -18,7 +18,7 @@
 	display: flex;
 	align-items: center;
 	gap: 4px;
-	padding: 6px 12px;
+	padding: 0.5em;
 	border: 1px solid #464647;
 	border-radius: 4px;
 	background: #383838;
@@ -63,7 +63,7 @@
 }
 
 .button.full {
-	padding: 8px 16px;
+	padding: 0.5em;
 	font-size: 13px;
 }
 

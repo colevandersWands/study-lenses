@@ -14,27 +14,27 @@ const FullPageContainer = ({ lensId, file }) => {
 	const lens = getLens(lensId);
 
 	const handleLensAction = (actionLensId, config) => {
-		console.log(
-			`Opening lens ${actionLensId} in modal with config:`,
-			config
-		);
+		// 		console.log(
+		// 	`Opening lens ${actionLensId} in modal with config:`,
+		// 	config
+		// );
 		setModalState({ lensId: actionLensId, config });
 	};
 
 	const handleActionLensExecution = async (actionLens, config) => {
-		console.log(
-			`Executing action lens ${actionLens.id} with config:`,
-			config
-		);
+		// 		console.log(
+		// 	`Executing action lens ${actionLens.id} with config:`,
+		// 	config
+		// );
 		try {
 			const result = await actionLens.execute(file, config);
-			
+
 			// If execute returns a component, show it in modal
 			if (result && typeof result === 'object' && result.type) {
-				setModalState({ 
-					lensId: actionLens.id, 
+				setModalState({
+					lensId: actionLens.id,
 					config, 
-					component: result 
+					component: result,
 				});
 			}
 			// Otherwise, it was a side-effect only action (existing behavior)

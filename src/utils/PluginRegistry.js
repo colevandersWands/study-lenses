@@ -60,9 +60,9 @@ export class PluginRegistry {
 		if (config.universal) {
 			// Still check excluded languages for universal plugins
 			if (config.excludedLanguages.includes(language)) {
-				console.log(
-					`Plugin Registry: Universal plugin ${pluginId} excludes language ${language}`
-				);
+				// console.log(
+				// 	`Plugin Registry: Universal plugin ${pluginId} excludes language ${language}`
+				// );
 				return false;
 			}
 			return true;
@@ -70,9 +70,9 @@ export class PluginRegistry {
 
 		// Check if language is explicitly excluded
 		if (config.excludedLanguages.includes(language)) {
-			console.log(
-				`Plugin Registry: Plugin ${pluginId} excludes language ${language}`
-			);
+			// console.log(
+			// 	`Plugin Registry: Plugin ${pluginId} excludes language ${language}`
+			// );
 			return false;
 		}
 
@@ -289,30 +289,30 @@ export class PluginRegistry {
 			requiredFeatures: ['execution', 'tracing'],
 		});
 
-		console.log(
-			'Plugin Registry: Default plugin language support initialized'
-		);
+		// console.log(
+		// 	'Plugin Registry: Default plugin language support initialized'
+		// );
 	}
 
 	/**
 	 * Debug method to log current plugin registry state
 	 */
 	static debugRegistry() {
-		console.log('Plugin Registry State:');
-		console.table(
-			Array.from(this.pluginLanguageSupport.entries()).map(
-				([id, config]) => ({
-					pluginId: id,
-					universal: config.universal,
-					supportedLanguages: config.supportedLanguages.join(', '),
-					excludedLanguages: config.excludedLanguages.join(', '),
-					requiredFeatures: config.requiredFeatures.join(', '),
-				})
-			)
-		);
+		// console.log('Plugin Registry State:');
+		// console.table(
+		// 	Array.from(this.pluginLanguageSupport.entries()).map(
+		// 		([id, config]) => ({
+		// 			pluginId: id,
+		// 			universal: config.universal,
+		// 			supportedLanguages: config.supportedLanguages.join(', '),
+		// 			excludedLanguages: config.excludedLanguages.join(', '),
+		// 			requiredFeatures: config.requiredFeatures.join(', '),
+		// 		})
+		// 	)
+		// );
 
 		const summary = this.getLanguageSupportSummary();
-		console.log('Language Support Summary:', summary);
+		// console.log('Language Support Summary:', summary);
 	}
 }
 

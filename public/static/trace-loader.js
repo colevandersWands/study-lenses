@@ -167,12 +167,13 @@ async function loadTraceSystem() {
 							console.error('Trace execution error:', err);
 						}
 
-						// Clean up iframe after execution
-						setTimeout(() => {
-							if (iframe.parentNode) {
-								document.body.removeChild(iframe);
-							}
-						}, 1000);
+						// Clean up iframe after execution 
+						// // commenting this line fixed the pop-up blocking (somehow?)
+						// setTimeout(() => {
+						// 	if (iframe.parentNode) {
+						// 		document.body.removeChild(iframe);
+						// 	}
+						// }, 1000);
 					};
 
 					iframe.contentWindow.trace(code);

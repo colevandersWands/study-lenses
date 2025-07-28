@@ -45,14 +45,14 @@ function processMarkdownWithCodeBlocks(content, resource, editorializedFiles) {
 	// Extract repository information for GitHub raw image resolution
 	const repoInfo = getRepoFromPath();
 	if (repoInfo) {
-		console.log(
-			`🖼️ Repository context: ${repoInfo.username}/${repoInfo.repository}`
-		);
-		console.log(`📁 Current file directory: "${resource.dir || 'root'}"`);
+		// 		console.log(
+		// 	`🖼️ Repository context: ${repoInfo.username}/${repoInfo.repository}`
+		// );
+		// 		console.log(`📁 Current file directory: "${resource.dir || 'root'}"`);
 	} else {
-		console.log(
-			`📄 Not in GitHub repository context - images will use default relative paths`
-		);
+		// 		console.log(
+		// 	`📄 Not in GitHub repository context - images will use default relative paths`
+		// );
 	}
 
 	// Create custom renderer
@@ -60,12 +60,12 @@ function processMarkdownWithCodeBlocks(content, resource, editorializedFiles) {
 
 	// Custom image renderer for GitHub repository support
 	if (repoInfo) {
-		console.log('--------', repoInfo);
+		// 		console.log('--------', repoInfo);
 		renderer.image = function ({ href, title, text }) {
-			console.log(href);
+			// 			console.log(href);
 			// If the href is already a full URL, use it as-is
 			if (href.startsWith('http://') || href.startsWith('https://')) {
-				console.log(`🖼️ External image URL: ${href}`);
+				// 				console.log(`🖼️ External image URL: ${href}`);
 				return `<img src="${href}" alt="${text}" ${title ? `title="${title}"` : ''} />`;
 			}
 
@@ -120,9 +120,9 @@ function processMarkdownWithCodeBlocks(content, resource, editorializedFiles) {
 
 			// Construct the full GitHub raw URL
 			const imageUrl = `https://raw.githubusercontent.com/${repoInfo.username}/${repoInfo.repository}/refs/heads/main/${resolvedPath}`;
-			console.log(
-				`🖼️ Resolving image: "${href}" (from "${resource.dir || 'root'}") -> "${imageUrl}"`
-			);
+			// 			console.log(
+			// 	`🖼️ Resolving image: "${href}" (from "${resource.dir || 'root'}") -> "${imageUrl}"`
+			// );
 
 			return `<img src="${imageUrl}" alt="${text}" ${title ? `title="${title}"` : ''} />`;
 		};
@@ -135,7 +135,7 @@ function processMarkdownWithCodeBlocks(content, resource, editorializedFiles) {
 		codeBlockCounter += 1;
 
 		// Debug: Log the language parameter to see what we're getting
-		console.log(`🔍 Code block language: "${code.lang}"`);
+		// 		console.log(`🔍 Code block language: "${code.lang}"`);
 
 		// Simple extension: just add dot to language
 		const extension = code.lang ? `.${code.lang}` : '.txt';
@@ -239,18 +239,18 @@ const MarkdownExercise = ({ resource }) => {
 			}
 
 			// Debug: Track file object passed to InteractiveCodeBlock
-			console.log(
-				`🔍 MarkdownLens: Mounting InteractiveCodeBlock with complete file object:`,
-				{
-					name: editorializedFile.name,
-					path: editorializedFile.path,
-					base: editorializedFile.base,
-					ext: editorializedFile.ext,
-					lang: editorializedFile.lang,
-					dir: editorializedFile.dir,
-					toCwd: editorializedFile.toCwd,
-				}
-			);
+			// 			console.log(
+			// 	`🔍 MarkdownLens: Mounting InteractiveCodeBlock with complete file object:`,
+			// 	{
+			// 		name: editorializedFile.name,
+			// 		path: editorializedFile.path,
+			// 		base: editorializedFile.base,
+			// 		ext: editorializedFile.ext,
+			// 		lang: editorializedFile.lang,
+			// 		dir: editorializedFile.dir,
+			// 		toCwd: editorializedFile.toCwd,
+			// 	}
+			// );
 
 			// Mount InteractiveCodeBlock component with file object
 			preactRender(

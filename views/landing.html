@@ -180,6 +180,25 @@
 				background: #5a6fd8;
 			}
 
+			.demo-button {
+				display: inline-block;
+				padding: 16px 32px;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: white;
+				text-decoration: none;
+				border-radius: 8px;
+				font-size: 1.1rem;
+				font-weight: 600;
+				transition: all 0.3s ease;
+				box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+			}
+
+			.demo-button:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+				background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
+			}
+
 			.examples {
 				margin: 40px 0;
 			}
@@ -325,9 +344,18 @@
 					<div class="demo-section">
 						<h3>Try it now!</h3>
 						<p>
-							Enter a GitHub username to explore their
-							repositories:
+							Start with our interactive demo or explore any GitHub repository:
 						</p>
+
+						<div class="demo-input">
+							<a href="/demo" class="demo-button">
+								🚀 Try Interactive Demo
+							</a>
+						</div>
+
+						<div style="margin: 20px 0; color: #6c757d; font-size: 0.9rem;">
+							— OR —
+						</div>
 
 						<div class="demo-input">
 							<input

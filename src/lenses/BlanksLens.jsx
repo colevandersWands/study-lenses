@@ -516,23 +516,23 @@ const BlanksLens = ({ resource }) => {
 							// window.askOpenEnded(codeToAnalyze);
 							askOpenEnded(codeToAnalyze);
 						} catch (error) {
-							console.log(
-								'Fallback: Manual code analysis questions'
-							);
-							console.log('--- --- --- --- --- --- ---');
-							console.log(
-								'Consider these questions about your code:'
-							);
-							console.log(
-								'- What does this code do step by step?'
-							);
-							console.log(
-								'- What are the main variables and their purposes?'
-							);
-							console.log(
-								'- Are there any patterns or structures you recognize?'
-							);
-							console.log('--- --- --- --- --- --- ---');
+							// console.log(
+							//	'Fallback: Manual code analysis questions'
+							// );
+							// console.log('--- --- --- --- --- --- ---');
+							// console.log(
+							//	'Consider these questions about your code:'
+							// );
+							// console.log(
+							//	'- What does this code do step by step?'
+							// );
+							// console.log(
+							//	'- What are the main variables and their purposes?'
+							// );
+							// console.log(
+							//	'- Are there any patterns or structures you recognize?'
+							// );
+							// console.log('--- --- --- --- --- --- ---');
 						}
 					}}
 					title="Generate questions about this code (logged to console)"

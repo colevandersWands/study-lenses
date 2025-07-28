@@ -65,7 +65,11 @@
       "Bash(flyctl machine start:*)",
       "Bash(flyctl machine destroy:*)",
       "WebFetch(domain:study-lenses.fly.dev)",
-      "Bash(flyctl ssh console:*)"
+      "Bash(flyctl ssh console:*)",
+      "Bash(open \"http://localhost:4567/demo\")",
+      "Bash(open \"http://localhost:4567/\")",
+      "Bash(npx eslint:*)",
+      "Bash(timeout 30 npm run dev)"
     ],
     "deny": []
   }

@@ -143,18 +143,18 @@ const showFallbackQuestions = (file) => {
 	}
 
 	// Display questions in console with nice formatting
-	console.log('🤔 CODE ANALYSIS QUESTIONS');
-	console.log('='.repeat(50));
-	console.log('Consider these questions about your code:');
-	console.log('');
+	// console.log('🤔 CODE ANALYSIS QUESTIONS');
+	// console.log('='.repeat(50));
+	// console.log('Consider these questions about your code:');
+	// console.log('');
 	questions.forEach((question) => {
-		console.log(question);
+		// console.log(question);
 	});
-	console.log('');
-	console.log(
-		'💡 TIP: Try to answer these questions out loud or write down your thoughts!'
-	);
-	console.log('='.repeat(50));
+	// console.log('');
+	// console.log(
+	//	'💡 TIP: Try to answer these questions out loud or write down your thoughts!'
+	// );
+	// console.log('='.repeat(50));
 };
 
 /**

@@ -1,0 +1,419 @@
+/* DropDowns Lens Styles - Inspired by BlanksLens */
+
+.container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	background: #1e1e1e;
+	color: #d4d4d4;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Control Panel - Compact design */
+.controls {
+	background: #2d2d30;
+	border-bottom: 1px solid #464647;
+	padding: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 0.5rem;
+}
+
+.header h3 {
+	margin: 0;
+	color: #cccccc;
+	font-size: 1.1rem;
+}
+
+.status {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-size: 0.9rem;
+}
+
+.score {
+	color: #007acc;
+	font-weight: 600;
+}
+
+.dropdownCount {
+	color: #808080;
+	font-size: 0.85rem;
+}
+
+/* Slider Row - Difficulty with Distractors */
+.sliderRow {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 0.25rem;
+}
+
+/* Checkbox Row - All content types in one line */
+.checkboxRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-bottom: 0.25rem;
+}
+
+/* Action Buttons Row */
+.actionButtons {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.checkboxLabel {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	cursor: pointer;
+	font-size: 0.8rem;
+	color: #d4d4d4;
+	padding: 0.2rem 0.4rem;
+	border-radius: 4px;
+	transition: background-color 0.2s;
+	white-space: nowrap;
+}
+
+.checkboxLabel:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.checkboxLabel input[type='checkbox'] {
+	width: 16px;
+	height: 16px;
+	accent-color: #007acc;
+	cursor: pointer;
+}
+
+.checkboxLabel span {
+	user-select: none;
+}
+
+/* Slider Container - Main difficulty slider */
+.sliderContainer {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex: 1;
+	max-width: 85%;
+}
+
+.sliderLabel {
+	font-size: 0.8rem;
+	color: #d4d4d4;
+	white-space: nowrap;
+}
+
+/* Distractors label - to the right of slider */
+.distractorsLabel {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	cursor: pointer;
+	font-size: 0.8rem;
+	color: #d4d4d4;
+	padding: 0.2rem 0.4rem;
+	border-radius: 4px;
+	transition: background-color 0.2s;
+	white-space: nowrap;
+	margin-left: 1rem;
+	flex-shrink: 0;
+}
+
+.distractorsLabel:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.slider {
+	flex: 1;
+	height: 6px;
+	background: #464647;
+	border-radius: 3px;
+	outline: none;
+	-webkit-appearance: none;
+	cursor: pointer;
+	min-width: 100%;
+}
+
+.slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 18px;
+	height: 18px;
+	background: #007acc;
+	border-radius: 50%;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider::-moz-range-thumb {
+	width: 18px;
+	height: 18px;
+	background: #007acc;
+	border-radius: 50%;
+	cursor: pointer;
+	border: none;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.percentage {
+	color: #007acc;
+	font-weight: 600;
+	font-size: 0.8rem;
+	min-width: 35px;
+	text-align: right;
+}
+
+/* Score display */
+.score {
+	color: #4caf50;
+	font-weight: 600;
+	font-size: 0.8rem;
+	margin-left: auto;
+}
+
+.checkButton,
+.resetButton {
+	flex: 1;
+	padding: 0.5rem 1rem;
+	border: 1px solid #007acc;
+	background: rgba(0, 122, 204, 0.1);
+	color: #007acc;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.85rem;
+	font-family: inherit;
+	transition: all 0.2s;
+	font-weight: 500;
+}
+
+.checkButton:hover,
+.resetButton:hover {
+	background: rgba(0, 122, 204, 0.2);
+	border-color: #1177bb;
+	color: #1177bb;
+}
+
+.checkButton:active,
+.resetButton:active {
+	background: rgba(0, 122, 204, 0.3);
+}
+
+.resetButton {
+	border-color: #464647;
+	background: #2d2d30;
+	color: #d4d4d4;
+}
+
+.resetButton:hover {
+	background: #3c3c3c;
+	border-color: #007acc;
+	color: #007acc;
+}
+
+/* Code Container */
+.codeContainer {
+	flex: 1;
+	overflow: auto;
+	padding: 1rem;
+	font-family: 'Courier New', Monaco, monospace;
+	font-size: 14px;
+	line-height: 1.6;
+	white-space: pre-wrap;
+	background: #1e1e1e;
+}
+
+.codeSegment {
+	color: #d4d4d4;
+}
+
+/* Dropdown Styling */
+.dropdown {
+	font-family: 'Courier New', Monaco, monospace;
+	font-size: 14px;
+	background: #2d2d30;
+	border: 2px solid #464647;
+	color: #d4d4d4;
+	padding: 0.2rem 0.4rem;
+	margin: 0 0.1rem;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s;
+	min-width: 60px;
+	max-width: 200px;
+}
+
+.dropdown:hover {
+	border-color: #007acc;
+	background: #3c3c3c;
+}
+
+.dropdown:focus {
+	outline: none;
+	border-color: #007acc;
+	box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.3);
+}
+
+.dropdown.correct {
+	border-color: #4caf50;
+	background: rgba(76, 175, 80, 0.2);
+	color: #4caf50;
+}
+
+.dropdown.incorrect {
+	border-color: #f44336;
+	background: rgba(244, 67, 54, 0.2);
+	color: #f44336;
+}
+
+/* Empty State */
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	color: #808080;
+	text-align: center;
+	flex: 1;
+}
+
+.emptyState p {
+	margin: 0.5rem 0;
+	line-height: 1.4;
+}
+
+.emptyState p:first-child {
+	font-weight: 600;
+	color: #cccccc;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.controls {
+		padding: 0.75rem;
+		gap: 0.75rem;
+	}
+
+	.sliderRow {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.5rem;
+	}
+
+	.checkboxRow {
+		justify-content: center;
+	}
+
+	.actionButtons {
+		flex-direction: column;
+	}
+
+	.sliderContainer {
+		justify-content: space-between;
+		min-width: unset;
+	}
+
+	.buttonGroup {
+		flex-direction: column;
+	}
+
+	.codeContainer {
+		font-size: 13px;
+		padding: 0.75rem;
+	}
+
+	.dropdown {
+		font-size: 13px;
+		min-width: 50px;
+	}
+}
+
+@media (max-width: 480px) {
+	.controls {
+		padding: 0.5rem;
+	}
+
+	.header {
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: flex-start;
+	}
+
+	.status {
+		flex-direction: column;
+		gap: 0.25rem;
+		align-items: flex-start;
+	}
+
+	.codeContainer {
+		font-size: 12px;
+		padding: 0.5rem;
+	}
+
+	.dropdown {
+		font-size: 12px;
+		padding: 0.15rem 0.3rem;
+	}
+}
+
+/* Focus and accessibility */
+.slider:focus,
+.checkboxLabel input:focus,
+.checkButton:focus,
+.resetButton:focus {
+	outline: 2px solid #007acc;
+	outline-offset: 2px;
+}
+
+/* Animation for feedback */
+.dropdown.correct,
+.dropdown.incorrect {
+	animation: feedbackPulse 0.3s ease;
+}
+
+@keyframes feedbackPulse {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+/* Loading animation */
+.loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	color: #808080;
+}
+
+.loadingSpinner {
+	width: 20px;
+	height: 20px;
+	border: 2px solid #464647;
+	border-top: 2px solid #007acc;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	margin-right: 0.5rem;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}

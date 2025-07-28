@@ -17,6 +17,7 @@ import EditorLens, * as studyLens from './EditorLens.jsx';
 import * as highlightLens from './HighlightLens.jsx';
 import * as parsonsLens from './ParsonsLens.jsx';
 import * as blanksLens from './BlanksLens.jsx';
+import * as dropDownsLens from './DropDownsLens.jsx';
 import * as variablesLens from './VariablesLens.jsx';
 import MarkdownExercise, * as markdownLens from './MarkdownLens.jsx';
 import * as printLens from './PrintLens.jsx';
@@ -39,6 +40,7 @@ export const STUDY_LENSES = [
 	studyLens,
 	highlightLens,
 	parsonsLens,
+	dropDownsLens,
 	blanksLens,
 	variablesLens,
 	markdownLens,
@@ -76,11 +78,11 @@ export function getApplicableLenses(file) {
 		file
 	);
 
-	console.log(`Lens filtering for file ${file?.name || 'unknown'}:`);
-	console.log(
-		`- Traditional applicable: ${traditionallyApplicable.length} lenses`
-	);
-	console.log(`- Language compatible: ${languageCompatible.length} lenses`);
+	// console.log(`Lens filtering for file ${file?.name || 'unknown'}:`);
+	// console.log(
+	// 	`- Traditional applicable: ${traditionallyApplicable.length} lenses`
+	// );
+	// console.log(`- Language compatible: ${languageCompatible.length} lenses`);
 
 	return languageCompatible;
 }
@@ -150,26 +152,26 @@ export function getLensesForLanguage(language) {
  * @param {Object} file - Optional file to check compatibility against
  */
 export function debugLensCompatibility(file = null) {
-	console.log('=== Lens Compatibility Debug ===');
+	// console.log('=== Lens Compatibility Debug ===');
 
 	if (file) {
-		console.log(`File: ${file.name || 'unknown'}`);
-		console.log(`Language: ${file.lang || 'unknown'}`);
-		console.log('');
+		// console.log(`File: ${file.name || 'unknown'}`);
+		// console.log(`Language: ${file.lang || 'unknown'}`);
+		// console.log('');
 
 		const applicableLenses = getApplicableLenses(file);
-		console.log(
-			`Applicable lenses for this file: ${applicableLenses.length}`
-		);
-		applicableLenses.forEach((lens) => {
-			console.log(`- ${lens.id}: ${lens.config?.label || 'Unknown'}`);
-		});
+		// console.log(
+		// 	`Applicable lenses for this file: ${applicableLenses.length}`
+		// );
+		// applicableLenses.forEach((lens) => {
+		// 	console.log(`- ${lens.id}: ${lens.config?.label || 'Unknown'}`);
+		// });
 	}
 
-	console.log('');
-	console.log('All registered lenses:');
-	STUDY_LENSES.forEach((lens) => {
-		const langSupport = PluginRegistry.getPluginLanguageSupport(lens.id);
-		console.log(`- ${lens.id}:`, langSupport || 'No language config');
-	});
+	// console.log('');
+	// console.log('All registered lenses:');
+	// STUDY_LENSES.forEach((lens) => {
+	// 	const langSupport = PluginRegistry.getPluginLanguageSupport(lens.id);
+	// 	console.log(`- ${lens.id}:`, langSupport || 'No language config');
+	// });
 }

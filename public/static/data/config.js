@@ -24,7 +24,7 @@ export const config = {
 
 	// --- other options ---
 	operatorsList: [],
-	operators: true, // for stepping through operations & precedence
+	operators: false, // for stepping through operations & precedence
 
 	controlFlowList: [],
 	controlFlow: false, // all occurrences of the 'test' trap, and break/continue

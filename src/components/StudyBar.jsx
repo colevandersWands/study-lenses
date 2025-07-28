@@ -58,9 +58,9 @@ const StudyBar = ({
 		'run-python': 1,
 		'debug-javascript': 2,
 		'trace-javascript': 3,
-		'ask-javascript': 5,
 		'tables-universal': 4,
-		stepthroughs: 5,
+		'ask-javascript': 5,
+		stepthroughs: 6,
 	};
 
 	const sortedActionLenses = [...actionLenses].sort((a, b) => {

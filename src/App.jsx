@@ -47,6 +47,7 @@ const AppContent = () => {
 	// Get exercise type from URL lens parameters
 	const getExerciseFromURL = (lensParams) => {
 		if (lensParams.blanks) return 'blanks';
+		if (lensParams.dropdowns) return 'dropdowns';
 		if (lensParams.parsons) return 'parsons';
 		if (lensParams.flowchart) return 'flowchart';
 		if (lensParams.variables) return 'variables';
@@ -69,6 +70,11 @@ const AppContent = () => {
 		const basePathParts = BASE_PATH.split('/').filter(Boolean);
 		const relevantParts = pathParts.slice(basePathParts.length);
 
+		// Handle demo mode
+		if (relevantParts.length >= 1 && relevantParts[0] === 'demo') {
+			return null;
+		}
+
 		if (relevantParts.length >= 2) {
 			return {
 				username: relevantParts[0],
@@ -86,7 +92,7 @@ const AppContent = () => {
 
 				// Check if we're viewing a GitHub repository
 				const repoInfo = getRepoFromPath();
-				console.log(repoInfo);
+				// console.log(repoInfo);
 
 				// Determine content URL based on context
 				let contentUrl;
@@ -94,13 +100,13 @@ const AppContent = () => {
 					// Load from repository API endpoint
 					const baseUrl = window.location.origin;
 					contentUrl = `${baseUrl}${BASE_PATH}api/${repoInfo.username}/${repoInfo.repository}/content.json`;
-					console.log(
-						`Loading repository: ${repoInfo.username}/${repoInfo.repository}`
-					);
+					// console.log(
+					//	`Loading repository: ${repoInfo.username}/${repoInfo.repository}`
+					// );
 				} else {
 					// Load default content
-					contentUrl = `${BASE_PATH}/content.json`;
-					console.log('Loading default content');
+					contentUrl = '/demo.json';
+					// console.log('Loading default content');
 				}
 
 				// Load initial filesystem and enliven it
@@ -170,10 +176,10 @@ const AppContent = () => {
 							if (fallbackFile) {
 								setCurrentFile(fallbackFile);
 								fileToLoad = fallbackFile;
-								console.log(
-									'📢 Loaded fallback file:',
-									fallbackFile.name
-								);
+								// console.log(
+								//	'📢 Loaded fallback file:',
+								//	fallbackFile.name
+								// );
 							}
 						}
 					}
@@ -301,20 +307,20 @@ const AppContent = () => {
 
 					// Only switch exercise when the file actually changes, not just the lens
 					if (exerciseType && fileChanged) {
-						console.log('📁 File changed, switching exercise:', {
-							from: currentFilePath,
-							to: fileToLoad.path,
-							exercise: exerciseType,
-						});
+						// console.log('📁 File changed, switching exercise:', {
+						//	from: currentFilePath,
+						//	to: fileToLoad.path,
+						//	exercise: exerciseType,
+						// });
 						switchExercise(exerciseType);
 					} else if (exerciseType && !fileChanged) {
-						console.log(
-							'🔍 Lens changed, keeping current exercise:',
-							{
-								file: fileToLoad.path,
-								lens: exerciseType,
-							}
-						);
+						// console.log(
+						//	'🔍 Lens changed, keeping current exercise:',
+						//	{
+						//		file: fileToLoad.path,
+						//		lens: exerciseType,
+						//	}
+						// );
 					}
 				} else {
 					console.warn(

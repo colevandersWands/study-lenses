@@ -55,7 +55,6 @@ export const applicable = (file) => {
  * @returns {Promise} Execution result
  */
 export const execute = async (file, _config = {}) => {
-	const finalConfig = { ...config, ..._config };
 	const code = file.content;
 
 	if (!code?.trim()) {
