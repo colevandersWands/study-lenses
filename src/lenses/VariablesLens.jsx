@@ -498,7 +498,8 @@ const VariablesLens = ({ resource, selectedCode, onHighlight }) => {
 // Variables lens - unified interface
 export const id = 'variables';
 export const label = 'Variables';
-export const applicable = (file) => true; // Always applicable
+export const applicable = (file) =>
+	file && file.lang === 'javascript' && file.ext !== '.mjs';
 export const render = (resource, _config) => {
 	const finalConfig = { ...config, ..._config };
 	return <VariablesLens resource={resource} config={finalConfig} />;

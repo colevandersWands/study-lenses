@@ -34,19 +34,8 @@ export const config = deepFreeze({
  * @param {Object} file - File object with properties like lang, content, etc.
  * @returns {boolean} True if plugin should be available for this file
  */
-export const applicable = (file) => {
-	if (!file) return false;
-
-	// Only support JavaScript languages for tracing using language names (not extensions)
-	const supportedLanguages = ['javascript', 'typescript'];
-
-	if (file.lang && supportedLanguages.includes(file.lang)) {
-		return true;
-	}
-
-	// Don't support HTML/CSS for tracing as SL1 trace system is JS-specific
-	return false;
-};
+export const applicable = (file) =>
+	file && file.lang === 'javascript' && file.ext !== '.mjs';
 
 /**
  * Execute the plugin functionality

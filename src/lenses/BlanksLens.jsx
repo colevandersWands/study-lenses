@@ -899,7 +899,8 @@ const BlanksLens = ({ resource }) => {
 // Blanks lens - unified interface
 export const id = 'blanks';
 export const label = 'Blanks';
-export const applicable = (file) => file.lang === 'javascript'; // Always applicable
+export const applicable = (file) =>
+	file && file.lang === 'javascript' && file.ext !== '.mjs'
 export const render = (resource, _config) => {
 	const finalConfig = { ...config, ..._config };
 	return <BlanksLens resource={resource} config={finalConfig} />;

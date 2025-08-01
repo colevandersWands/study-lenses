@@ -31,7 +31,12 @@ document.body.appendChild(container);
  * @param {Object} config - Plugin configuration
  * @returns {Promise} Execution result
  */
-export const execute = async (file) => executeJavaScript(file.content, {}, container);
+export const execute = async (file) =>
+	executeJavaScript(
+		file.content,
+		{ type: file.ext === '.mjs' ? 'module' : 'script' },
+		container
+	);
 
 /**
  * Render configuration UI for this plugin as dropdown-style options

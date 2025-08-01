@@ -301,7 +301,8 @@ const TracingLens = ({ resource }) => {
 // Tracing lens - unified interface
 export const id = 'tracing';
 export const label = 'Tracing';
-export const applicable = (file) => true; // Always applicable
+export const applicable = (file) =>
+	file && file.lang === 'javascript' && file.ext !== '.mjs';
 // export const render = (resource, _config) => {
 // 	const finalConfig = { ...config, ..._config };
 // 	return <TracingLens resource={resource} config={finalConfig} />;

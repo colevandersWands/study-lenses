@@ -860,7 +860,8 @@ const WritemeLens = ({ resource }) => {
 // Writeme lens - unified interface
 export const id = 'writeme';
 export const label = 'Write Me';
-export const applicable = (file) => file.lang === 'javascript'; // Always applicable
+export const applicable = (file) =>
+	file && file.lang === 'javascript' && file.ext !== '.mjs';
 export const render = (resource, _config) => {
 	const finalConfig = { ...config, ..._config };
 	return <WritemeLens resource={resource} config={finalConfig} />;

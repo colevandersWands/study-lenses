@@ -75,6 +75,11 @@ export const executeJavaScript = async (
 					);
 				}
 
+				// if(finalCode.type==='module'){
+				// 	const importBase 
+				// 	iframeDocument.head.appendChild()
+				// }
+
 				// Add globals to iframe (like old-runner.js)
 				Object.assign(iframeWindow, finalConfig.globals || {});
 

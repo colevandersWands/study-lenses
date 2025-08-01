@@ -36,24 +36,8 @@ export const config = deepFreeze({
  * @param {Object} file - File object with properties like lang, content, etc.
  * @returns {boolean} True if plugin should be available for this file
  */
-export const applicable = (file) => {
-	if (!file) return false;
-
-	// Support JavaScript languages primarily using language names (not extensions)
-	const primaryLanguages = ['javascript', 'typescript'];
-
-	if (file.lang && primaryLanguages.includes(file.lang)) {
-		return true;
-	}
-
-	// Could also support other languages with basic fallback questions
-	const supportedLanguages = ['html', 'css', 'python'];
-	if (file.lang && supportedLanguages.includes(file.lang)) {
-		return true;
-	}
-
-	return false;
-};
+export const applicable = (file) =>
+	file && file.lang === 'javascript' && file.ext !== '.mjs';
 
 /**
  * Execute the plugin functionality

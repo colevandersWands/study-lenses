@@ -9,6 +9,8 @@
 const LANGUAGE_MAPPINGS = {
 	'.js': 'javascript',
 	js: 'javascript',
+	'.mjs': 'javascript',
+	mjs: 'javascript',
 	'.jsx': 'javascript',
 	jsx: 'javascript',
 	'.ts': 'typescript',

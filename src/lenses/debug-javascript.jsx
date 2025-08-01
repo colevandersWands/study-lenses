@@ -32,4 +32,8 @@ document.body.appendChild(container);
  * @returns {Promise} Execution result
  */
 export const execute = async (file) =>
-	executeJavaScript(file.content, { debug: true }, container);
+	executeJavaScript(
+		file.content,
+		{ debug: true, type: file.ext === '.mjs' ? 'module' : 'script' },
+		container
+	);
