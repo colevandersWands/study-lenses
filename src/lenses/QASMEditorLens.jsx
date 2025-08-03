@@ -6,13 +6,13 @@ import {
 	useMemo,
 } from 'preact/hooks';
 import { memo } from 'preact/compat';
+import { EditorView } from '@codemirror/view';
+import { StateEffect } from '@codemirror/state';
 import StepThroughModal from '../components/StepThroughModal.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { useColorize } from '../context/ColorizeContext.jsx';
 import { deepFreeze } from '../utils/deepFreeze.js';
 import styles from './QASMEditorLens.module.css';
-
-import '../../public/static/q.js';
 
 /**
  * QASMEditorLens - Interactive code editor with lens selection system
@@ -51,10 +51,11 @@ const QASMEditorLens = ({ resource }) => {
 	const [showInstructions, setShowInstructions] = useState(false);
 	const [showHtmlPreview, setShowHtmlPreview] = useState(false);
 	const [showStepThroughModal, setShowStepThroughModal] = useState(false);
-	
+
 	// Two-panel synchronization state
 	const [rightPanelContent, setRightPanelContent] = useState('');
-	const debounceTimeoutRef = useRef(null);
+	const leftToRightTimeoutRef = useRef(null);
+	const rightToLeftTimeoutRef = useRef(null);
 
 	// Check file types
 	const isHtmlFile =
@@ -92,37 +93,53 @@ const QASMEditorLens = ({ resource }) => {
 	}, [getEditorLegacy]);
 
 	// Debounced function to update textarea from editor
-	const updateTextareaFromEditor = useCallback((content) => {
-		if (debounceTimeoutRef.current) {
-			clearTimeout(debounceTimeoutRef.current);
-		}
-		
-		debounceTimeoutRef.current = setTimeout(() => {
-			if (rightPanelContent !== content) {
-				setRightPanelContent(content);
+	const updateTextareaFromEditor = useCallback(
+		(content) => {
+			if (leftToRightTimeoutRef.current) {
+				clearTimeout(leftToRightTimeoutRef.current);
 			}
-		}, 500);
-	}, [rightPanelContent]);
+
+			leftToRightTimeoutRef.current = setTimeout(() => {
+				if (rightPanelContent !== content) {
+					setRightPanelContent(content);
+				}
+			}, 500);
+		},
+		[rightPanelContent]
+	);
 
 	// Debounced function to update editor from textarea
-	const updateEditorFromTextarea = useCallback((content) => {
-		if (debounceTimeoutRef.current) {
-			clearTimeout(debounceTimeoutRef.current);
-		}
-		
-		debounceTimeoutRef.current = setTimeout(() => {
-			const editor = getEditorLegacy();
-			if (editor && editor.state.doc.toString() !== content) {
-				editor.dispatch({
-					changes: {
-						from: 0,
-						to: editor.state.doc.length,
-						insert: content
-					}
-				});
+	const updateEditorFromTextarea = useCallback(
+		(content) => {
+			if (rightToLeftTimeoutRef.current) {
+				clearTimeout(rightToLeftTimeoutRef.current);
 			}
-		}, 500);
-	}, [getEditorLegacy]);
+
+			rightToLeftTimeoutRef.current = setTimeout(() => {
+				const editor = getEditorLegacy();
+				if (editor && editor.state.doc.toString() !== content) {
+					editor.dispatch({
+						changes: {
+							from: 0,
+							to: editor.state.doc.length,
+							insert: content,
+						},
+					});
+				}
+			}, 500);
+		},
+		[getEditorLegacy]
+	);
+
+	// Create debounced CodeMirror update listener for event-driven sync
+	const createUpdateListener = useCallback(() => {
+		return EditorView.updateListener.of((update) => {
+			if (update.docChanged) {
+				const content = update.state.doc.toString();
+				updateTextareaFromEditor(content);
+			}
+		});
+	}, [updateTextareaFromEditor]);
 
 	// Setup enliven editor integration
 	useEffect(() => {
@@ -131,24 +148,21 @@ const QASMEditorLens = ({ resource }) => {
 			editorContainer.current.innerHTML = '';
 			editorContainer.current.appendChild(currentFile.view);
 
-			// Set up polling to sync editor changes to textarea
-			const pollEditor = () => {
-				const editor = getEditorLegacy();
-				if (editor) {
-					const editorContent = editor.state.doc.toString();
-					if (editorContent !== rightPanelContent) {
-						updateTextareaFromEditor(editorContent);
-					}
-				}
-			};
-
-			const pollInterval = setInterval(pollEditor, 100); // Poll every 100ms
-
-			return () => {
-				clearInterval(pollInterval);
-			};
+			// Set up event-driven sync from editor to textarea
+			const editor = getEditorLegacy();
+			if (editor) {
+				// Add our update listener as a runtime extension
+				const updateListener = createUpdateListener();
+				editor.dispatch({
+					effects: StateEffect.appendConfig.of(updateListener)
+				});
+			}
 		}
-	}, [currentFile, getEditorLegacy, updateTextareaFromEditor, rightPanelContent]);
+	}, [
+		currentFile,
+		getEditorLegacy,
+		createUpdateListener,
+	]);
 
 	// Initialize right panel content when currentFile changes
 	useEffect(() => {
@@ -158,11 +172,14 @@ const QASMEditorLens = ({ resource }) => {
 	}, [currentFile?.content]);
 
 	// Handle textarea changes
-	const handleRightPanelChange = useCallback((event) => {
-		const newContent = event.target.value;
-		setRightPanelContent(newContent);
-		updateEditorFromTextarea(newContent);
-	}, [updateEditorFromTextarea]);
+	const handleRightPanelChange = useCallback(
+		(event) => {
+			const newContent = event.target.value;
+			setRightPanelContent(newContent);
+			updateEditorFromTextarea(newContent);
+		},
+		[updateEditorFromTextarea]
+	);
 
 	// Initialize scope only once when component mounts
 	const scopeInitializedRef = useRef(false);
@@ -201,11 +218,14 @@ const QASMEditorLens = ({ resource }) => {
 		}
 	}, [filePath, getCurrentCode]); // Only depend on filePath to reduce unnecessary renders
 
-	// Cleanup debounce timeout on unmount
+	// Cleanup debounce timeouts on unmount
 	useEffect(() => {
 		return () => {
-			if (debounceTimeoutRef.current) {
-				clearTimeout(debounceTimeoutRef.current);
+			if (leftToRightTimeoutRef.current) {
+				clearTimeout(leftToRightTimeoutRef.current);
+			}
+			if (rightToLeftTimeoutRef.current) {
+				clearTimeout(rightToLeftTimeoutRef.current);
 			}
 		};
 	}, []);
@@ -348,34 +368,12 @@ const QASMEditorLens = ({ resource }) => {
 						</div>
 					</div>
 				) : (
-					/* Two-panel layout for QASM editor */
-					<div className={styles.panelContainer}>
-						{/* Left Panel - CodeMirror Editor */}
-						<div className={styles.leftPanel}>
-							<div className={styles.panelHeader}>
-								📝 Editor
-							</div>
-							<div className={styles.editorWrapper}>
-								<div
-									ref={editorContainer}
-									className={styles.codeEditor}
-								/>
-							</div>
-						</div>
-						
-						{/* Right Panel - Plain Textarea */}
-						<div className={styles.rightPanel}>
-							<div className={styles.panelHeader}>
-								📄 Content
-							</div>
-							<textarea
-								className={styles.syncTextarea}
-								value={rightPanelContent}
-								onChange={handleRightPanelChange}
-								placeholder="Content will sync with editor..."
-								spellCheck={false}
-							/>
-						</div>
+					/* Single editor panel */
+					<div className={styles.editorWrapper}>
+						<div
+							ref={editorContainer}
+							className={styles.codeEditor}
+						/>
 					</div>
 				)}
 			</div>
