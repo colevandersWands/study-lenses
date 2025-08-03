@@ -18,6 +18,7 @@ export const label = 'Trace Table';
  */
 export const applicable = (file) => {
 	if (!file) return false;
+	if (file.ext === '.qasm') return false;
 
 	// Support executable code files (exclude static files like images, PDFs, etc.)
 	const executableExtensions = [
@@ -64,7 +65,7 @@ export const execute = async (file, _config = {}) => {
 
 		// Set attributes based on table type
 		// if (finalConfig.tableType === 'steps') {
-			traceTable.setAttribute('steps', '');
+		traceTable.setAttribute('steps', '');
 		// } else if (finalConfig.tableType === 'operators') {
 		// 	traceTable.setAttribute('operators', '');
 		// }

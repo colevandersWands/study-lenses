@@ -13,8 +13,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 4px;
-	padding: 4px 8px;
+	/* gap: 4px; */
+	/* padding: 4px 8px; */
 	background: #2d2d30;
 	border-bottom: 1px solid #464647;
 	font-size: 11px;

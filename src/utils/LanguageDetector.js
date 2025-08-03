@@ -37,7 +37,9 @@ const LANGUAGE_MAPPINGS = {
 	markdown: 'markdown',
 	'.json': 'json',
 	json: 'json',
-	'.xml': 'xml',
+	'.qasm': 'openqasm2',
+	qasm: 'openqasm2',
+	'.yaml': 'yaml',
 	xml: 'xml',
 	'.yaml': 'yaml',
 	yaml: 'yaml',
@@ -85,6 +87,7 @@ export class LanguageDetector {
 			markdown: () => import('@codemirror/lang-markdown'),
 			json: () => import('@codemirror/lang-json'),
 			xml: () => import('@codemirror/lang-xml'),
+			openqasm2: () => import('@codemirror/lang-javascript'),
 		};
 
 		const loader = cmMappings[language];
@@ -113,6 +116,7 @@ export class LanguageDetector {
 			python: 'python',
 			html: 'html',
 			css: 'css',
+			openqasm2: 'openqasm2',
 			markdown: 'markdown',
 			json: 'json',
 			xml: 'xml',
@@ -204,6 +208,11 @@ export class LanguageDetector {
 				name: 'JSON',
 				description: 'JavaScript Object Notation',
 				category: 'data',
+			},
+			openqasm2: {
+				name: 'OpenQASM 2.0',
+				description: 'Open Quantum Assembly 2.0',
+				category: 'programming',
 			},
 			xml: {
 				name: 'XML',

@@ -30,6 +30,7 @@ import * as traceJavaScriptLens from './trace-javascript.jsx';
 import * as askJavaScriptLens from './ask-javascript.jsx';
 import * as tablesUniversalLens from './tables-universal.jsx';
 import * as runPython from './run-python.jsx';
+import * as qasmEditorLens from './QASMEditorLens.jsx';
 
 /**
  * All registered lenses - auto-discovered from unified API exports
@@ -53,6 +54,7 @@ export const STUDY_LENSES = [
 	askJavaScriptLens,
 	tablesUniversalLens,
 	runPython,
+	qasmEditorLens,
 ];
 
 /**

@@ -1359,6 +1359,17 @@ export const editorialize = (file = {}) => {
 			if (editor) return editor.state.doc.toString();
 			return initialContent;
 		},
+		set content(newCode = '') {
+			if (editor) {
+				editor.dispatch({
+					changes: {
+						from: 0,
+						to: editor.state.doc.length,
+						insert: newCode,
+					},
+				});
+			}
+		},
 		get view() {
 			if (view) return view;
 
@@ -1386,7 +1397,7 @@ export const editorialize = (file = {}) => {
 					// Dynamic language loading based on file type
 					const detectedLanguage =
 						LanguageDetector.detectFromFile(processedFile);
-					// 					// console.log(
+					// console.log(
 					// 	`Detected language: ${detectedLanguage} for file:`,
 					// 	processedFile.name || 'unknown'
 					// );
@@ -1424,6 +1435,8 @@ export const editorialize = (file = {}) => {
 							} else if (detectedLanguage === 'html') {
 								extensions.push(languagePkg.html());
 								// 								// console.log('HTML language added successfully');
+							} else if (detectedLanguage === 'openqasm2') {
+								extensions.push(languagePkg.javascript());
 							} else if (detectedLanguage === 'css') {
 								extensions.push(languagePkg.css());
 								// 								// console.log('CSS language added successfully');
@@ -1613,6 +1626,8 @@ export const editorialize = (file = {}) => {
 
 			const currentContent = editor.state.doc.toString();
 			const fileExtension = this.lang || '.js';
+
+			if (fileExtension === '.qasm') return;
 
 			// Extract pedagogical data if present
 			const pedagogicalData = options.__pedagogicalData;

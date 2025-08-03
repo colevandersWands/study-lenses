@@ -35,7 +35,7 @@
 }
 
 .studyBar.compact {
-	padding: 6px;
+	/* padding: 6px; */
 }
 
 .studyBar.compact .header {
@@ -47,10 +47,10 @@
 }
 
 .studyBar.minimal {
-	padding: 4px;
+	/* padding: 4px; */
 	background: transparent;
 	border: none;
-	margin: 4px 0;
+	/* margin: 4px 0; */
 }
 
 .studyBar.minimal .header {

@@ -323,6 +323,35 @@ export class LanguageConfiguration {
 				pedagogicalSettings: {},
 			},
 		],
+		[
+			'openqasm',
+			{
+				displayName: 'OpenQASM 2.0',
+				fileExtensions: ['.qasm'],
+				mimeTypes: ['text/x-python', 'application/x-python'],
+				features: [
+					LANGUAGE_FEATURES.SYNTAX_HIGHLIGHTING, // uses c 
+				],
+				executionEnvironment: 'q.js', // for now, can move to web-assembly-based qasmtools , but q is simple to set up and has nice visuals
+				parserLibrary: 'qasm-transpilers', // Python AST module (planned)
+				// formatterLibrary: 'qasmtools', // Removed - not implemented yet (it's in go compiled to webassembly)
+				// linterLibrary: 'qasmtools', // Removed - not implemented yet (it's in go compiled to webassembly)
+				// testingFrameworks: ['pytest', 'unittest'], // (planned)
+				defaultSettings: {
+					indentSize: 4,
+					indentType: 'spaces', 
+					quotes: 'single',
+					lineLength: 88, 
+				},
+				currentImplementation: {
+					hasLinting: false,
+					hasFormatting: false,
+					hasExecution: false,
+					hasAST: false,
+					hasTracing: false,
+				},
+			},
+		],
 	]);
 
 	/**

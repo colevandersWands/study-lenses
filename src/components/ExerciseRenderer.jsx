@@ -38,6 +38,10 @@ const ExerciseRenderer = () => {
 				exerciseToUse = 'markdown';
 			}
 
+			if (currentFile.ext === '.qasm') {
+				exerciseToUse = 'qasm';
+			}
+
 			// URL migration: redirect old 'study' lens to 'editor'
 			if (exerciseToUse === 'study') {
 				exerciseToUse = 'editor';
@@ -62,7 +66,11 @@ const ExerciseRenderer = () => {
 				const requestedLens = getLens(exerciseToUse);
 
 				// Check if lens exists and has render method (render lenses)
-				if (requestedLens && requestedLens.render && typeof requestedLens.render === 'function') {
+				if (
+					requestedLens &&
+					requestedLens.render &&
+					typeof requestedLens.render === 'function'
+				) {
 					const componentKey = `${currentFile.path}-${exerciseToUse}`;
 					setExerciseComponent(() => (
 						<FullPageContainer
@@ -77,8 +85,14 @@ const ExerciseRenderer = () => {
 
 				// Check if lens exists and has execute method (action lenses)
 				// Action lenses should not be rendered as main content
-				if (requestedLens && requestedLens.execute && typeof requestedLens.execute === 'function') {
-					console.warn(`Lens '${exerciseToUse}' is an action lens, not a render lens. Falling back to editor.`);
+				if (
+					requestedLens &&
+					requestedLens.execute &&
+					typeof requestedLens.execute === 'function'
+				) {
+					console.warn(
+						`Lens '${exerciseToUse}' is an action lens, not a render lens. Falling back to editor.`
+					);
 					exerciseToUse = 'editor'; // Fall back to editor for action lenses
 				}
 
@@ -86,9 +100,11 @@ const ExerciseRenderer = () => {
 				const editorLens = getLens('editor');
 				if (editorLens && editorLens.render) {
 					if (exerciseToUse !== 'editor') {
-						console.warn(`Lens '${exerciseToUse}' not found or not renderable, falling back to 'editor'`);
+						console.warn(
+							`Lens '${exerciseToUse}' not found or not renderable, falling back to 'editor'`
+						);
 					}
-					
+
 					const componentKey = `${currentFile.path}-editor`;
 					setExerciseComponent(() => (
 						<FullPageContainer
@@ -102,18 +118,23 @@ const ExerciseRenderer = () => {
 				}
 
 				// Ultimate fallback - basic text viewer with .txt extension support
-				console.error(`Failed to load any lens, showing basic text viewer`);
+				console.error(
+					`Failed to load any lens, showing basic text viewer`
+				);
 				const componentKey = `${currentFile.path}-basic-text`;
 				setExerciseComponent(() => (
-					<div key={componentKey} style={{ 
-						padding: '20px', 
-						fontFamily: 'monospace', 
-						whiteSpace: 'pre-wrap',
-						backgroundColor: '#1e1e1e',
-						color: '#d4d4d4',
-						overflow: 'auto',
-						height: '100%'
-					}}>
+					<div
+						key={componentKey}
+						style={{
+							padding: '20px',
+							fontFamily: 'monospace',
+							whiteSpace: 'pre-wrap',
+							backgroundColor: '#1e1e1e',
+							color: '#d4d4d4',
+							overflow: 'auto',
+							height: '100%',
+						}}
+					>
 						<div style={{ marginBottom: '10px', opacity: 0.7 }}>
 							📄 {currentFile.name} (Basic Text View)
 						</div>

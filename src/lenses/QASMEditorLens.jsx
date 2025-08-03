@@ -10,15 +10,17 @@ import StepThroughModal from '../components/StepThroughModal.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { useColorize } from '../context/ColorizeContext.jsx';
 import { deepFreeze } from '../utils/deepFreeze.js';
-import styles from './EditorLens.module.css';
+import styles from './QASMEditorLens.module.css';
+
+import '../../public/static/q.js';
 
 /**
- * EditorLens - Interactive code editor with lens selection system
+ * QASMEditorLens - Interactive code editor with lens selection system
  * Implements the new mental model:
  * - Default: Whole file selected, lens icon in upper-right
  * - Selection: Icon moves to selection, scope narrows
  */
-const EditorLens = ({ resource }) => {
+const QASMEditorLens = ({ resource }) => {
 	const fileName = resource?.name || '';
 	const filePath = resource?.path || '';
 
@@ -49,6 +51,10 @@ const EditorLens = ({ resource }) => {
 	const [showInstructions, setShowInstructions] = useState(false);
 	const [showHtmlPreview, setShowHtmlPreview] = useState(false);
 	const [showStepThroughModal, setShowStepThroughModal] = useState(false);
+	
+	// Two-panel synchronization state
+	const [rightPanelContent, setRightPanelContent] = useState('');
+	const debounceTimeoutRef = useRef(null);
 
 	// Check file types
 	const isHtmlFile =
@@ -59,18 +65,7 @@ const EditorLens = ({ resource }) => {
 		fileName.toLowerCase().endsWith('.webm') ||
 		fileName.toLowerCase().endsWith('.mov');
 
-	// Setup enliven editor integration
-	useEffect(() => {
-		if (currentFile?.view && editorContainer.current) {
-			// Clear container and append enliven editor
-			editorContainer.current.innerHTML = '';
-			editorContainer.current.appendChild(currentFile.view);
-
-			// Editor is now managed by enliven - no need for global adapter
-		}
-	}, [currentFile]);
-
-	// Helper functions for external access (enliven-based)
+	// Helper functions for external access (enliven-based) - MUST be defined before useEffect
 	const getEditorLegacy = useCallback(() => {
 		// Get editor from enliven view
 		return currentFile?.view?.querySelector('.cm-editor')?.cmView || null;
@@ -95,6 +90,79 @@ const EditorLens = ({ resource }) => {
 		}
 		return null;
 	}, [getEditorLegacy]);
+
+	// Debounced function to update textarea from editor
+	const updateTextareaFromEditor = useCallback((content) => {
+		if (debounceTimeoutRef.current) {
+			clearTimeout(debounceTimeoutRef.current);
+		}
+		
+		debounceTimeoutRef.current = setTimeout(() => {
+			if (rightPanelContent !== content) {
+				setRightPanelContent(content);
+			}
+		}, 500);
+	}, [rightPanelContent]);
+
+	// Debounced function to update editor from textarea
+	const updateEditorFromTextarea = useCallback((content) => {
+		if (debounceTimeoutRef.current) {
+			clearTimeout(debounceTimeoutRef.current);
+		}
+		
+		debounceTimeoutRef.current = setTimeout(() => {
+			const editor = getEditorLegacy();
+			if (editor && editor.state.doc.toString() !== content) {
+				editor.dispatch({
+					changes: {
+						from: 0,
+						to: editor.state.doc.length,
+						insert: content
+					}
+				});
+			}
+		}, 500);
+	}, [getEditorLegacy]);
+
+	// Setup enliven editor integration
+	useEffect(() => {
+		if (currentFile?.view && editorContainer.current) {
+			// Clear container and append enliven editor
+			editorContainer.current.innerHTML = '';
+			editorContainer.current.appendChild(currentFile.view);
+
+			// Set up polling to sync editor changes to textarea
+			const pollEditor = () => {
+				const editor = getEditorLegacy();
+				if (editor) {
+					const editorContent = editor.state.doc.toString();
+					if (editorContent !== rightPanelContent) {
+						updateTextareaFromEditor(editorContent);
+					}
+				}
+			};
+
+			const pollInterval = setInterval(pollEditor, 100); // Poll every 100ms
+
+			return () => {
+				clearInterval(pollInterval);
+			};
+		}
+	}, [currentFile, getEditorLegacy, updateTextareaFromEditor, rightPanelContent]);
+
+	// Initialize right panel content when currentFile changes
+	useEffect(() => {
+		if (currentFile?.content !== undefined) {
+			setRightPanelContent(currentFile.content);
+		}
+	}, [currentFile?.content]);
+
+	// Handle textarea changes
+	const handleRightPanelChange = useCallback((event) => {
+		const newContent = event.target.value;
+		setRightPanelContent(newContent);
+		updateEditorFromTextarea(newContent);
+	}, [updateEditorFromTextarea]);
 
 	// Initialize scope only once when component mounts
 	const scopeInitializedRef = useRef(false);
@@ -133,9 +201,18 @@ const EditorLens = ({ resource }) => {
 		}
 	}, [filePath, getCurrentCode]); // Only depend on filePath to reduce unnecessary renders
 
+	// Cleanup debounce timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (debounceTimeoutRef.current) {
+				clearTimeout(debounceTimeoutRef.current);
+			}
+		};
+	}, []);
+
 	return (
 		<div
-			className={styles.editorLens}
+			className={styles.QASMEditorLens}
 			style={{
 				// HACK: Force hardware acceleration to prevent flickering
 				transform: 'translateZ(0)',
@@ -144,7 +221,7 @@ const EditorLens = ({ resource }) => {
 			}}
 		>
 			<div className={styles.header}>
-				<h3>📖 Editor Mode</h3>
+				<h3>Quantum Gates: OpenQasm 2.0</h3>
 				{fileName && (
 					<span className={styles.fileName}>{fileName}</span>
 				)}
@@ -161,7 +238,7 @@ const EditorLens = ({ resource }) => {
 
 						return (
 							<div className={styles.statusContainer}>
-								<button
+								{/* <button
 									className={styles.formatButton}
 									onClick={async () => {
 										// Format file content using enliven
@@ -193,7 +270,7 @@ const EditorLens = ({ resource }) => {
 									title="Format code with Prettier"
 								>
 									Format
-								</button>
+								</button> */}
 								<button
 									className={styles.resetButton}
 									onClick={() => {
@@ -271,12 +348,34 @@ const EditorLens = ({ resource }) => {
 						</div>
 					</div>
 				) : (
-					/* CodeMirror Editor for non-video files */
-					<div className={styles.editorWrapper}>
-						<div
-							ref={editorContainer}
-							className={styles.codeEditor}
-						/>
+					/* Two-panel layout for QASM editor */
+					<div className={styles.panelContainer}>
+						{/* Left Panel - CodeMirror Editor */}
+						<div className={styles.leftPanel}>
+							<div className={styles.panelHeader}>
+								📝 Editor
+							</div>
+							<div className={styles.editorWrapper}>
+								<div
+									ref={editorContainer}
+									className={styles.codeEditor}
+								/>
+							</div>
+						</div>
+						
+						{/* Right Panel - Plain Textarea */}
+						<div className={styles.rightPanel}>
+							<div className={styles.panelHeader}>
+								📄 Content
+							</div>
+							<textarea
+								className={styles.syncTextarea}
+								value={rightPanelContent}
+								onChange={handleRightPanelChange}
+								placeholder="Content will sync with editor..."
+								spellCheck={false}
+							/>
+						</div>
 					</div>
 				)}
 			</div>
@@ -374,16 +473,16 @@ const EditorLens = ({ resource }) => {
 };
 
 // Editor lens - unified interface
-export const id = 'editor';
-export const label = 'Editor';
-export const applicable = (file) => file && file.lang !== '.qasm'; // force qasm files to QASMEditorLens (hacked for now)
+export const id = 'qasm';
+export const label = 'OpenQASM2';
+export const applicable = (file) => file && file.lang === '.qasm';
 export const render = (resource, _config) => {
 	const finalConfig = { ...config, ..._config };
-	return <EditorLens resource={resource} config={finalConfig} />;
+	return <QASMEditorLens resource={resource} config={finalConfig} />;
 };
 export const config = deepFreeze({});
 export const renderConfig = () => null; // No configuration UI needed
 
 // Legacy edit exports removed - now using unified API pattern only
 
-export default memo(EditorLens);
+export default memo(QASMEditorLens);
