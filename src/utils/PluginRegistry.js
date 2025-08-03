@@ -50,9 +50,9 @@ export class PluginRegistry {
 	static isPluginCompatible(pluginId, language) {
 		const config = this.pluginLanguageSupport.get(pluginId);
 		if (!config) {
-			console.warn(
-				`Plugin Registry: No language config found for plugin "${pluginId}", assuming compatible`
-			);
+			// console.warn(
+			// 	`Plugin Registry: No language config found for plugin "${pluginId}", assuming compatible`
+			// );
 			return true; // Default to compatible for unknown plugins
 		}
 
