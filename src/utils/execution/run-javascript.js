@@ -109,7 +109,7 @@ Your testing functions will then be available!`;
 
 						console.warn(helpMsg);
 					}
-					console.error('JavaScript execution iframe error:', event);
+					// console.error('JavaScript execution iframe error:', event);
 				});
 
 				// Create and execute script (use innerHTML like old-runner.js)
@@ -123,13 +123,13 @@ Your testing functions will then be available!`;
 				// Execute the script
 				iframeDocument.body.appendChild(script);
 			} catch (error) {
-				console.error('❌ JavaScript execution error:', error);
+				// console.error('❌ JavaScript execution error:', error);
 			}
 		};
 
 		// Set iframe error handler
 		iframe.onerror = (error) => {
-			console.error('❌ JavaScript execution iframe error:', error);
+			// console.error('❌ JavaScript execution iframe error:', error);
 		};
 
 		container.appendChild(iframe);
